@@ -18,7 +18,7 @@ void ClientRaw::setDepthTopic(const std::string& topic) {
             ros::SubscribeOptions::create<sensor_msgs::Image>(
                 topic, 1, boost::bind(&ClientRaw::depthImageCallback, this, _1), ros::VoidPtr(), &cb_queue_);
 
-    sub_image_ = nh.subscribe(sub_options);
+    sub_cam_info_ = nh.subscribe(sub_options);
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -67,6 +67,7 @@ void ClientRaw::depthImageCallback(sensor_msgs::ImageConstPtr depth_img_msg) {
 
     image_ptr_->setFrameID(depth_img_msg->header.frame_id);
     image_ptr_->setTimestamp(depth_img_msg->header.stamp.toSec());
+    image_ptr_->setCameraModel(cam_model_);
     received_image_ = true;
 }
 

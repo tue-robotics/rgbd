@@ -30,6 +30,7 @@ public:
 protected:
 
     ros::Subscriber sub_image_;
+    ros::Subscriber sub_cam_info_;
     ros::CallbackQueue cb_queue_;
 
     bool received_image_;
