@@ -1,5 +1,7 @@
 #include "rgbd_transport/RGBDImage.h"
 
+namespace rgbd {
+
 RGBDImage::RGBDImage() {
 
 }
@@ -30,5 +32,7 @@ const cv::Mat& RGBDImage::getDepthImage() const {
 
 const std::string& RGBDImage::getFrameID() const {
     return frame_id_;
+}
+
 }
 

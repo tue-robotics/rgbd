@@ -22,14 +22,14 @@ image_geometry::PinholeCameraModel cam_model_;
 
 typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> KinectApproxPolicy;
 
-Server rgbd_server;
+rgbd::Server rgbd_server;
 
 void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageConstPtr depth_image_msg) {
     if (!cam_model_.initialized()) {
         return;
     }
 
-    RGBDImage image;
+    rgbd::RGBDImage image;
     image.setTimestamp(rgb_image_msg->header.stamp.toSec());
     image.setFrameID(rgb_image_msg->header.frame_id);
     image.setCameraModel(cam_model_);

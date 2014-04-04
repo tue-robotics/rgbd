@@ -4,12 +4,12 @@
 int main(int argc, char **argv) {
     ros::init(argc, argv, "rgbd_transport_test_client");
 
-    Client client;
+    rgbd::Client client;
     client.intialize("test");
 
     ros::Rate r(30);
     while (ros::ok()) {
-        RGBDImage image;
+        rgbd::RGBDImage image;
         if (client.nextImage(image)) {
             cv::imshow("depth", image.getDepthImage() / 8);
             cv::waitKey(3);

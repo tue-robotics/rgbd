@@ -4,6 +4,8 @@
 #include <opencv2/core/core.hpp>
 #include <image_geometry/pinhole_camera_model.h>
 
+namespace rgbd {
+
 class RGBDImage {
 
     friend class ROSModuleWrapper;
@@ -45,5 +47,7 @@ protected:
     image_geometry::PinholeCameraModel cam_model_;
 
 };
+
+}
 
 #endif

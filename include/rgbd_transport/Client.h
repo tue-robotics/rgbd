@@ -7,6 +7,8 @@
 #include "rgbd_transport/RGBDMsg.h"
 #include <ros/callback_queue.h>
 
+namespace rgbd {
+
 class Client {
 
 public:
@@ -30,5 +32,7 @@ protected:
     void imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg);
 
 };
+
+}
 
 #endif

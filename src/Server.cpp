@@ -4,6 +4,8 @@
 
 #include <opencv2/highgui/highgui.hpp>
 
+namespace rgbd {
+
 const int Server::SERIALIZATION_VERSION = 0;
 
 Server::Server() {
@@ -70,4 +72,6 @@ void Server::send(const RGBDImage& image) {
     } else {
         std::cout << "Depth image compression failed" << std::endl;
     }
+}
+
 }

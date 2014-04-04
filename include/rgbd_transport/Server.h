@@ -3,6 +3,8 @@
 
 #include <ros/ros.h>
 
+namespace rgbd {
+
 class RGBDImage;
 
 class Server {
@@ -24,5 +26,7 @@ protected:
     ros::Publisher pub_image_;
 
 };
+
+}
 
 #endif

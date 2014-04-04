@@ -1,6 +1,8 @@
 #include "rgbd_transport/Client.h"
 #include <opencv2/highgui/highgui.hpp>
 
+namespace rgbd {
+
 Client::Client() {
 }
 
@@ -82,6 +84,10 @@ void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
     cam_model.fromCameraInfo(cam_info_msg);
 
     image_ptr_->setCameraModel(cam_model);
+    image_ptr_->setFrameID(msg->header.frame_id);
+    image_ptr_->setTimestamp(msg->header.stamp.toSec());
 
     received_image_ = true;
+}
+
 }
