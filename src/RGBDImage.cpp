@@ -1,7 +1,5 @@
 #include "rgbd_transport/RGBDImage.h"
 
-namespace pein {
-
 RGBDImage::RGBDImage() {
 
 }
@@ -34,4 +32,3 @@ const std::string& RGBDImage::getFrameID() const {
     return frame_id_;
 }
 
-}

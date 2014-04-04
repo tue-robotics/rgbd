@@ -3,8 +3,6 @@
 
 #include <opencv2/core/core.hpp>
 
-namespace pein {
-
 class RGBDImage {
 
     friend class ROSModuleWrapper;
@@ -37,7 +35,5 @@ protected:
     cv::Mat depth_image_;
 
 };
-
-}
 
 #endif

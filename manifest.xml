@@ -8,8 +8,11 @@
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/rgbd_transport</url>
+  
+  <depend package="roscpp"/>
   <depend package="opencv2"/>
   <depend package="cv_bridge"/>
+  <depend package="message_filters"/>
 
 </package>
 
