@@ -1,0 +1,16 @@
+<package>
+  <description brief="rgbd_transport">
+
+     rgbd_transport
+
+  </description>
+  <author>Sjoerd van den Dries</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/rgbd_transport</url>
+  <depend package="opencv2"/>
+  <depend package="cv_bridge"/>
+
+</package>
+
+
