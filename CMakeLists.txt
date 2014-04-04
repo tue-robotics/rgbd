@@ -34,6 +34,7 @@ file(GLOB_RECURSE HEADER_FILES include/*.h)
 
 rosbuild_add_library(rgbd_transport src/Server.cpp
                                     src/Client.cpp
+                                    src/ClientRaw.cpp
                                     src/RGBDImage.cpp)
 
 rosbuild_add_executable(server src/server.cpp ${HEADER_FILES})
