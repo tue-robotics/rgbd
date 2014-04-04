@@ -16,11 +16,8 @@ void Client::intialize(const std::string& server_name) {
 
 void Client::imageCallback(const rgbd_transport::RGBDMsg& msg) {
 
-    float depthZ0 = 0.01; //config_.depth_quantization;
-    float depthMax = 10; //config_.depth_max;
-
-    float depthQuantA = depthZ0 * (depthZ0 + 1.0f);
-    float depthQuantB = 1.0f - depthQuantA / depthMax;
+    float depthQuantA = msg.params[0];
+    float depthQuantB = msg.params[1];
 
     cv::Mat decompressed = cv::imdecode(msg.depth, CV_LOAD_IMAGE_UNCHANGED);
     cv::Mat depth_image(decompressed.size(), CV_32FC1);

@@ -23,11 +23,13 @@ void Server::send(const RGBDImage& image) {
     msg.header.frame_id = image.getFrameID();
     msg.header.stamp = ros::Time(image.getTimestamp());
 
-    float depthZ0 = 0.01; //config_.depth_quantization;
+    float depthZ0 = 100; //config_.depth_quantization;
     float depthMax = 10; //config_.depth_max;
 
     float depthQuantA = depthZ0 * (depthZ0 + 1.0f);
     float depthQuantB = 1.0f - depthQuantA / depthMax;
+    msg.params.push_back(depthQuantA);
+    msg.params.push_back(depthQuantB);
 
 
     const cv::Mat& depth_image = image.getDepthImage();
@@ -53,7 +55,7 @@ void Server::send(const RGBDImage& image) {
     params.resize(3, 0);
 
     params[0] = CV_IMWRITE_PNG_COMPRESSION;
-    params[1] = 2;
+    params[1] = 1;
 
     if (cv::imencode(".png", invDepthImg, msg.depth, params)) {
         std::cout << msg.depth.size() << std::endl;
