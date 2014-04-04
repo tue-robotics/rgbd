@@ -23,14 +23,37 @@ void Server::send(const RGBDImage& image) {
     msg.header.frame_id = image.getFrameID();
     msg.header.stamp = ros::Time(image.getTimestamp());
 
+    float depthZ0 = 0.01; //config_.depth_quantization;
+    float depthMax = 10; //config_.depth_max;
+
+    float depthQuantA = depthZ0 * (depthZ0 + 1.0f);
+    float depthQuantB = 1.0f - depthQuantA / depthMax;
+
+
+    const cv::Mat& depth_image = image.getDepthImage();
+    cv::Mat invDepthImg(depth_image.size(), CV_16UC1);
+
+    // Matrix iterators
+    cv::MatConstIterator_<float> itDepthImg = depth_image.begin<float>(),
+                             itDepthImg_end = depth_image.end<float>();
+    cv::MatIterator_<unsigned short> itInvDepthImg = invDepthImg.begin<unsigned short>(),
+                                 itInvDepthImg_end = invDepthImg.end<unsigned short>();
+
+    // Quantization
+    for (; (itDepthImg != itDepthImg_end) && (itInvDepthImg != itInvDepthImg_end); ++itDepthImg, ++itInvDepthImg) {
+        // check for NaN & max depth
+        if (*itDepthImg < depthMax){
+            *itInvDepthImg = depthQuantA / *itDepthImg + depthQuantB;
+        } else{
+            *itInvDepthImg = 0;
+        }
+    }
     // Compression settings
     std::vector<int> params;
     params.resize(3, 0);
 
     params[0] = CV_IMWRITE_PNG_COMPRESSION;
     params[1] = 2;
-
-    cv::Mat invDepthImg = image.getDepthImage();
 
     if (cv::imencode(".png", invDepthImg, msg.depth, params)) {
         std::cout << msg.depth.size() << std::endl;
