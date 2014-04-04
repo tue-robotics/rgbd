@@ -22,6 +22,8 @@ Server rgbd_server;
 
 void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageConstPtr depth_image_msg) {
     RGBDImage image;
+    image.setTimestamp(rgb_image_msg->header.stamp.toSec());
+    image.setFrameID(rgb_image_msg->header.frame_id);
 
     // Convert RGB image
     try {
@@ -40,8 +42,6 @@ void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageC
         ROS_ERROR("Could not deserialize depth image: %s", e.what());
         return;
     }
-
-    image.setFrameID(rgb_image_msg->header.frame_id);
 
     rgbd_server.send(image);
 }

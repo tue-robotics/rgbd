@@ -36,8 +36,8 @@ rosbuild_add_library(rgbd_transport src/Server.cpp
                                     src/Client.cpp
                                     src/RGBDImage.cpp)
 
-rosbuild_add_executable(server src/server.cpp)
-target_link_libraries(server rgbd_transport ${HEADER_FILES})
+rosbuild_add_executable(server src/server.cpp ${HEADER_FILES})
+target_link_libraries(server rgbd_transport)
 
 rosbuild_add_executable(test_client test/test_client.cpp)
 target_link_libraries(test_client rgbd_transport)
