@@ -16,14 +16,23 @@
 #include "rgbd_transport/RGBDImage.h"
 #include "rgbd_transport/Server.h"
 
+#include <image_geometry/pinhole_camera_model.h>
+
+image_geometry::PinholeCameraModel cam_model_;
+
 typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> KinectApproxPolicy;
 
 Server rgbd_server;
 
 void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageConstPtr depth_image_msg) {
+    if (!cam_model_.initialized()) {
+        return;
+    }
+
     RGBDImage image;
     image.setTimestamp(rgb_image_msg->header.stamp.toSec());
     image.setFrameID(rgb_image_msg->header.frame_id);
+    image.setCameraModel(cam_model_);
 
     // Convert RGB image
     try {
@@ -47,6 +56,9 @@ void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageC
 }
 
 void camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_msg) {
+    if (!cam_model_.initialized()) {
+        cam_model_.fromCameraInfo(cam_info_msg);
+    }
 }
 
 int main(int argc, char **argv) {
@@ -58,7 +70,7 @@ int main(int argc, char **argv) {
     double max_fps = 30;
     nh_private.getParam("max_fps", max_fps);
 
-    rgbd_server.initialize("/test");
+    rgbd_server.initialize("output");
 
     ros::Subscriber sub_cam_info = nh.subscribe("cam_info", 1, &camInfoCallback);
 

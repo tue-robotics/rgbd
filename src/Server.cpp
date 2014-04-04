@@ -23,6 +23,14 @@ void Server::send(const RGBDImage& image) {
     msg.header.frame_id = image.getFrameID();
     msg.header.stamp = ros::Time(image.getTimestamp());
 
+    const image_geometry::PinholeCameraModel& cam_model = image.getCameraModel();
+    msg.cam_info.push_back(cam_model.fx());
+    msg.cam_info.push_back(cam_model.fy());
+    msg.cam_info.push_back(cam_model.cx());
+    msg.cam_info.push_back(cam_model.cy());
+    msg.cam_info.push_back(cam_model.Tx());
+    msg.cam_info.push_back(cam_model.Ty());
+
     float depthZ0 = 100; //config_.depth_quantization;
     float depthMax = 10; //config_.depth_max;
 

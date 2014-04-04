@@ -48,5 +48,40 @@ void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
     }
 
     image_ptr_->setDepthImage(depth_image);
+
+    // DESERIALZE CAMERA INFO
+    sensor_msgs::CameraInfo cam_info_msg;
+
+    cam_info_msg.D.resize(5, 0.0);
+    cam_info_msg.K.fill(0.0);
+    cam_info_msg.K[0] = msg->cam_info[0];  // fx
+    cam_info_msg.K[2] = msg->cam_info[2];  // cx
+    cam_info_msg.K[4] = msg->cam_info[1];  // fy
+    cam_info_msg.K[5] = msg->cam_info[3];  // cy
+    cam_info_msg.K[8] = 1.0;
+
+    cam_info_msg.R.fill(0.0);
+    cam_info_msg.R[0] = 1.0;
+    cam_info_msg.R[4] = 1.0;
+    cam_info_msg.R[8] = 1.0;
+
+    cam_info_msg.P.fill(0.0);
+    cam_info_msg.P[0] = msg->cam_info[0];  // fx
+    cam_info_msg.P[2] = msg->cam_info[2];  // cx
+    cam_info_msg.P[3] = msg->cam_info[4];  // Tx
+    cam_info_msg.P[5] = msg->cam_info[1];  // fy
+    cam_info_msg.P[6] = msg->cam_info[3];  // cy
+    cam_info_msg.P[7] = msg->cam_info[5];  // cy
+    cam_info_msg.P[10] = 1.0;
+
+    cam_info_msg.distortion_model = "plumb_bob";
+    cam_info_msg.width = depth_image.cols;
+    cam_info_msg.height = depth_image.rows;
+
+    image_geometry::PinholeCameraModel cam_model;
+    cam_model.fromCameraInfo(cam_info_msg);
+
+    image_ptr_->setCameraModel(cam_model);
+
     received_image_ = true;
 }
