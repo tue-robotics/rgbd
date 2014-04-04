@@ -58,10 +58,8 @@ void Server::send(const RGBDImage& image) {
     params[1] = 1;
 
     if (cv::imencode(".png", invDepthImg, msg.depth, params)) {
-        std::cout << msg.depth.size() << std::endl;
+        pub_image_.publish(msg);
     } else {
-        std::cout << "failed" << std::endl;
+        std::cout << "Depth image compression failed" << std::endl;
     }
-
-    pub_image_.publish(msg);
 }

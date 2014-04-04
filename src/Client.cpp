@@ -2,24 +2,34 @@
 #include <opencv2/highgui/highgui.hpp>
 
 Client::Client() {
-
 }
 
-Client::~Client() {
-
+Client::~Client(){
 }
 
 void Client::intialize(const std::string& server_name) {
     ros::NodeHandle nh;
-    sub_image_ = nh.subscribe(server_name, 1, &Client::imageCallback, this);
+
+    ros::SubscribeOptions sub_options =
+            ros::SubscribeOptions::create<rgbd_transport::RGBDMsg>(
+                server_name, 1, boost::bind(&Client::imageCallback, this, _1), ros::VoidPtr(), &cb_queue_);
+
+    sub_image_ = nh.subscribe(sub_options);
 }
 
-void Client::imageCallback(const rgbd_transport::RGBDMsg& msg) {
+bool Client::nextImage(RGBDImage& image) {
+    received_image_ = false;
+    image_ptr_ = &image;
+    cb_queue_.callAvailable();
+    return received_image_;
+}
 
-    float depthQuantA = msg.params[0];
-    float depthQuantB = msg.params[1];
+void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
 
-    cv::Mat decompressed = cv::imdecode(msg.depth, CV_LOAD_IMAGE_UNCHANGED);
+    float depthQuantA = msg->params[0];
+    float depthQuantB = msg->params[1];
+
+    cv::Mat decompressed = cv::imdecode(msg->depth, CV_LOAD_IMAGE_UNCHANGED);
     cv::Mat depth_image(decompressed.size(), CV_32FC1);
 
     // Depth conversion
@@ -37,11 +47,6 @@ void Client::imageCallback(const rgbd_transport::RGBDMsg& msg) {
         }
     }
 
-
-
-
-    cv::imshow("depth", depth_image / 8);
-    cv::waitKey(3);
-
-
+    image_ptr_->setDepthImage(depth_image);
+    received_image_ = true;
 }

@@ -53,6 +53,10 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "rgbd_transport_server");
 
     ros::NodeHandle nh;
+    ros::NodeHandle nh_private("~");
+
+    double max_fps = 30;
+    nh_private.getParam("max_fps", max_fps);
 
     rgbd_server.initialize("/test");
 
@@ -64,7 +68,11 @@ int main(int argc, char **argv) {
     message_filters::Synchronizer<KinectApproxPolicy> sync_(KinectApproxPolicy(10), sub_rgb_sync_, sub_depth_sync_);
     sync_.registerCallback(boost::bind(&imageCallback, _1, _2));
 
-    ros::spin();
+    ros::Rate r(max_fps);
+    while (ros::ok()) {
+        ros::spinOnce();
+        r.sleep();
+    }
 
     return 0;
 }
