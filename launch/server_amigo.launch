@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="gdb" default="false"/>
+    <arg if="$(arg gdb)" name="launch-prefix" value="gdb -ex run --args"/>
+    <arg unless="$(arg gdb)" name="launch-prefix" value=""/>
+
+    <node name="rgbd_encoder" pkg="rgbd_transport" type="server" output="screen" launch-prefix="$(arg launch-prefix)">
+        <remap from="cam_info" to="/amigo/top_kinect/rgb/camera_info"/>
+        <remap from="rgb_image" to="/amigo/top_kinect/rgb/image_rect_color"/>
+        <remap from="depth_image" to="/amigo/top_kinect/depth_registered/image_rect"/>
+    </node>
+
+</launch>
