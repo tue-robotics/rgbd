@@ -7,6 +7,8 @@
 #include "rgbd_transport/RGBDMsg.h"
 #include <ros/callback_queue.h>
 
+#include "rgbd_transport/types.h"
+
 namespace rgbd {
 
 class Client {
@@ -19,7 +21,11 @@ public:
 
     void intialize(const std::string& server_name);
 
+    bool initialized() { return !sub_image_.getTopic().empty(); }
+
     bool nextImage(RGBDImage& image);
+
+    RGBDImagePtr nextImage();
 
 protected:
 

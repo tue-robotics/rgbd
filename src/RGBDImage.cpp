@@ -34,5 +34,19 @@ const std::string& RGBDImage::getFrameID() const {
     return frame_id_;
 }
 
+bool RGBDImage::getPoint3D(int x, int y, double& px, double& py, double& pz) const {
+    float d = depth_image_.at<float>(y, x);
+    if (d != d || d == 0) {
+        return false;
+    }
+
+    cv::Point3d p = cam_model_.projectPixelTo3dRay(cv::Point2i(x, y)) * d;
+    px = p.x;
+    py = p.y;
+    pz = p.z;
+
+    return true;
+}
+
 }
 

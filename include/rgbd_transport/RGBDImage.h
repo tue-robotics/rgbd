@@ -34,6 +34,12 @@ public:
 
     double getTimestamp() const { return timestamp_; }
 
+    int getWidth() const { return depth_image_.cols; }
+
+    int getHeight() const { return depth_image_.rows; }
+
+    bool getPoint3D(int x, int y, double& px, double& py, double& pz) const;
+
     const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
 
 protected:

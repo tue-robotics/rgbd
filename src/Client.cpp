@@ -26,6 +26,12 @@ bool Client::nextImage(RGBDImage& image) {
     return received_image_;
 }
 
+RGBDImagePtr Client::nextImage() {
+    image_ptr_ = 0;
+    cb_queue_.callAvailable();
+    return RGBDImagePtr(image_ptr_);
+}
+
 void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
 
     float depthQuantA = msg->params[0];
@@ -47,6 +53,11 @@ void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
         } else{
             *itDepthImg = std::numeric_limits<float>::quiet_NaN();
         }
+    }
+
+    if (!image_ptr_) {
+        // in this case, the pointer will always be wrapped in a shared ptr, so no mem leaks (see nextImage() )
+        image_ptr_ = new RGBDImage();
     }
 
     image_ptr_->setDepthImage(depth_image);
