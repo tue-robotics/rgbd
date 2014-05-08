@@ -3,6 +3,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <image_geometry/pinhole_camera_model.h>
+#include <geolib/sensors/DepthCamera.h>
 
 namespace rgbd {
 
@@ -24,7 +25,7 @@ public:
 
     void setTimestamp(double stamp) { timestamp_ = stamp; }
 
-    void setCameraModel(const image_geometry::PinholeCameraModel& cam_model) { cam_model_ = cam_model; }
+    void setCameraModel(const image_geometry::PinholeCameraModel& cam_model);
 
     const cv::Mat& getRGBImage() const;
 
@@ -37,6 +38,8 @@ public:
     int getWidth() const { return depth_image_.cols; }
 
     int getHeight() const { return depth_image_.rows; }
+
+    const geo::DepthCamera& getRasterizer() { return rasterizer_; }
 
     bool getPoint3D(int x, int y, double& px, double& py, double& pz) const;
 
@@ -51,6 +54,7 @@ protected:
     cv::Mat depth_image_;
 
     image_geometry::PinholeCameraModel cam_model_;
+    geo::DepthCamera rasterizer_;
 
 };
 

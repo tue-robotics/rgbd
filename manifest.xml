@@ -14,6 +14,7 @@
   <depend package="cv_bridge"/>
   <depend package="message_filters"/>
   <depend package="image_geometry"/>
+  <depend package="geolib"/>
 
   <export>
     <cpp cflags="-I${prefix}/include" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lrgbd_transport"/>
