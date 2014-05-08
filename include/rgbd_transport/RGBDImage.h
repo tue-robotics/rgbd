@@ -39,7 +39,7 @@ public:
 
     int getHeight() const { return depth_image_.rows; }
 
-    const geo::DepthCamera& getRasterizer() { return rasterizer_; }
+    const geo::DepthCamera& getRasterizer() const { return rasterizer_; }
 
     bool getPoint3D(int x, int y, double& px, double& py, double& pz) const;
 
