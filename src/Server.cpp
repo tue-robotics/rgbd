@@ -6,24 +6,37 @@
 
 namespace rgbd {
 
-const int Server::SERIALIZATION_VERSION = 0;
+const int Server::SERIALIZATION_VERSION = 1;
+
+// ----------------------------------------------------------------------------------------
 
 Server::Server() {
 }
 
+// ----------------------------------------------------------------------------------------
+
 Server::~Server() {
 }
+
+// ----------------------------------------------------------------------------------------
 
 void Server::initialize(const std::string& name) {
     ros::NodeHandle nh;
     pub_image_ = nh.advertise<rgbd_transport::RGBDMsg>(name, 1);
 }
 
+// ----------------------------------------------------------------------------------------
+
 void Server::send(const RGBDImage& image) {
     rgbd_transport::RGBDMsg msg;
+
+    // - - - - - - - - - - - - - - - - GENERAL INFO - - - - - - - - - - - - - - - -
+
     msg.version = SERIALIZATION_VERSION;
     msg.header.frame_id = image.getFrameID();
     msg.header.stamp = ros::Time(image.getTimestamp());
+
+    // - - - - - - - - - - - - - - - - CAMERA INFO - - - - - - - - - - - - - - - -
 
     const image_geometry::PinholeCameraModel& cam_model = image.getCameraModel();
     msg.cam_info.push_back(cam_model.fx());
@@ -32,6 +45,23 @@ void Server::send(const RGBDImage& image) {
     msg.cam_info.push_back(cam_model.cy());
     msg.cam_info.push_back(cam_model.Tx());
     msg.cam_info.push_back(cam_model.Ty());
+
+    // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
+
+    // OpenCV compression settings
+    std::vector<int> rgb_params;
+    rgb_params.resize(3, 0);
+
+    rgb_params[0] = CV_IMWRITE_JPEG_QUALITY;
+    rgb_params[1] = 0; // default is 95
+
+    // Compress image
+    if (!cv::imencode(".jpg", image.getRGBImage(), msg.rgb, rgb_params)) {
+        std::cout << "RGB image compression failed" << std::endl;
+        return;
+    }
+
+    // - - - - - - - - - - - - - - - - DEPTH IMAGE - - - - - - - - - - - - - - - -
 
     float depthZ0 = 100; //config_.depth_quantization;
     float depthMax = 10; //config_.depth_max;
@@ -60,6 +90,7 @@ void Server::send(const RGBDImage& image) {
             *itInvDepthImg = 0;
         }
     }
+
     // Compression settings
     std::vector<int> params;
     params.resize(3, 0);

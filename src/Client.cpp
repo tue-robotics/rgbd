@@ -3,11 +3,17 @@
 
 namespace rgbd {
 
+// ----------------------------------------------------------------------------------------
+
 Client::Client() {
 }
 
+// ----------------------------------------------------------------------------------------
+
 Client::~Client(){
 }
+
+// ----------------------------------------------------------------------------------------
 
 void Client::intialize(const std::string& server_name) {
     ros::NodeHandle nh;
@@ -19,6 +25,8 @@ void Client::intialize(const std::string& server_name) {
     sub_image_ = nh.subscribe(sub_options);
 }
 
+// ----------------------------------------------------------------------------------------
+
 bool Client::nextImage(RGBDImage& image) {
     received_image_ = false;
     image_ptr_ = &image;
@@ -26,13 +34,32 @@ bool Client::nextImage(RGBDImage& image) {
     return received_image_;
 }
 
+// ----------------------------------------------------------------------------------------
+
 RGBDImagePtr Client::nextImage() {
     image_ptr_ = 0;
     cb_queue_.callAvailable();
     return RGBDImagePtr(image_ptr_);
 }
 
+// ----------------------------------------------------------------------------------------
+
 void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
+
+    if (!image_ptr_) {
+        // in this case, the pointer will always be wrapped in a shared ptr, so no mem leaks (see nextImage() )
+        image_ptr_ = new RGBDImage();
+    }
+
+    // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
+
+    if (msg->version > 0) {
+        // rgb info also encoded
+        cv::Mat rgb_image = cv::imdecode(cv::Mat(msg->rgb), CV_LOAD_IMAGE_UNCHANGED);
+        image_ptr_->setRGBImage(rgb_image);
+    }
+
+    // - - - - - - - - - - - - - - - - DEPTH IMAGE - - - - - - - - - - - - - - - -
 
     float depthQuantA = msg->params[0];
     float depthQuantB = msg->params[1];
@@ -53,11 +80,6 @@ void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
         } else{
             *itDepthImg = std::numeric_limits<float>::quiet_NaN();
         }
-    }
-
-    if (!image_ptr_) {
-        // in this case, the pointer will always be wrapped in a shared ptr, so no mem leaks (see nextImage() )
-        image_ptr_ = new RGBDImage();
     }
 
     image_ptr_->setDepthImage(depth_image);

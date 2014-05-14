@@ -24,6 +24,8 @@ typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sens
 
 rgbd::Server rgbd_server;
 
+// ----------------------------------------------------------------------------------------
+
 void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageConstPtr depth_image_msg) {
     if (!cam_model_.initialized()) {
         return;
@@ -55,11 +57,15 @@ void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageC
     rgbd_server.send(image);
 }
 
+// ----------------------------------------------------------------------------------------
+
 void camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_msg) {
     if (!cam_model_.initialized()) {
         cam_model_.fromCameraInfo(cam_info_msg);
     }
 }
+
+// ----------------------------------------------------------------------------------------
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "rgbd_transport_server");

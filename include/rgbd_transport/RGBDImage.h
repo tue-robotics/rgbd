@@ -43,6 +43,8 @@ public:
 
     bool getPoint3D(int x, int y, double& px, double& py, double& pz) const;
 
+    bool getPoint3D(int x, int y, geo::Vector3& p) const;
+
     const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
 
 protected:

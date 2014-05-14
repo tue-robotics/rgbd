@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
         rgbd::RGBDImage image;
         if (client.nextImage(image)) {
             cv::imshow("depth", image.getDepthImage() / 8);
+            cv::imshow("rgb", image.getRGBImage());
             cv::waitKey(3);
         }
         r.sleep();
