@@ -53,7 +53,7 @@ void Server::send(const RGBDImage& image) {
     rgb_params.resize(3, 0);
 
     rgb_params[0] = CV_IMWRITE_JPEG_QUALITY;
-    rgb_params[1] = 0; // default is 95
+    rgb_params[1] = 95; // default is 95
 
     // Compress image
     if (!cv::imencode(".jpg", image.getRGBImage(), msg.rgb, rgb_params)) {
