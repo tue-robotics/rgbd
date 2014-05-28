@@ -97,4 +97,12 @@ bool RGBDImage::getPoint3D(int x, int y, geo::Vector3& p) const {
     return true;
 }
 
+// ----------------------------------------------------------------------------------------
+
+bool RGBDImage::getPoint3DSafe(int x, int y, geo::Vector3& p) const {
+    if (x < 0 || y < 0 || x >= getWidth() || y >= getHeight())
+        return false;
+    return getPoint3D(x, y, p);
+}
+
 }
