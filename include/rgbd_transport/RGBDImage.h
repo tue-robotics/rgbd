@@ -5,6 +5,8 @@
 #include <image_geometry/pinhole_camera_model.h>
 #include <geolib/sensors/DepthCamera.h>
 
+#include <pcl/point_types.h>
+
 namespace rgbd {
 
 class RGBDImage {
@@ -46,6 +48,8 @@ public:
     bool getPoint3D(int x, int y, geo::Vector3& p) const;
 
     bool getPoint3DSafe(int x, int y, geo::Vector3& p) const;
+
+    void getPCLPointCloud(pcl::PointCloud<pcl::PointXYZ>& pcl) const;
 
     const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
 
