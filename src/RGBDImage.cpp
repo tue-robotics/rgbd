@@ -107,18 +107,26 @@ bool RGBDImage::getPoint3DSafe(int x, int y, geo::Vector3& p) const {
 
 // ----------------------------------------------------------------------------------------
 
-pcl::PointCloud<pcl::PointXYZ>::Ptr RGBDImage::getPCLPointCloud() const
+pcl::PointCloud<pcl::PointXYZ>::Ptr RGBDImage::getPCLPointCloud(int step, double max_range) const
 {
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 
-    double px,py,pz;
-    for(int y = 0; y < depth_image_.rows; ++y) {
-        for(int x = 0; x < depth_image_.cols; ++x) {
-            getPoint3D(x,y,px,py,pz);
+    pcl::PointXYZ pcl_p;
+    geo::Vector3 p;
 
-            pcl::PointXYZ p;
-            p.x = px; p.y = py; p.z = pz;
-            cloud->points.push_back(p);
+    for(int y = 0; y < depth_image_.rows; y+=step) {
+        for(int x = 0; x < depth_image_.cols; x+=step) {
+
+            float d = depth_image_.at<float>(y, x);
+            if (d > 0 && d < max_range) {
+                p = rasterizer_.project2Dto3D(x, y) * d;
+
+                pcl_p.x = p.getX();
+                pcl_p.y = p.getY();
+                pcl_p.z = p.getZ();
+
+                cloud->points.push_back(pcl_p);
+            }
         }
     }
 
