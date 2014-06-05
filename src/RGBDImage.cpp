@@ -107,8 +107,10 @@ bool RGBDImage::getPoint3DSafe(int x, int y, geo::Vector3& p) const {
 
 // ----------------------------------------------------------------------------------------
 
-void RGBDImage::getPCLPointCloud(pcl::PointCloud<pcl::PointXYZ>& pcl) const
+pcl::PointCloud<pcl::PointXYZ>::Ptr RGBDImage::getPCLPointCloud() const
 {
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+
     double px,py,pz;
     for(int y = 0; y < depth_image_.rows; ++y) {
         for(int x = 0; x < depth_image_.cols; ++x) {
@@ -116,9 +118,11 @@ void RGBDImage::getPCLPointCloud(pcl::PointCloud<pcl::PointXYZ>& pcl) const
 
             pcl::PointXYZ p;
             p.x = px; p.y = py; p.z = pz;
-            pcl.push_back(p);
+            cloud->points.push_back(p);
         }
     }
+
+    return cloud;
 }
 
 

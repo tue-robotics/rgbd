@@ -49,7 +49,7 @@ public:
 
     bool getPoint3DSafe(int x, int y, geo::Vector3& p) const;
 
-    void getPCLPointCloud(pcl::PointCloud<pcl::PointXYZ>& pcl) const;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr getPCLPointCloud() const;
 
     const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
 
