@@ -35,23 +35,35 @@ public:
 
     const std::string& getFrameID() const;
 
-    double getTimestamp() const { return timestamp_; }
+    const geo::DepthCamera& getRasterizer() const { return rasterizer_; }
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr getPCLPointCloud(int step = 1, int padding = 0, double max_range = 1e6) const;
+
+    const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
+
+    // -----
+
+    void set(const cv::Mat& rgb_image, const cv::Mat& depth_image, const geo::DepthCamera& cam_model, double timestamp);
 
     int getWidth() const { return depth_image_.cols; }
 
     int getHeight() const { return depth_image_.rows; }
 
-    const geo::DepthCamera& getRasterizer() const { return rasterizer_; }
+    double getTimestamp() const { return timestamp_; }
+
+    inline const cv::Vec3b& getColor(int x, int y)
+    {
+    }
+
+    inline bool getDepth(int x, int y, float& f)
+    {
+    }
 
     bool getPoint3D(int x, int y, double& px, double& py, double& pz) const;
 
     bool getPoint3D(int x, int y, geo::Vector3& p) const;
 
     bool getPoint3DSafe(int x, int y, geo::Vector3& p) const;
-
-    pcl::PointCloud<pcl::PointXYZ>::Ptr getPCLPointCloud(int step = 1, int padding = 0, double max_range = 1e6) const;
-
-    const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
 
 protected:
 
