@@ -1,5 +1,5 @@
 #include "rgbd_transport/Server.h"
-#include "rgbd_transport/RGBDMsg.h"
+#include "rgbd/RGBDMsg.h"
 #include "rgbd_transport/RGBDImage.h"
 
 #include <opencv2/highgui/highgui.hpp>
@@ -22,13 +22,13 @@ Server::~Server() {
 
 void Server::initialize(const std::string& name) {
     ros::NodeHandle nh;
-    pub_image_ = nh.advertise<rgbd_transport::RGBDMsg>(name, 1);
+    pub_image_ = nh.advertise<rgbd::RGBDMsg>(name, 1);
 }
 
 // ----------------------------------------------------------------------------------------
 
 void Server::send(const RGBDImage& image) {
-    rgbd_transport::RGBDMsg msg;
+    rgbd::RGBDMsg msg;
 
     // - - - - - - - - - - - - - - - - GENERAL INFO - - - - - - - - - - - - - - - -
 

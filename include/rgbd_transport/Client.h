@@ -4,7 +4,7 @@
 #include <ros/ros.h>
 
 #include "rgbd_transport/RGBDImage.h"
-#include "rgbd_transport/RGBDMsg.h"
+#include "rgbd/RGBDMsg.h"
 #include <ros/callback_queue.h>
 
 #include "rgbd_transport/types.h"
@@ -35,7 +35,7 @@ protected:
     bool received_image_;
     RGBDImage* image_ptr_;
 
-    void imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg);
+    void imageCallback(const rgbd::RGBDMsg::ConstPtr& msg);
 
 };
 

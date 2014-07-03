@@ -19,7 +19,7 @@ void Client::intialize(const std::string& server_name) {
     ros::NodeHandle nh;
 
     ros::SubscribeOptions sub_options =
-            ros::SubscribeOptions::create<rgbd_transport::RGBDMsg>(
+            ros::SubscribeOptions::create<rgbd::RGBDMsg>(
                 server_name, 1, boost::bind(&Client::imageCallback, this, _1), ros::VoidPtr(), &cb_queue_);
 
     sub_image_ = nh.subscribe(sub_options);
@@ -44,7 +44,7 @@ RGBDImagePtr Client::nextImage() {
 
 // ----------------------------------------------------------------------------------------
 
-void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
+void Client::imageCallback(const rgbd::RGBDMsg::ConstPtr& msg) {
 
     if (msg->version == 0)
     {
