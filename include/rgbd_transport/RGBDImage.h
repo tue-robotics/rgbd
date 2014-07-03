@@ -9,9 +9,12 @@ namespace rgbd {
 
 class RGBDImage {
 
-    friend class ROSModuleWrapper;
+    friend class Server;
+    friend class Client;
 
 public:
+
+    RGBDImage();
 
     RGBDImage(const cv::Mat& rgb_image,
               const cv::Mat& depth_image,
@@ -19,8 +22,12 @@ public:
               const std::string& frame_id,
               double timestamp);
 
-    inline const cv::Mat& getRGBImage() const {
+    inline const cv::Mat& getOriginalRGBImage() const {
         return rgb_image_;
+    }
+
+    inline const cv::Mat& getOriginalDepthImage() const {
+        return depth_image_;
     }
 
     inline const int& getWidth() const
@@ -55,9 +62,13 @@ public:
 
     inline bool getPoint3D(int x, int y, geo::Vector3& p) const {
         float d = getDepth(x,y);
-        p = rasterizer_.project2Dto3D(x/factor_, y/factor_) * d;
+        p = rasterizer_.project2Dto3D(x, y) * d;
         return (d == d);
     }
+
+    const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
+
+    const geo::DepthCamera& getRasterizer() const { return rasterizer_; }
 
 protected:
 
@@ -66,7 +77,7 @@ protected:
 
     int width_;
     int height_;
-    float ratio_;
+    float aspect_ratio_;
     int factor_; // for xbox kinect either 1 or 2 (640/640 or 1280/640)
 
     cv::Mat rgb_image_;
@@ -74,6 +85,8 @@ protected:
 
     image_geometry::PinholeCameraModel cam_model_;
     geo::DepthCamera rasterizer_;
+
+    void updateRatio();
 
 };
 

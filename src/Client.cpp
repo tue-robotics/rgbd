@@ -46,6 +46,12 @@ RGBDImagePtr Client::nextImage() {
 
 void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
 
+    if (msg->version == 0)
+    {
+        std::cout << "rgbd_transport::Client::imageCallback: version 0 not supported" << std::endl;
+        return;
+    }
+
     if (!image_ptr_) {
         // in this case, the pointer will always be wrapped in a shared ptr, so no mem leaks (see nextImage() )
         image_ptr_ = new RGBDImage();
@@ -53,11 +59,7 @@ void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
 
     // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
 
-    if (msg->version > 0) {
-        // rgb info also encoded
-        cv::Mat rgb_image = cv::imdecode(cv::Mat(msg->rgb), CV_LOAD_IMAGE_UNCHANGED);
-        image_ptr_->setRGBImage(rgb_image);
-    }
+    image_ptr_->rgb_image_ = cv::imdecode(cv::Mat(msg->rgb), CV_LOAD_IMAGE_UNCHANGED);
 
     // - - - - - - - - - - - - - - - - DEPTH IMAGE - - - - - - - - - - - - - - - -
 
@@ -65,11 +67,11 @@ void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
     float depthQuantB = msg->params[1];
 
     cv::Mat decompressed = cv::imdecode(msg->depth, CV_LOAD_IMAGE_UNCHANGED);
-    cv::Mat depth_image(decompressed.size(), CV_32FC1);
+    image_ptr_->depth_image_ = cv::Mat(decompressed.size(), CV_32FC1);
 
     // Depth conversion
-    cv::MatIterator_<float> itDepthImg = depth_image.begin<float>(),
-            itDepthImg_end = depth_image.end<float>();
+    cv::MatIterator_<float> itDepthImg = image_ptr_->depth_image_.begin<float>(),
+            itDepthImg_end = image_ptr_->depth_image_.end<float>();
     cv::MatConstIterator_<unsigned short> itInvDepthImg = decompressed.begin<unsigned short>(),
             itInvDepthImg_end = decompressed.end<unsigned short>();
 
@@ -82,9 +84,8 @@ void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
         }
     }
 
-    image_ptr_->setDepthImage(depth_image);
+    // - - - - - - - - - - - - - - - - CAMERA INFO - - - - - - - - - - - - - - - -
 
-    // DESERIALZE CAMERA INFO
     sensor_msgs::CameraInfo cam_info_msg;
 
     cam_info_msg.D.resize(5, 0.0);
@@ -110,15 +111,17 @@ void Client::imageCallback(const rgbd_transport::RGBDMsg::ConstPtr& msg) {
     cam_info_msg.P[10] = 1.0;
 
     cam_info_msg.distortion_model = "plumb_bob";
-    cam_info_msg.width = depth_image.cols;
-    cam_info_msg.height = depth_image.rows;
+    cam_info_msg.width = image_ptr_->rgb_image_.cols;
+    cam_info_msg.height = image_ptr_->rgb_image_.rows;
 
     image_geometry::PinholeCameraModel cam_model;
     cam_model.fromCameraInfo(cam_info_msg);
 
-    image_ptr_->setCameraModel(cam_model);
-    image_ptr_->setFrameID(msg->header.frame_id);
-    image_ptr_->setTimestamp(msg->header.stamp.toSec());
+    image_ptr_->cam_model_ = cam_model;
+    image_ptr_->timestamp_ = msg->header.stamp.toSec();
+    image_ptr_->frame_id_ = msg->header.frame_id;
+
+    image_ptr_->updateRatio();
 
     received_image_ = true;
 }

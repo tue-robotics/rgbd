@@ -33,7 +33,7 @@ void Server::send(const RGBDImage& image) {
     // - - - - - - - - - - - - - - - - GENERAL INFO - - - - - - - - - - - - - - - -
 
     msg.version = SERIALIZATION_VERSION;
-    msg.header.frame_id = image.getFrameID();
+    msg.header.frame_id = image.getFrameId();
     msg.header.stamp = ros::Time(image.getTimestamp());
 
     // - - - - - - - - - - - - - - - - CAMERA INFO - - - - - - - - - - - - - - - -
@@ -56,7 +56,7 @@ void Server::send(const RGBDImage& image) {
     rgb_params[1] = 95; // default is 95
 
     // Compress image
-    if (!cv::imencode(".jpg", image.getRGBImage(), msg.rgb, rgb_params)) {
+    if (!cv::imencode(".jpg", image.rgb_image_, msg.rgb, rgb_params)) {
         std::cout << "RGB image compression failed" << std::endl;
         return;
     }
@@ -72,7 +72,7 @@ void Server::send(const RGBDImage& image) {
     msg.params.push_back(depthQuantB);
 
 
-    const cv::Mat& depth_image = image.getDepthImage();
+    const cv::Mat& depth_image = image.depth_image_;
     cv::Mat invDepthImg(depth_image.size(), CV_16UC1);
 
     // Matrix iterators

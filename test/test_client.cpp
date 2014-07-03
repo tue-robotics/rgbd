@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
     while (ros::ok()) {
         rgbd::RGBDImage image;
         if (client.nextImage(image)) {
-            cv::imshow("depth", image.getDepthImage() / 8);
+            cv::imshow("depth", image.getOriginalDepthImage() / 8);
             cv::waitKey(3);
         }
         r.sleep();

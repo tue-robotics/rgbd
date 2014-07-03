@@ -53,22 +53,22 @@ void ClientRaw::cameraInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_in
 // ---------------------------------------------------------------------------------------------
 
 void ClientRaw::depthImageCallback(sensor_msgs::ImageConstPtr depth_img_msg) {
-    if (!cam_model_.initialized()) {
-        return;
-    }
+//    if (!cam_model_.initialized()) {
+//        return;
+//    }
 
-    // Convert depth image
-    try {
-        cv_bridge::CvImagePtr depth_img_ptr = cv_bridge::toCvCopy(depth_img_msg, "32FC1");
-        image_ptr_->setDepthImage(depth_img_ptr->image);
-    } catch (cv_bridge::Exception& e) {
-        ROS_ERROR("Could not deserialize depth image: %s", e.what());
-    }
+//    // Convert depth image
+//    try {
+//        cv_bridge::CvImagePtr depth_img_ptr = cv_bridge::toCvCopy(depth_img_msg, "32FC1");
+//        image_ptr_->depth_image_ = depth_img_ptr->image;
+//    } catch (cv_bridge::Exception& e) {
+//        ROS_ERROR("Could not deserialize depth image: %s", e.what());
+//    }
 
-    image_ptr_->setFrameID(depth_img_msg->header.frame_id);
-    image_ptr_->setTimestamp(depth_img_msg->header.stamp.toSec());
-    image_ptr_->setCameraModel(cam_model_);
-    received_image_ = true;
+//    image_ptr_->setFrameID(depth_img_msg->header.frame_id);
+//    image_ptr_->setTimestamp(depth_img_msg->header.stamp.toSec());
+//    image_ptr_->setCameraModel(cam_model_);
+//    received_image_ = true;
 }
 
 }

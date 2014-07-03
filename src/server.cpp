@@ -31,9 +31,11 @@ void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageC
         return;
     }
 
+    cv_bridge::CvImagePtr img_ptr, depth_img_ptr;
+
     // Convert RGB image
     try {
-        cv_bridge::CvImagePtr img_ptr = cv_bridge::toCvCopy(rgb_image_msg, sensor_msgs::image_encodings::BGR8);
+        img_ptr = cv_bridge::toCvCopy(rgb_image_msg, sensor_msgs::image_encodings::BGR8);
     } catch (cv_bridge::Exception& e) {
         ROS_ERROR("Could not deserialize rgb image: %s", e.what());
         return;
@@ -41,7 +43,7 @@ void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageC
 
     // Convert depth image
     try {
-        cv_bridge::CvImagePtr depth_img_ptr = cv_bridge::toCvCopy(depth_image_msg, "32FC1");
+        depth_img_ptr = cv_bridge::toCvCopy(depth_image_msg, "32FC1");
     } catch (cv_bridge::Exception& e) {
         ROS_ERROR("Could not deserialize depth image: %s", e.what());
         return;
