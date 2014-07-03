@@ -56,7 +56,7 @@ public:
     inline bool getPoint3D(int x, int y, geo::Vector3& p) const {
         float d = getDepth(x,y);
         p = rasterizer_.project2Dto3D(x/factor_, y/factor_) * d;
-        return d > 0;
+        return (d == d);
     }
 
 protected:

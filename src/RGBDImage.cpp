@@ -11,7 +11,9 @@ RGBDImage::RGBDImage(const cv::Mat& rgb_image,
                      double timestamp) :
     cam_model_(cam_model),
     frame_id_(frame_id),
-    timestamp_(timestamp)
+    timestamp_(timestamp),
+    rgb_image_(rgb_image),
+    depth_image_(depth_image)
 {
     // Set the rasterizer
     rasterizer_.setFocalLengths(cam_model_.fx(), cam_model_.fy());
@@ -23,35 +25,6 @@ RGBDImage::RGBDImage(const cv::Mat& rgb_image,
     factor_ = rgb_image_.cols / depth_image_.cols; // 640 / 640 or 1280 / 640
     width_ = rgb_image_.cols;
     height_ = width_ / ratio_;
-
-    // Set the depth image (skip the NANs)
-    depth_image_ = cv::Mat::zeros(height_/factor_,width_/factor_, CV_32F);
-    for(int y = 0; y < depth_image.rows; ++y) {
-        for(int x = 0; x < depth_image.cols; ++x) {
-            float d = depth_image.at<float>(y, x);
-            if (d == d) {
-                depth_image_.at<float>(y, x) = d;
-            }
-        }
-    }
-
-    // Set the color image
-    cv::Rect rect(0,0,width_,height_);
-    rgb_image_ = rect(rgb_image);
 }
-
-// ----------------------------------------------------------------------------------------
-
-const cv::Mat& RGBDImage::getRGBImage() const {
-    return rgb_image_;
-}
-
-// ----------------------------------------------------------------------------------------
-
-const std::string& RGBDImage::getFrameID() const {
-    return frame_id_;
-}
-
-// ----------------------------------------------------------------------------------------
 
 }
