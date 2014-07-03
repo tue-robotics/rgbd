@@ -31,15 +31,9 @@ void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageC
         return;
     }
 
-    rgbd::RGBDImage image;
-    image.setTimestamp(rgb_image_msg->header.stamp.toSec());
-    image.setFrameID(rgb_image_msg->header.frame_id);
-    image.setCameraModel(cam_model_);
-
     // Convert RGB image
     try {
         cv_bridge::CvImagePtr img_ptr = cv_bridge::toCvCopy(rgb_image_msg, sensor_msgs::image_encodings::BGR8);
-        image.setRGBImage(img_ptr->image);
     } catch (cv_bridge::Exception& e) {
         ROS_ERROR("Could not deserialize rgb image: %s", e.what());
         return;
@@ -48,11 +42,12 @@ void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageC
     // Convert depth image
     try {
         cv_bridge::CvImagePtr depth_img_ptr = cv_bridge::toCvCopy(depth_image_msg, "32FC1");
-        image.setDepthImage(depth_img_ptr->image);
     } catch (cv_bridge::Exception& e) {
         ROS_ERROR("Could not deserialize depth image: %s", e.what());
         return;
     }
+
+    rgbd::RGBDImage image(img_ptr->image,depth_img_ptr->image,cam_model_,rgb_image_msg->header.frame_id,rgb_image_msg->header.stamp.toSec());
 
     rgbd_server.send(image);
 }
