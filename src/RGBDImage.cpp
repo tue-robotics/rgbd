@@ -1,4 +1,4 @@
-#include "rgbd_transport/RGBDImage.h"
+#include "rgbd/RGBDImage.h"
 
 namespace rgbd {
 

@@ -13,8 +13,8 @@
 // CV bridge
 #include <cv_bridge/cv_bridge.h>
 
-#include "rgbd_transport/RGBDImage.h"
-#include "rgbd_transport/Server.h"
+#include "rgbd/RGBDImage.h"
+#include "rgbd/Server.h"
 
 #include <image_geometry/pinhole_camera_model.h>
 

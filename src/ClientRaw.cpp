@@ -1,4 +1,4 @@
-#include "rgbd_transport/ClientRaw.h"
+#include "rgbd/ClientRaw.h"
 #include <cv_bridge/cv_bridge.h>
 
 namespace rgbd {

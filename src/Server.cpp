@@ -1,6 +1,6 @@
-#include "rgbd_transport/Server.h"
+#include "rgbd/Server.h"
 #include "rgbd/RGBDMsg.h"
-#include "rgbd_transport/RGBDImage.h"
+#include "rgbd/RGBDImage.h"
 
 #include <opencv2/highgui/highgui.hpp>
 
