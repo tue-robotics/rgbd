@@ -3,11 +3,11 @@
 
 #include <ros/ros.h>
 
-#include "rgbd_transport/RGBDImage.h"
+#include "rgbd/RGBDImage.h"
 #include "rgbd/RGBDMsg.h"
 #include <ros/callback_queue.h>
 
-#include "rgbd_transport/types.h"
+#include "rgbd/types.h"
 
 namespace rgbd {
 

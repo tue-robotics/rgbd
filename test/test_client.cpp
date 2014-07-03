@@ -1,4 +1,4 @@
-#include "rgbd_transport/Client.h"
+#include "rgbd/Client.h"
 #include <opencv2/highgui/highgui.hpp>
 
 int main(int argc, char **argv) {
