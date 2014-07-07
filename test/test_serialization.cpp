@@ -3,12 +3,19 @@
 
 #include <fstream>
 
+#include <opencv2/highgui/highgui.hpp>
+
 int main(int argc, char **argv) {
 
     std::string test_filename = "/tmp/rgbd_test_serialization";
 
     {
-        rgbd::RGBDImage image;
+        image_geometry::PinholeCameraModel cam_model;
+
+        cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0,0,255));
+        cv::Mat depth_image(480, 640, CV_32FC1, 3);
+
+        rgbd::RGBDImage image(rgb_image, depth_image, cam_model, "no_frame", 0);
 
         // write
         std::ofstream f_out;
@@ -37,6 +44,10 @@ int main(int argc, char **argv) {
 
     std::cout << "Image loaded from disk." << std::endl;
     std::cout << "Image size: " << image.getWidth() << " x " << image.getHeight() << std::endl;
+
+    cv::imshow("rgb", image.getOriginalRGBImage());
+    cv::imshow("depth", image.getOriginalDepthImage() / 8);
+    cv::waitKey();
 
     return 0;
 }
