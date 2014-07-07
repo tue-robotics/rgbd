@@ -7,7 +7,7 @@
 
 int main(int argc, char **argv) {
 
-    std::string test_filename = "/tmp/rgbd_test_serialization";
+    std::string test_filename = "/tmp/rgbd_test_image";
 
     {
         image_geometry::PinholeCameraModel cam_model;
@@ -43,7 +43,9 @@ int main(int argc, char **argv) {
     }
 
     std::cout << "Image loaded from disk." << std::endl;
-    std::cout << "Image size: " << image.getWidth() << " x " << image.getHeight() << std::endl;
+    std::cout << "    size:  " << image.getWidth() << " x " << image.getHeight() << std::endl;
+    std::cout << "    frame: " << image.getFrameId() << std::endl;
+    std::cout << "    time:  " << ros::Time(image.getTimestamp()) << std::endl;
 
     cv::imshow("rgb", image.getOriginalRGBImage());
     cv::imshow("depth", image.getOriginalDepthImage() / 8);

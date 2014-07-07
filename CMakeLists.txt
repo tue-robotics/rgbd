@@ -44,6 +44,12 @@ target_link_libraries(server rgbd_transport)
 rosbuild_add_executable(viewer src/viewer.cpp ${HEADER_FILES})
 target_link_libraries(viewer rgbd_transport)
 
+rosbuild_add_executable(save src/save.cpp ${HEADER_FILES})
+target_link_libraries(save rgbd_transport)
+
+rosbuild_add_executable(view src/view.cpp ${HEADER_FILES})
+target_link_libraries(view rgbd_transport)
+
 rosbuild_add_executable(test_client test/test_client.cpp)
 target_link_libraries(test_client rgbd_transport)
 
