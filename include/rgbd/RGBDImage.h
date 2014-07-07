@@ -5,6 +5,15 @@
 #include <image_geometry/pinhole_camera_model.h>
 #include <geolib/sensors/DepthCamera.h>
 
+namespace tue
+{
+namespace serialization
+{
+    class InputArchive;
+    class OutputArchive;
+}
+}
+
 namespace rgbd {
 
 class RGBDImage {
@@ -75,6 +84,10 @@ public:
     const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
 
     const geo::DepthCamera& getRasterizer() const { return rasterizer_; }
+
+    friend void serialize(const RGBDImage& image, tue::serialization::OutputArchive& a);
+
+    friend void deserialize(tue::serialization::InputArchive& a, RGBDImage& image);
 
 protected:
 

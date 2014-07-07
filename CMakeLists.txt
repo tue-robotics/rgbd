@@ -35,7 +35,8 @@ file(GLOB_RECURSE HEADER_FILES include/*.h)
 rosbuild_add_library(rgbd_transport src/Server.cpp
                                     src/Client.cpp
                                     src/ClientRaw.cpp
-                                    src/RGBDImage.cpp)
+                                    src/RGBDImage.cpp
+                                    src/serialization.cpp)
 
 rosbuild_add_executable(server src/server.cpp ${HEADER_FILES})
 target_link_libraries(server rgbd_transport)
@@ -45,3 +46,6 @@ target_link_libraries(viewer rgbd_transport)
 
 rosbuild_add_executable(test_client test/test_client.cpp)
 target_link_libraries(test_client rgbd_transport)
+
+rosbuild_add_executable(test_serialization test/test_serialization.cpp)
+target_link_libraries(test_serialization rgbd_transport)
