@@ -4,7 +4,15 @@ namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
 
-RGBDImage::RGBDImage()
+//double timestamp_;
+//std::string frame_id_;
+
+//int width_;
+//int height_;
+//float aspect_ratio_;
+//int factor_; // for xbox kinect either 1 or 2 (640/640 or 1280/640)
+
+RGBDImage::RGBDImage() : timestamp_(0), width_(0), height_(0), aspect_ratio_(0), factor_(0)
 {
 }
 
@@ -29,10 +37,13 @@ RGBDImage::RGBDImage(const cv::Mat& rgb_image,
 
 void RGBDImage::updateRatio()
 {
-    // Set the rasterizer
-    rasterizer_.setFocalLengths(cam_model_.fx(), cam_model_.fy());
-    rasterizer_.setOpticalCenter(cam_model_.cx(), cam_model_.cy());
-    rasterizer_.setOpticalTranslation(cam_model_.Tx(), cam_model_.Ty());
+    if (cam_model_.initialized())
+    {
+        // Set the rasterizer
+        rasterizer_.setFocalLengths(cam_model_.fx(), cam_model_.fy());
+        rasterizer_.setOpticalCenter(cam_model_.cx(), cam_model_.cy());
+        rasterizer_.setOpticalTranslation(cam_model_.Tx(), cam_model_.Ty());
+    }
 
     // Determine scaling between rgb and depth
     aspect_ratio_ = (float)depth_image_.cols / depth_image_.rows; // 640 / 480

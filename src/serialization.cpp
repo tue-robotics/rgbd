@@ -174,9 +174,10 @@ void deserialize(tue::serialization::InputArchive& a, RGBDImage& image)
     int cam_type;
     a >> cam_type;
 
-    image_geometry::PinholeCameraModel cam_model;
-
-    if (cam_type == CAMERA_MODEL_PINHOLE)
+    if (cam_type == CAMERA_MODEL_NONE)
+    {
+    }
+    else if (cam_type == CAMERA_MODEL_PINHOLE)
     {
         double fx, fy, cx, cy, tx, ty;
         a >> fx >> fy;
@@ -223,7 +224,10 @@ void deserialize(tue::serialization::InputArchive& a, RGBDImage& image)
     int rgb_type;
     a >> rgb_type;
 
-    if (rgb_type == RGB_STORAGE_JPG)
+    if (rgb_type == RGB_STORAGE_NONE)
+    {
+    }
+    else if (rgb_type == RGB_STORAGE_JPG)
     {
         int rgb_size;
         a >> rgb_size;
@@ -244,7 +248,10 @@ void deserialize(tue::serialization::InputArchive& a, RGBDImage& image)
     int depth_type;
     a >> depth_type;
 
-    if (depth_type == DEPTH_STORAGE_PNG)
+    if (depth_type == DEPTH_STORAGE_NONE)
+    {
+    }
+    else if (depth_type == DEPTH_STORAGE_PNG)
     {
         float depthQuantA, depthQuantB;
         a >> depthQuantA >> depthQuantB;
@@ -280,7 +287,10 @@ void deserialize(tue::serialization::InputArchive& a, RGBDImage& image)
         std::cout << "rgbd::deserialize: Unsupported depth storage format" << std::endl;
     }
 
-    image.updateRatio();
+    if (image.depth_image_.cols > 0 && image.rgb_image_.cols > 0)
+    {
+        image.updateRatio();
+    }
 }
 
 }

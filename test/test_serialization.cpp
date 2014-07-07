@@ -23,21 +23,20 @@ int main(int argc, char **argv) {
 
     std::cout << "Image stored to disk." << std::endl;
 
+    rgbd::RGBDImage image;
+
     {
         // read
-
         std::ifstream f_in;
         f_in.open(test_filename.c_str(), std::ifstream::binary);
 
         tue::serialization::InputArchive a_in(f_in);
 
-        rgbd::RGBDImage image;
         rgbd::deserialize(a_in, image);
-
-        std::cout << image.getWidth() << std::endl;
     }
 
     std::cout << "Image loaded from disk." << std::endl;
+    std::cout << "Image size: " << image.getWidth() << " x " << image.getHeight() << std::endl;
 
     return 0;
 }
