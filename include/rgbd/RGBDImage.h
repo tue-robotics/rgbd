@@ -60,10 +60,16 @@ public:
         return depth_image_.at<float>(y/factor_,x/factor_);
     }
 
-    inline bool getPoint3D(int x, int y, geo::Vector3& p) const {
+    inline bool getPoint3D(int x, int y, geo::Vector3& p) const
+    {
         float d = getDepth(x,y);
         p = rasterizer_.project2Dto3D(x, y) * d;
         return (d == d);
+    }
+
+    cv::Point2i getIndexFromPoint3D(const geo::Vector3& p) const
+    {
+        return rasterizer_.project3Dto2D(p);
     }
 
     const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
