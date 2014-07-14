@@ -1,5 +1,5 @@
-#ifndef RGBD_TRANSPORT_Image.h_
-#define RGBD_TRANSPORT_Image.h_
+#ifndef RGBD_TRANSPORT_IMAGE_H_
+#define RGBD_TRANSPORT_IMAGE_H_
 
 #include <opencv2/core/core.hpp>
 #include <image_geometry/pinhole_camera_model.h>
@@ -55,14 +55,14 @@ public:
 
 protected:
 
-    double timestamp_;
-    std::string frame_id_;
-
     cv::Mat rgb_image_;
     cv::Mat depth_image_;
 
     image_geometry::PinholeCameraModel cam_model_;
     geo::DepthCamera rasterizer_;
+
+    std::string frame_id_;
+    double timestamp_;
 
 };
 

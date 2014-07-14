@@ -1,4 +1,6 @@
 #include "rgbd/Client.h"
+#include "rgbd/Image.h"
+
 #include <rgbd/serialization.h>
 #include <fstream>
 

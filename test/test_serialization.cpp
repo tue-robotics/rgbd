@@ -1,6 +1,6 @@
 #include <rgbd/serialization.h>
-#include <rgbd/Image.h>
 #include <rgbd/View.h>
+#include <rgbd/Image.h>
 
 #include <fstream>
 

@@ -1,5 +1,5 @@
-#ifndef RGBD_TRANSPORT_View.h_
-#define RGBD_TRANSPORT_View.h_
+#ifndef RGBD_TRANSPORT_VIEW_H_
+#define RGBD_TRANSPORT_VIEW_H_
 
 #include <rgbd/Image.h>
 

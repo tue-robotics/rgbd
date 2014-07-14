@@ -3,13 +3,14 @@
 
 #include <ros/ros.h>
 
-#include "rgbd/Image.h"
 #include "rgbd/RGBDMsg.h"
 #include <ros/callback_queue.h>
 
 #include "rgbd/types.h"
 
 namespace rgbd {
+
+class Image;
 
 class Client {
 
