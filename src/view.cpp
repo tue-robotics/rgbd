@@ -1,5 +1,6 @@
 #include <rgbd/serialization.h>
-#include <rgbd/RGBDImage.h>
+#include <rgbd/Image.h>
+#include <rgbd/View.h>
 
 #include <fstream>
 
@@ -25,17 +26,17 @@ int main(int argc, char **argv) {
 
     tue::serialization::InputArchive a_in(f_in);
 
-    rgbd::RGBDImage image;
+    rgbd::Image image;
     rgbd::deserialize(a_in, image);
 
     std::cout << "Image loaded from disk." << std::endl;
     std::cout << "    name:  " << argv[1] << std::endl;
-    std::cout << "    size:  " << image.getWidth() << " x " << image.getHeight() << std::endl;
+//    std::cout << "    size:  " << image.getWidth() << " x " << image.getHeight() << std::endl;
     std::cout << "    frame: " << image.getFrameId() << std::endl;
     std::cout << "    time:  " << ros::Time(image.getTimestamp()) << std::endl;
 
-    cv::imshow("rgb", image.getOriginalRGBImage());
-    cv::imshow("depth", image.getOriginalDepthImage() / 8);
+    cv::imshow("rgb", image.getRGBImage());
+    cv::imshow("depth", image.getDepthImage() / 8);
     cv::waitKey();
 
     return 0;

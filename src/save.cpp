@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
 
     ros::Rate r(30);
     while (ros::ok()) {
-        rgbd::RGBDImage image;
+        rgbd::Image image;
         if (client.nextImage(image)) {
 
             // write

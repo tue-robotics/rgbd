@@ -5,9 +5,9 @@
 
 namespace rgbd {
 
-class RGBDImage;
-typedef boost::shared_ptr<RGBDImage> RGBDImagePtr;
-typedef boost::shared_ptr<const RGBDImage> RGBDImageConstPtr;
+class Image;
+typedef boost::shared_ptr<Image> ImagePtr;
+typedef boost::shared_ptr<const Image> ImageConstPtr;
 
 }
 

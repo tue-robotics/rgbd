@@ -3,7 +3,7 @@
 
 #include <ros/ros.h>
 
-#include "rgbd/RGBDImage.h"
+#include "rgbd/Image.h"
 #include "rgbd/RGBDMsg.h"
 #include <ros/callback_queue.h>
 
@@ -23,9 +23,9 @@ public:
 
     bool initialized() { return !sub_image_.getTopic().empty(); }
 
-    bool nextImage(RGBDImage& image);
+    bool nextImage(Image& image);
 
-    RGBDImagePtr nextImage();
+    ImagePtr nextImage();
 
 protected:
 
@@ -33,7 +33,7 @@ protected:
     ros::CallbackQueue cb_queue_;
 
     bool received_image_;
-    RGBDImage* image_ptr_;
+    Image* image_ptr_;
 
     void imageCallback(const rgbd::RGBDMsg::ConstPtr& msg);
 

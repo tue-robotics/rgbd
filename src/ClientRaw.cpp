@@ -35,7 +35,7 @@ void ClientRaw::setCameraInfoTopic(const std::string& topic) {
 
 // ---------------------------------------------------------------------------------------------
 
-bool ClientRaw::nextImage(RGBDImage& image) {
+bool ClientRaw::nextImage(Image& image) {
     received_image_ = false;
     image_ptr_ = &image;
     cb_queue_.callAvailable();

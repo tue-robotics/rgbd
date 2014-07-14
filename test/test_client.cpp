@@ -1,4 +1,5 @@
 #include "rgbd/Client.h"
+#include "rgbd/View.h"
 #include <opencv2/highgui/highgui.hpp>
 
 int main(int argc, char **argv) {
@@ -9,9 +10,10 @@ int main(int argc, char **argv) {
 
     ros::Rate r(30);
     while (ros::ok()) {
-        rgbd::RGBDImage image;
+        rgbd::Image image;
         if (client.nextImage(image)) {
-            cv::imshow("depth", image.getOriginalDepthImage() / 8);
+            rgbd::View view(image,640);
+            cv::imshow("depth", image.getDepthImage() / 8);
             cv::waitKey(3);
         }
         r.sleep();

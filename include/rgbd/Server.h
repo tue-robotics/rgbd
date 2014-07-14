@@ -5,7 +5,7 @@
 
 namespace rgbd {
 
-class RGBDImage;
+class Image;
 
 class Server {
 
@@ -17,7 +17,7 @@ public:
 
     void initialize(const std::string& name);
 
-    void send(const RGBDImage& image);
+    void send(const Image& image);
 
     const static int SERIALIZATION_VERSION;
 

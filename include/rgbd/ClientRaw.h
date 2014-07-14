@@ -1,7 +1,7 @@
 #ifndef RGBD_TRANSPORT_CLIENTRAW_H_
 #define RGBD_TRANSPORT_CLIENTRAW_H_
 
-#include "RGBDImage.h"
+#include "Image.h"
 
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
@@ -25,7 +25,7 @@ public:
 
     void setCameraInfoTopic(const std::string& topic);
 
-    bool nextImage(RGBDImage& image);
+    bool nextImage(Image& image);
 
 protected:
 
@@ -34,7 +34,7 @@ protected:
     ros::CallbackQueue cb_queue_;
 
     bool received_image_;
-    RGBDImage* image_ptr_;
+    Image* image_ptr_;
 
     image_geometry::PinholeCameraModel cam_model_;
 

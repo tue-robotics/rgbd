@@ -13,7 +13,7 @@
 // CV bridge
 #include <cv_bridge/cv_bridge.h>
 
-#include "rgbd/RGBDImage.h"
+#include "rgbd/Image.h"
 #include "rgbd/Server.h"
 
 #include <image_geometry/pinhole_camera_model.h>
@@ -49,7 +49,7 @@ void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageC
         return;
     }
 
-    rgbd::RGBDImage image(img_ptr->image,depth_img_ptr->image,cam_model_,rgb_image_msg->header.frame_id,rgb_image_msg->header.stamp.toSec());
+    rgbd::Image image(img_ptr->image,depth_img_ptr->image,cam_model_,rgb_image_msg->header.frame_id,rgb_image_msg->header.stamp.toSec());
 
     rgbd_server.send(image);
 }

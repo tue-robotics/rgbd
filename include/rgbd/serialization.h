@@ -7,15 +7,15 @@
 namespace rgbd
 {
 
-class RGBDImage;
+class Image;
 
 // SERIALIZATION
 
-void serialize(const RGBDImage& image, tue::serialization::OutputArchive& a);
+void serialize(const Image& image, tue::serialization::OutputArchive& a);
 
 // DESERIALIZATION
 
-void deserialize(tue::serialization::InputArchive& a, RGBDImage& image);
+void deserialize(tue::serialization::InputArchive& a, Image& image);
 
 }
 

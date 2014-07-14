@@ -1,5 +1,5 @@
 #include "rgbd/serialization.h"
-#include "rgbd/RGBDImage.h"
+#include "rgbd/Image.h"
 
 #include <tue/serialization/input_archive.h>
 #include <tue/serialization/output_archive.h>
@@ -37,7 +37,7 @@ enum DepthStorageType
 //
 // ----------------------------------------------------------------------------------------------------
 
-void serialize(const RGBDImage& image, tue::serialization::OutputArchive& a)
+void serialize(const Image& image, tue::serialization::OutputArchive& a)
 {
     // - - - - - - - - - - - - - - - - GENERAL INFO - - - - - - - - - - - - - - - -
 
@@ -48,7 +48,7 @@ void serialize(const RGBDImage& image, tue::serialization::OutputArchive& a)
 
     // - - - - - - - - - - - - - - - - CAMERA INFO - - - - - - - - - - - - - - - -
 
-    const image_geometry::PinholeCameraModel& cam_model = image.getCameraModel();
+    const image_geometry::PinholeCameraModel& cam_model = image.cam_model_;
 
     if (cam_model.initialized())
     {
@@ -64,7 +64,7 @@ void serialize(const RGBDImage& image, tue::serialization::OutputArchive& a)
 
     // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
 
-    if (image.getOriginalRGBImage().rows > 0 && image.getOriginalRGBImage().cols > 0)
+    if (image.rgb_image_.rows > 0 && image.rgb_image_.cols > 0)
     {
         a << RGB_STORAGE_JPG;
 
@@ -78,7 +78,7 @@ void serialize(const RGBDImage& image, tue::serialization::OutputArchive& a)
         std::vector<unsigned char> rgb_data;
 
         // Compress image
-        if (!cv::imencode(".jpg", image.getOriginalRGBImage(), rgb_data, rgb_params)) {
+        if (!cv::imencode(".jpg", image.depth_image_, rgb_data, rgb_params)) {
             std::cout << "RGB image compression failed" << std::endl;
             return;
         }
@@ -96,7 +96,7 @@ void serialize(const RGBDImage& image, tue::serialization::OutputArchive& a)
 
     // - - - - - - - - - - - - - - - - DEPTH IMAGE - - - - - - - - - - - - - - - -
 
-    if (image.getOriginalDepthImage().rows > 0 && image.getOriginalDepthImage().cols > 0)
+    if (image.depth_image_.rows > 0 && image.depth_image_.cols > 0)
     {
         a << DEPTH_STORAGE_PNG;
 
@@ -108,7 +108,7 @@ void serialize(const RGBDImage& image, tue::serialization::OutputArchive& a)
 
         a << depthQuantA << depthQuantB;
 
-        const cv::Mat& depth_image = image.getOriginalDepthImage();
+        const cv::Mat& depth_image = image.depth_image_;
         cv::Mat invDepthImg(depth_image.size(), CV_16UC1);
 
         // Matrix iterators
@@ -159,7 +159,7 @@ void serialize(const RGBDImage& image, tue::serialization::OutputArchive& a)
 //
 // ----------------------------------------------------------------------------------------------------
 
-void deserialize(tue::serialization::InputArchive& a, RGBDImage& image)
+void deserialize(tue::serialization::InputArchive& a, Image& image)
 {
     // - - - - - - - - - - - - - - - - GENERAL INFO - - - - - - - - - - - - - - - -
 
@@ -212,7 +212,11 @@ void deserialize(tue::serialization::InputArchive& a, RGBDImage& image)
 //        cam_info_msg.width = image_ptr_->rgb_image_.cols;
 //        cam_info_msg.height = image_ptr_->rgb_image_.rows;
 
-        image.cam_model_.fromCameraInfo(cam_info_msg);
+        image_geometry::PinholeCameraModel cam_model;
+        cam_model.fromCameraInfo(cam_info_msg);
+        image.cam_model_ = cam_model;
+
+        image.setupRasterizer();
     }
     else
     {
@@ -285,11 +289,6 @@ void deserialize(tue::serialization::InputArchive& a, RGBDImage& image)
     else
     {
         std::cout << "rgbd::deserialize: Unsupported depth storage format" << std::endl;
-    }
-
-    if (image.depth_image_.cols > 0 && image.rgb_image_.cols > 0)
-    {
-        image.updateRatio();
     }
 }
 

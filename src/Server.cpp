@@ -1,6 +1,6 @@
 #include "rgbd/Server.h"
 #include "rgbd/RGBDMsg.h"
-#include "rgbd/RGBDImage.h"
+#include "rgbd/Image.h"
 
 #include <opencv2/highgui/highgui.hpp>
 
@@ -27,7 +27,7 @@ void Server::initialize(const std::string& name) {
 
 // ----------------------------------------------------------------------------------------
 
-void Server::send(const RGBDImage& image) {
+void Server::send(const Image& image) {
     rgbd::RGBDMsg msg;
 
     // - - - - - - - - - - - - - - - - GENERAL INFO - - - - - - - - - - - - - - - -

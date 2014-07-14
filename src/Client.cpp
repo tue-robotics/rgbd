@@ -27,7 +27,7 @@ void Client::intialize(const std::string& server_name) {
 
 // ----------------------------------------------------------------------------------------
 
-bool Client::nextImage(RGBDImage& image) {
+bool Client::nextImage(Image& image) {
     received_image_ = false;
     image_ptr_ = &image;
     cb_queue_.callAvailable();
@@ -36,10 +36,10 @@ bool Client::nextImage(RGBDImage& image) {
 
 // ----------------------------------------------------------------------------------------
 
-RGBDImagePtr Client::nextImage() {
+ImagePtr Client::nextImage() {
     image_ptr_ = 0;
     cb_queue_.callAvailable();
-    return RGBDImagePtr(image_ptr_);
+    return ImagePtr(image_ptr_);
 }
 
 // ----------------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ void Client::imageCallback(const rgbd::RGBDMsg::ConstPtr& msg) {
 
     if (!image_ptr_) {
         // in this case, the pointer will always be wrapped in a shared ptr, so no mem leaks (see nextImage() )
-        image_ptr_ = new RGBDImage();
+        image_ptr_ = new Image();
     }
 
     // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
@@ -121,7 +121,7 @@ void Client::imageCallback(const rgbd::RGBDMsg::ConstPtr& msg) {
     image_ptr_->timestamp_ = msg->header.stamp.toSec();
     image_ptr_->frame_id_ = msg->header.frame_id;
 
-    image_ptr_->updateRatio();
+    image_ptr_->setupRasterizer();
 
     received_image_ = true;
 }

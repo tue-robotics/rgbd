@@ -1,5 +1,6 @@
 #include <rgbd/serialization.h>
-#include <rgbd/RGBDImage.h>
+#include <rgbd/Image.h>
+#include <rgbd/View.h>
 
 #include <fstream>
 
@@ -15,7 +16,7 @@ int main(int argc, char **argv) {
         cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0,0,255));
         cv::Mat depth_image(480, 640, CV_32FC1, 3);
 
-        rgbd::RGBDImage image(rgb_image, depth_image, cam_model, "no_frame", 0);
+        rgbd::Image image(rgb_image, depth_image, cam_model, "no_frame", 0);
 
         // write
         std::ofstream f_out;
@@ -30,7 +31,7 @@ int main(int argc, char **argv) {
 
     std::cout << "Image stored to disk." << std::endl;
 
-    rgbd::RGBDImage image;
+    rgbd::Image image;
 
     {
         // read
@@ -43,12 +44,12 @@ int main(int argc, char **argv) {
     }
 
     std::cout << "Image loaded from disk." << std::endl;
-    std::cout << "    size:  " << image.getWidth() << " x " << image.getHeight() << std::endl;
+//    std::cout << "    size:  " << image.getWidth() << " x " << image.getHeight() << std::endl;
     std::cout << "    frame: " << image.getFrameId() << std::endl;
     std::cout << "    time:  " << ros::Time(image.getTimestamp()) << std::endl;
 
-    cv::imshow("rgb", image.getOriginalRGBImage());
-    cv::imshow("depth", image.getOriginalDepthImage() / 8);
+    cv::imshow("rgb", image.getRGBImage());
+    cv::imshow("depth", image.getDepthImage() / 8);
     cv::waitKey();
 
     return 0;
