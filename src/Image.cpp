@@ -26,6 +26,21 @@ Image::Image(const cv::Mat& rgb_image,
 
 // ----------------------------------------------------------------------------------------
 
+Image::Image(const cv::Mat& rgb_image,
+             const cv::Mat& depth_image,
+             const geo::DepthCamera& cam_model,
+             const std::string& frame_id,
+             double timestamp) :
+    rgb_image_(rgb_image),
+    depth_image_(depth_image),
+    rasterizer_(cam_model),
+    frame_id_(frame_id),
+    timestamp_(timestamp)
+{
+}
+
+// ----------------------------------------------------------------------------------------
+
 void Image::setupRasterizer()
 {
     if (cam_model_.initialized())

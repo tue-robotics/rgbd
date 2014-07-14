@@ -38,7 +38,7 @@ void Server::send(const Image& image) {
 
     // - - - - - - - - - - - - - - - - CAMERA INFO - - - - - - - - - - - - - - - -
 
-    const image_geometry::PinholeCameraModel& cam_model = image.getCameraModel();
+    const image_geometry::PinholeCameraModel& cam_model = image.cam_model_;
     msg.cam_info.push_back(cam_model.fx());
     msg.cam_info.push_back(cam_model.fy());
     msg.cam_info.push_back(cam_model.cx());

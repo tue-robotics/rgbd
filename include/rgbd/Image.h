@@ -1,6 +1,8 @@
 #ifndef RGBD_TRANSPORT_IMAGE_H_
 #define RGBD_TRANSPORT_IMAGE_H_
 
+#include "rgbd/types.h"
+
 #include <opencv2/core/core.hpp>
 #include <image_geometry/pinhole_camera_model.h>
 #include <geolib/sensors/DepthCamera.h>
@@ -32,12 +34,20 @@ public:
               const std::string& frame_id,
               double timestamp);
 
+    Image(const cv::Mat& rgb_image,
+              const cv::Mat& depth_image,
+              const geo::DepthCamera& cam_model,
+              const std::string& frame_id,
+              double timestamp);
+
     void setupRasterizer();
 
     inline const cv::Mat& getDepthImage() const { return depth_image_; }
     inline const cv::Mat& getRGBImage() const { return rgb_image_; }
 
-    const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
+//    const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
+
+    inline const geo::DepthCamera& getRasterizer() const { return rasterizer_; }
 
     inline const std::string& getFrameId() const
     {

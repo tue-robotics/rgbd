@@ -78,7 +78,7 @@ void serialize(const Image& image, tue::serialization::OutputArchive& a)
         std::vector<unsigned char> rgb_data;
 
         // Compress image
-        if (!cv::imencode(".jpg", image.depth_image_, rgb_data, rgb_params)) {
+        if (!cv::imencode(".jpg", image.rgb_image_, rgb_data, rgb_params)) {
             std::cout << "RGB image compression failed" << std::endl;
             return;
         }
@@ -87,7 +87,7 @@ void serialize(const Image& image, tue::serialization::OutputArchive& a)
         for(unsigned int i = 0; i < rgb_data.size(); ++i)
         {
             a << rgb_data[i];
-        }
+        }        
     }
     else
     {
