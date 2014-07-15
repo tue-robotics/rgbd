@@ -45,10 +45,6 @@ public:
     inline const cv::Mat& getDepthImage() const { return depth_image_; }
     inline const cv::Mat& getRGBImage() const { return rgb_image_; }
 
-//    const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
-
-    inline const geo::DepthCamera& getRasterizer() const { return rasterizer_; }
-
     inline const std::string& getFrameId() const
     {
         return frame_id_;
