@@ -33,7 +33,17 @@ public:
 
     inline bool getPoint3D(int x, int y, geo::Vector3& p) const
     {
-        float d = getDepth(x,y);
+        float d = getDepth(x, y);
+        p = rasterizer_.project2Dto3D(x, y) * d;
+        return (d == d);
+    }
+
+    inline bool getPoint3DSafe(int x, int y, geo::Vector3& p) const
+    {
+        if (x < 0 || y < 0 || x >= width_ || y >= height_)
+            return false;
+
+        float d = getDepth(x, y);
         p = rasterizer_.project2Dto3D(x, y) * d;
         return (d == d);
     }
