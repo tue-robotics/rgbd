@@ -20,12 +20,12 @@ View::View(const Image& image, int width) :
     // create a new rasterizer based on the FOV of the given model, but scaled to the width and height given here.
     // ASSUMES: no optical translation in the given camera model
     // TODO: get rid of assumption
-    float w_old = (image.rasterizer_.getOpticalCenterX() - 0.5) * 2;
-    float h_old = (image.rasterizer_.getOpticalCenterY() - 0.5) * 2;
+    float w_old = (image.rasterizer_.getOpticalCenterX() + 0.5) * 2;
+    float h_old = (image.rasterizer_.getOpticalCenterY() + 0.5) * 2;
 
     rasterizer_.setFocalLengths(image.rasterizer_.getFocalLengthX() / w_old * width_,
                                 image.rasterizer_.getFocalLengthY() / h_old * height_);
-    rasterizer_.setOpticalCenter(width_ / 2 + 0.5, height_ / 2 + 0.5);
+    rasterizer_.setOpticalCenter(width_ / 2 - 0.5, height_ / 2 - 0.5);
     rasterizer_.setOpticalTranslation(0, 0);
 }
 
