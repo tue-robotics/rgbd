@@ -55,6 +55,8 @@ public:
         return timestamp_;
     }
 
+    inline void setDepthImage(const cv::Mat& depth_image) { depth_image_ = depth_image; }
+
     friend void serialize(const Image& image, tue::serialization::OutputArchive& a);
 
     friend void deserialize(tue::serialization::InputArchive& a, Image& image);
