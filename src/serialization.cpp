@@ -11,33 +11,14 @@ namespace rgbd
 
 const static int SERIALIZATION_VERSION = 1;
 
-enum CameraModelType
-{
-    CAMERA_MODEL_NONE = 0,
-    CAMERA_MODEL_PINHOLE = 1
-};
-
-enum RGBStorageType
-{
-    RGB_STORAGE_NONE = 0,
-    RGB_STORAGE_LOSSLESS = 1,
-    RGB_STORAGE_JPG = 2
-};
-
-enum DepthStorageType
-{
-    DEPTH_STORAGE_NONE = 0,
-    DEPTH_STORAGE_LOSSLESS = 1,
-    DEPTH_STORAGE_PNG = 2
-};
-
 // ----------------------------------------------------------------------------------------------------
 //
 //                                          SERIALIZATION
 //
 // ----------------------------------------------------------------------------------------------------
 
-void serialize(const Image& image, tue::serialization::OutputArchive& a)
+bool serialize(const Image& image, tue::serialization::OutputArchive& a,
+               RGBStorageType rgb_type, DepthStorageType depth_type)
 {
     // - - - - - - - - - - - - - - - - GENERAL INFO - - - - - - - - - - - - - - - -
 
@@ -64,10 +45,25 @@ void serialize(const Image& image, tue::serialization::OutputArchive& a)
 
     // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
 
-    if (image.rgb_image_.rows > 0 && image.rgb_image_.cols > 0)
-    {
-        a << RGB_STORAGE_JPG;
+    if (!image.rgb_image_.data)
+        rgb_type = RGB_STORAGE_NONE;
 
+    a << rgb_type;
+
+    if (rgb_type == RGB_STORAGE_NONE)
+    {
+    }
+    else if (rgb_type == RGB_STORAGE_LOSSLESS)
+    {
+        a << image.rgb_image_.cols;
+        a << image.rgb_image_.rows;
+
+        int size = image.rgb_image_.rows * image.rgb_image_.cols * 3;
+        for(int i = 0; i < size; ++i)
+            a << image.rgb_image_.data[i];
+    }
+    else if (rgb_type == RGB_STORAGE_JPG)
+    {
         // OpenCV compression settings
         std::vector<int> rgb_params;
         rgb_params.resize(3, 0);
@@ -80,26 +76,33 @@ void serialize(const Image& image, tue::serialization::OutputArchive& a)
         // Compress image
         if (!cv::imencode(".jpg", image.rgb_image_, rgb_data, rgb_params)) {
             std::cout << "RGB image compression failed" << std::endl;
-            return;
+            return false;
         }
 
         a << (int)rgb_data.size();
         for(unsigned int i = 0; i < rgb_data.size(); ++i)
         {
             a << rgb_data[i];
-        }        
+        }
     }
     else
     {
-        a << RGB_STORAGE_NONE;
+        std::cout << "Unsupported RGB STORAGE TYPE" << std::endl;
+        return false;
     }
 
     // - - - - - - - - - - - - - - - - DEPTH IMAGE - - - - - - - - - - - - - - - -
 
-    if (image.depth_image_.rows > 0 && image.depth_image_.cols > 0)
-    {
-        a << DEPTH_STORAGE_PNG;
+    if (!image.depth_image_.data)
+        depth_type = DEPTH_STORAGE_NONE;
 
+    a << depth_type;
+
+    if (depth_type == DEPTH_STORAGE_NONE)
+    {
+    }
+    else if (depth_type == DEPTH_STORAGE_PNG)
+    {
         float depthZ0 = 100; //config_.depth_quantization;
         float depthMax = 10; //config_.depth_max;
 
@@ -138,7 +141,7 @@ void serialize(const Image& image, tue::serialization::OutputArchive& a)
 
         if (!cv::imencode(".png", invDepthImg, depth_data, params)) {
             std::cout << "Depth image compression failed" << std::endl;
-            return;
+            return false;
         }
 
         a << (int)depth_data.size();
@@ -149,8 +152,11 @@ void serialize(const Image& image, tue::serialization::OutputArchive& a)
     }
     else
     {
-        a << DEPTH_STORAGE_NONE;
+        std::cout << "Unsupported DEPTH STORAGE TYPE" << std::endl;
+        return false;
     }
+
+    return true;
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -159,7 +165,7 @@ void serialize(const Image& image, tue::serialization::OutputArchive& a)
 //
 // ----------------------------------------------------------------------------------------------------
 
-void deserialize(tue::serialization::InputArchive& a, Image& image)
+bool deserialize(tue::serialization::InputArchive& a, Image& image)
 {
     // - - - - - - - - - - - - - - - - GENERAL INFO - - - - - - - - - - - - - - - -
 
@@ -221,6 +227,7 @@ void deserialize(tue::serialization::InputArchive& a, Image& image)
     else
     {
         std::cout << "rgbd::deserialize: Unsupported camera model" << std::endl;
+        return false;
     }
 
     // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
@@ -230,6 +237,17 @@ void deserialize(tue::serialization::InputArchive& a, Image& image)
 
     if (rgb_type == RGB_STORAGE_NONE)
     {
+    }
+    if (rgb_type == RGB_STORAGE_LOSSLESS)
+    {
+        int width, height;
+        a >> width;
+        a >> height;
+
+        int size = width * height * 3;
+        image.rgb_image_ = cv::Mat(height, width, CV_8UC3);
+        for(int i = 0; i < size; ++i)
+            a >> image.rgb_image_.data[i];
     }
     else if (rgb_type == RGB_STORAGE_JPG)
     {
@@ -245,6 +263,7 @@ void deserialize(tue::serialization::InputArchive& a, Image& image)
     else
     {
         std::cout << "rgbd::deserialize: Unsupported rgb storage format" << std::endl;
+        return false;
     }
 
     // - - - - - - - - - - - - - - - - DEPTH IMAGE - - - - - - - - - - - - - - - -
@@ -289,7 +308,10 @@ void deserialize(tue::serialization::InputArchive& a, Image& image)
     else
     {
         std::cout << "rgbd::deserialize: Unsupported depth storage format" << std::endl;
+        return false;
     }
+
+    return true;
 }
 
 }

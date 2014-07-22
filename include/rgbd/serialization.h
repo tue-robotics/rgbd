@@ -4,6 +4,8 @@
 #include <tue/serialization/input_archive.h>
 #include <tue/serialization/output_archive.h>
 
+#include "rgbd/Image.h"
+
 namespace rgbd
 {
 
@@ -11,11 +13,13 @@ class Image;
 
 // SERIALIZATION
 
-void serialize(const Image& image, tue::serialization::OutputArchive& a);
+bool serialize(const Image& image, tue::serialization::OutputArchive& a,
+               RGBStorageType rgb_type,
+               DepthStorageType depth_type);
 
 // DESERIALIZATION
 
-void deserialize(tue::serialization::InputArchive& a, Image& image);
+bool deserialize(tue::serialization::InputArchive& a, Image& image);
 
 }
 

@@ -14,7 +14,9 @@ int main(int argc, char **argv) {
         image_geometry::PinholeCameraModel cam_model;
 
         cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0,0,255));
+        cv::line(rgb_image, cv::Point2i(100, 100), cv::Point2i(200, 300), cv::Scalar(255, 0, 0), 3);
         cv::Mat depth_image(480, 640, CV_32FC1, 3);
+        cv::line(depth_image, cv::Point2i(100, 100), cv::Point2i(200, 300), cv::Scalar(1), 3);
 
         rgbd::Image image(rgb_image, depth_image, cam_model, "no_frame", 0);
 
@@ -24,9 +26,11 @@ int main(int argc, char **argv) {
 
         tue::serialization::OutputArchive a_out(f_out, 0);
 
-        rgbd::serialize(image, a_out);
-
-        f_out.close();
+        if (!rgbd::serialize(image, a_out, rgbd::RGB_STORAGE_LOSSLESS, rgbd::DEPTH_STORAGE_PNG))
+        {
+            std::cout << "Could not store image to disk" << std::endl;
+            return 1;
+        }
     }
 
     std::cout << "Image stored to disk." << std::endl;
@@ -48,8 +52,15 @@ int main(int argc, char **argv) {
     std::cout << "    frame: " << image.getFrameId() << std::endl;
     std::cout << "    time:  " << ros::Time(image.getTimestamp()) << std::endl;
 
-    cv::imshow("rgb", image.getRGBImage());
-    cv::imshow("depth", image.getDepthImage() / 8);
+    if (image.getRGBImage().data)
+        cv::imshow("rgb", image.getRGBImage());
+    else
+        std::cout << "File did not contain RGB data." << std::endl;
+
+    if (image.getDepthImage().data)
+        cv::imshow("depth", image.getDepthImage() / 8);
+    else
+        std::cout << "File did not contain Depth data" << std::endl;
     cv::waitKey();
 
     return 0;

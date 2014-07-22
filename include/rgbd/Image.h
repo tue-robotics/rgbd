@@ -18,6 +18,26 @@ namespace serialization
 
 namespace rgbd {
 
+enum CameraModelType
+{
+    CAMERA_MODEL_NONE = 0,
+    CAMERA_MODEL_PINHOLE = 1
+};
+
+enum RGBStorageType
+{
+    RGB_STORAGE_NONE = 0,
+    RGB_STORAGE_LOSSLESS = 1,
+    RGB_STORAGE_JPG = 2
+};
+
+enum DepthStorageType
+{
+    DEPTH_STORAGE_NONE = 0,
+    DEPTH_STORAGE_LOSSLESS = 1,
+    DEPTH_STORAGE_PNG = 2
+};
+
 class Image {
 
     friend class Server;
@@ -57,9 +77,11 @@ public:
 
     inline void setDepthImage(const cv::Mat& depth_image) { depth_image_ = depth_image; }
 
-    friend void serialize(const Image& image, tue::serialization::OutputArchive& a);
+    friend bool serialize(const Image& image, tue::serialization::OutputArchive& a,
+                          RGBStorageType rgb_type = RGB_STORAGE_JPG,
+                          DepthStorageType depth_type = DEPTH_STORAGE_PNG);
 
-    friend void deserialize(tue::serialization::InputArchive& a, Image& image);
+    friend bool deserialize(tue::serialization::InputArchive& a, Image& image);
 
 protected:
 
