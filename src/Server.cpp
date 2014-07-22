@@ -32,6 +32,7 @@ void Server::initialize(const std::string& name) {
 
 void Server::send(const Image& image) {
     rgbd::RGBDMsg msg;
+    msg.version = SERIALIZATION_VERSION;
 
     std::stringstream stream;
     tue::serialization::OutputArchive a(stream, 0);

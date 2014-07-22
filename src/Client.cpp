@@ -137,6 +137,7 @@ void Client::imageCallback(const rgbd::RGBDMsg::ConstPtr& msg) {
         tue::serialization::convert(msg->rgb, stream);
         tue::serialization::InputArchive a(stream);
         rgbd::deserialize(a, *image_ptr_);
+        received_image_ = true;
     }
 }
 
