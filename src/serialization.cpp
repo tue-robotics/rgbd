@@ -101,6 +101,15 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
     if (depth_type == DEPTH_STORAGE_NONE)
     {
     }
+    else if (depth_type == DEPTH_STORAGE_LOSSLESS)
+    {
+        a << image.depth_image_.cols;
+        a << image.depth_image_.rows;
+
+        int size = image.depth_image_.rows * image.depth_image_.cols * 4;
+        for(int i = 0; i < size; ++i)
+            a << image.depth_image_.data[i];
+    }
     else if (depth_type == DEPTH_STORAGE_PNG)
     {
         float depthZ0 = 100; //config_.depth_quantization;
@@ -273,6 +282,17 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
 
     if (depth_type == DEPTH_STORAGE_NONE)
     {
+    }
+    if (depth_type == DEPTH_STORAGE_LOSSLESS)
+    {
+        int width, height;
+        a >> width;
+        a >> height;
+
+        int size = width * height * 4;
+        image.depth_image_ = cv::Mat(480, 640, CV_32FC1);
+        for(int i = 0; i < size; ++i)
+            a >> image.depth_image_.data[i];
     }
     else if (depth_type == DEPTH_STORAGE_PNG)
     {
