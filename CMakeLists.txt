@@ -48,8 +48,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-message("include dirs: " + ${catkin_INCLUDE_DIRS})
-message("libs: " + ${catkin_LIBRARIES})
 
 # to show header files in Qt Creator
 file(GLOB_RECURSE HEADER_FILES include/*.h)
