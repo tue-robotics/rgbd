@@ -59,8 +59,8 @@ add_library(rgbd    src/Server.cpp
                     src/View.cpp
                     src/serialization.cpp
                     ${HEADER_FILES})
-
 target_link_libraries(rgbd ${catkin_LIBRARIES})
+add_dependencies(rgbd rgbd_generate_messages_cpp)
 
 add_executable(rgbd_server src/server.cpp)
 target_link_libraries(rgbd_server rgbd)
