@@ -6,7 +6,7 @@
     <arg if="$(arg gdb)" name="launch-prefix" value="gdb -ex run --args"/>
     <arg unless="$(arg gdb)" name="launch-prefix" value=""/>
 
-    <node name="rgbd_encoder" pkg="rgbd" type="server" output="screen" launch-prefix="$(arg launch-prefix)">
+    <node name="rgbd_encoder" pkg="rgbd" type="rgbd_server" output="screen" launch-prefix="$(arg launch-prefix)">
         <remap from="cam_info" to="/amigo/top_kinect/rgb/camera_info"/>
         <remap from="rgb_image" to="/amigo/top_kinect/rgb/image_color"/>
         <remap from="depth_image" to="/amigo/top_kinect/depth_registered/image"/>
