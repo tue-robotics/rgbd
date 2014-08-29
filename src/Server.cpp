@@ -35,7 +35,7 @@ void Server::send(const Image& image) {
     msg.version = SERIALIZATION_VERSION;
 
     std::stringstream stream;
-    tue::serialization::OutputArchive a(stream, 0);
+    tue::serialization::OutputArchive a(stream);
     serialize(image, a);
     tue::serialization::convert(stream, msg.rgb);
     pub_image_.publish(msg);

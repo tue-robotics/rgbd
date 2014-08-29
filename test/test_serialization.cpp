@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
         std::ofstream f_out;
         f_out.open(test_filename.c_str(), std::ifstream::binary);
 
-        tue::serialization::OutputArchive a_out(f_out, 0);
+        tue::serialization::OutputArchive a_out(f_out);
 
         if (!rgbd::serialize(image, a_out, rgbd::RGB_STORAGE_LOSSLESS, rgbd::DEPTH_STORAGE_LOSSLESS))
         {

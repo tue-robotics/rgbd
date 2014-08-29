@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
             // write
             std::ofstream f_out;
             f_out.open(file_name.c_str(), std::ifstream::binary);
-            tue::serialization::OutputArchive a_out(f_out, 0);
+            tue::serialization::OutputArchive a_out(f_out);
 
             rgbd::serialize(image, a_out);
             f_out.close();
