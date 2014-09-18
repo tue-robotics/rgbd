@@ -50,7 +50,7 @@ add_library(rgbd    src/Server.cpp
                     src/Image.cpp
                     src/View.cpp
                     src/serialization.cpp
-					src/ros/conversions.cpp
+                    src/ros/conversions.cpp
                     ${HEADER_FILES})
 target_link_libraries(rgbd ${catkin_LIBRARIES})
 
