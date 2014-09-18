@@ -247,7 +247,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     if (rgb_type == RGB_STORAGE_NONE)
     {
     }
-    if (rgb_type == RGB_STORAGE_LOSSLESS)
+    else if (rgb_type == RGB_STORAGE_LOSSLESS)
     {
         int width, height;
         a >> width;
@@ -271,7 +271,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     }
     else
     {
-        std::cout << "rgbd::deserialize: Unsupported rgb storage format" << std::endl;
+        std::cout << "rgbd::deserialize: Unsupported rgb storage format: " << rgb_type << std::endl;
         return false;
     }
 
@@ -283,7 +283,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     if (depth_type == DEPTH_STORAGE_NONE)
     {
     }
-    if (depth_type == DEPTH_STORAGE_LOSSLESS)
+    else if (depth_type == DEPTH_STORAGE_LOSSLESS)
     {
         int width, height;
         a >> width;
@@ -327,7 +327,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     }
     else
     {
-        std::cout << "rgbd::deserialize: Unsupported depth storage format" << std::endl;
+        std::cout << "rgbd::deserialize: Unsupported depth storage format: " << depth_type << std::endl;
         return false;
     }
 
