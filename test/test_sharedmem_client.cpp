@@ -5,7 +5,7 @@
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
 
-#include "image_data.h"
+#include <boost/interprocess/sync/interprocess_mutex.hpp>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -17,6 +17,11 @@ public:
 
     Client() : width_(0), height_(0)
     {
+    }
+
+    ~Client()
+    {
+        boost::interprocess::shared_memory_object::remove("MySharedMemory");
     }
 
     bool nextImage(cv::Mat& image)
@@ -35,16 +40,24 @@ public:
             // Map two regions: one of the mutex, on for the image
             mem_mutex_ = mapped_region(shm_, read_write, 0, sizeof(interprocess_mutex));
             mem_image_ = mapped_region(shm_, read_write, sizeof(interprocess_mutex));
+
+            width_ = 640;
+            height_ = 480;
         }
 
         interprocess_mutex* mutex = static_cast<interprocess_mutex*>(mem_mutex_.get_address());
+        std::cout << mutex << std::endl;
 
-        image = cv::Mat(480, 640, CV_8UC3);
+        image = cv::Mat(height_, width_, CV_8UC3);
 
         {
-            scoped_lock<interprocess_mutex> lock(*mutex);
+            std::cout << "Going to lock..." << std::endl;
+//            scoped_lock<interprocess_mutex> lock(*mutex);
+            std::cout << ".... Locked." << std::endl;
+
             memcpy(image.data, mem_image_.get_address(), image.cols * image.rows * 3);
         }
+        std::cout << "Unlocked" << std::endl;
 
         return true;
     }
@@ -72,6 +85,8 @@ int main(int argc, char *argv[])
             cv::imshow("Image", image);
             cv::waitKey(3);
         }
+
+        usleep(10000);
     }
 
     return 0;

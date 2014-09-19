@@ -5,8 +5,6 @@
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
 
-#include "image_data.h"
-
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
 
 #include <opencv2/core/core.hpp>
@@ -52,11 +50,17 @@ public:
         }
 
         interprocess_mutex* mutex = static_cast<interprocess_mutex*>(mem_mutex_.get_address());
+        std::cout << mutex << std::endl;
 
         {
-            scoped_lock<interprocess_mutex> lock(*mutex);
+            std::cout << "Going to lock..." << std::endl;
+//            scoped_lock<interprocess_mutex> lock(*mutex);
+            std::cout << ".... Locked." << std::endl;
+
             memcpy(mem_image_.get_address(), image.data, image.cols * image.rows * 3);
         }
+        std::cout << "Unlocked" << std::endl;
+
     }
 
 private:
@@ -74,12 +78,19 @@ private:
 int main(int argc, char *argv[])
 {
     Server server;
-    cv::Mat image(480, 640, CV_8UC3, cv::Scalar(0, 255, 0));
 
+    int x = 0;
     while(true)
     {
+        cv::Mat image(480, 640, CV_8UC3, cv::Scalar(100, 100, 100));
+        cv::line(image, cv::Point(x, 0), cv::Point(x, image.rows - 1), cv::Scalar(255, 0, 0));
+
         server.sendImage(image);
-        usleep(100000);
+        std::cout << "Sent image: " << x << std::endl;
+
+        x = (x + 10) % image.cols;
+
+        usleep(10000);
     }
 
     return 0;
