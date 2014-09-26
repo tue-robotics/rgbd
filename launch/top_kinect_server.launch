@@ -9,7 +9,7 @@
     <node name="rgbd_encoder" pkg="rgbd" type="rgbd_server" output="screen" launch-prefix="$(arg launch-prefix)">
         <remap from="cam_info" to="/amigo/top_kinect/rgb/camera_info"/>
         <remap from="rgb_image" to="/amigo/top_kinect/rgb/image_color"/>
-        <remap from="depth_image" to="/amigo/top_kinect/depth_registered/image"/>
+		<remap from="depth_image" to="/amigo/top_kinect/depth_registered/hw_registered/image_rect_raw"/>
         <remap from="output" to="/amigo/top_kinect/rgbd"/>
     </node>
 

@@ -43,7 +43,7 @@ void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageC
 
     // Convert depth image
     try {
-        depth_img_ptr = cv_bridge::toCvCopy(depth_image_msg, "32FC1");
+        depth_img_ptr = cv_bridge::toCvCopy(depth_image_msg, depth_image_msg->encoding);
     } catch (cv_bridge::Exception& e) {
         ROS_ERROR("Could not deserialize depth image: %s", e.what());
         return;
