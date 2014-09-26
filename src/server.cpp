@@ -44,6 +44,22 @@ void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageC
     // Convert depth image
     try {
         depth_img_ptr = cv_bridge::toCvCopy(depth_image_msg, depth_image_msg->encoding);
+
+        if (depth_image_msg->encoding == "16UC1")
+        {
+            // depths are 16-bit unsigned ints, in mm. Convert to 32-bit float (meters)
+            cv::Mat depth_image(depth_img_ptr->image.rows, depth_img_ptr->image.cols, CV_32FC1);
+            for(int x = 0; x < depth_image.cols; ++x)
+            {
+                for(int y = 0; y < depth_image.rows; ++y)
+                {
+                    depth_image.at<float>(y, x) = ((float)depth_img_ptr->image.at<unsigned short>(y, x)) / 1000; // (mm to m)
+                }
+            }
+
+            depth_img_ptr->image = depth_image;
+        }
+
     } catch (cv_bridge::Exception& e) {
         ROS_ERROR("Could not deserialize depth image: %s", e.what());
         return;
