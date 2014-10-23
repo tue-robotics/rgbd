@@ -76,8 +76,8 @@ void convert(const geo::DepthCamera& cam_model, sensor_msgs::CameraInfo& cam_mod
     cam_model_msg.P[11] = 0;
 
     // TODO: add width and height field to DepthCamera
-    cam_model_msg.width = cam_model.getOpticalCenterX() * 2 - 0.5; // 0.5 instead of 1 to round up properly
-    cam_model_msg.height = cam_model.getOpticalCenterY() * 2 - 0.5;
+    cam_model_msg.width = (cam_model.getOpticalCenterX() + 0.5) * 2; // 0.5 instead of 1 to round up properly
+    cam_model_msg.height = (cam_model.getOpticalCenterY() + 0.5) * 2;
 
     cam_model_msg.binning_x = 0;
     cam_model_msg.binning_y = 0;

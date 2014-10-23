@@ -60,6 +60,9 @@ target_link_libraries(rgbd_server rgbd)
 add_executable(rgbd_viewer src/viewer.cpp)
 target_link_libraries(rgbd_viewer rgbd)
 
+add_executable(rgbd_to_ros src/rgbd_to_ros.cpp)
+target_link_libraries(rgbd_to_ros rgbd)
+
 add_executable(rgbd_save src/save.cpp)
 target_link_libraries(rgbd_save rgbd)
 
