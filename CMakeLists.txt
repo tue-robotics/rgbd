@@ -86,4 +86,6 @@ target_link_libraries(rgbd_test_sharedmem_server rgbd rt)
 add_executable(rgbd_test_sharedmem_client test/test_sharedmem_client.cpp)
 target_link_libraries(rgbd_test_sharedmem_client rgbd rt)
 
+add_executable(amigo_full_screen src/amigo_full_screen.cpp)
+target_link_libraries(amigo_full_screen rgbd)
 
