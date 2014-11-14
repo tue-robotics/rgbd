@@ -72,6 +72,9 @@ target_link_libraries(rgbd_view rgbd)
 # compile the library after messages have been generated
 add_dependencies(rgbd ${PROJECT_NAME}_generate_messages_cpp)
 
+add_executable(record_to_video tools/record_to_video.cpp)
+target_link_libraries(record_to_video rgbd)
+
 # - - - - - - - - - - - - - - - - - TESTS - - - - - - - - - - - - - - - - -
 
 add_executable(rgbd_test_client test/test_client.cpp)
