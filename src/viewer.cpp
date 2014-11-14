@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 
     rgbd::Client client;
 //    client.intialize("rgbd");
-    client.intialize("/amigo/top_kinect/rgbd");
+    client.intialize("rgbd");
 
     ros::Rate r(30);
     while (ros::ok())
