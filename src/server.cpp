@@ -89,7 +89,45 @@ int main(int argc, char **argv) {
     double max_fps = 30;
     nh_private.getParam("max_fps", max_fps);
 
-    rgbd_server.initialize("output");
+    // ----- READ RGB STORAGE TYPE
+
+    rgbd::RGBStorageType rgb_type;
+
+    std::string rgb_type_str = "lossless";
+    nh_private.getParam("rgb_storage", rgb_type_str);
+    if (rgb_type_str == "none")
+        rgb_type = rgbd::RGB_STORAGE_NONE;
+    else if (rgb_type_str == "lossless")
+        rgb_type = rgbd::RGB_STORAGE_LOSSLESS;
+    else if (rgb_type_str == "jpg")
+        rgb_type = rgbd::RGB_STORAGE_JPG;
+    else
+    {
+        ROS_ERROR("Unknown 'rgb_storage' type: should be 'none', 'lossless', or 'jpg'.");
+        return 1;
+    }
+
+    // ----- READ DEPTH STORAGE TYPE
+
+    rgbd::DepthStorageType depth_type;
+
+    std::string depth_type_str = "lossless";
+    nh_private.getParam("depth_storage", depth_type_str);
+    if (depth_type_str == "none")
+        depth_type = rgbd::DEPTH_STORAGE_NONE;
+    else if (depth_type_str == "lossless")
+        depth_type = rgbd::DEPTH_STORAGE_LOSSLESS;
+    else if (depth_type_str == "png")
+        depth_type = rgbd::DEPTH_STORAGE_PNG;
+    else
+    {
+        ROS_ERROR("Unknown 'depth_storage' type: should be 'none', 'lossless', or 'png'.");
+        return 1;
+    }
+
+    // ------------------------------
+
+    rgbd_server.initialize("output", rgb_type, depth_type);
 
     ros::Subscriber sub_cam_info = nh.subscribe("cam_info", 1, &camInfoCallback);
 
