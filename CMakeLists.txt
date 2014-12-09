@@ -1,58 +1,90 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 2.8.3)
+project(rgbd)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
+## Find catkin macros and libraries
+find_package(catkin REQUIRED COMPONENTS
+  cv_bridge
+  geolib2
+  image_geometry
+  message_filters
+  pcl_conversions
+  pcl_ros
+  roscpp
+  tue_serialization
+  message_generation
+)
 
-rosbuild_init()
+# Generate messages in the 'msg' folder
+add_message_files(
+  FILES
+  RGBDMsg.msg
+)
 
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+# Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  std_msgs  # Or other packages containing msgs
+)
 
-#uncomment if you have defined messages
-rosbuild_genmsg()
-#uncomment if you have defined services
-#rosbuild_gensrv()
+###################################
+## catkin specific configuration ##
+###################################
+catkin_package(
+  INCLUDE_DIRS include
+  LIBRARIES rgbd
+  CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_conversions pcl_ros roscpp tue_serialization
+#  DEPENDS system_lib
+)
 
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
+###########
+## Build ##
+###########
+
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
+# include_directories(include)
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+)
+
+message("include dirs: " + ${catkin_INCLUDE_DIRS})
+message("libs: " + ${catkin_LIBRARIES})
 
 # to show header files in Qt Creator
 file(GLOB_RECURSE HEADER_FILES include/*.h)
 
-rosbuild_add_library(rgbd_transport src/Server.cpp
-                                    src/Client.cpp
-                                    src/ClientRaw.cpp
-                                    src/Image.cpp
-                                    src/View.cpp
-                                    src/serialization.cpp)
+add_library(rgbd    src/Server.cpp
+                    src/Client.cpp
+                    src/ClientRaw.cpp
+                    src/Image.cpp
+                    src/View.cpp
+                    src/serialization.cpp
+                    ${HEADER_FILES})
 
-rosbuild_add_executable(server src/server.cpp ${HEADER_FILES})
-target_link_libraries(server rgbd_transport)
+target_link_libraries(rgbd ${catkin_LIBRARIES})
 
-rosbuild_add_executable(viewer src/viewer.cpp ${HEADER_FILES})
-target_link_libraries(viewer rgbd_transport)
+add_executable(rgbd_server src/server.cpp)
+target_link_libraries(rgbd_server rgbd)
+add_dependencies(rgbd_server rgbd_generate_messages_cpp)
 
-rosbuild_add_executable(save src/save.cpp ${HEADER_FILES})
-target_link_libraries(save rgbd_transport)
+add_executable(rgbd_viewer src/viewer.cpp)
+target_link_libraries(rgbd_viewer rgbd)
+add_dependencies(rgbd_viewer rgbd_generate_messages_cpp)
 
-rosbuild_add_executable(view src/view.cpp ${HEADER_FILES})
-target_link_libraries(view rgbd_transport)
+add_executable(rgbd_save src/save.cpp)
+target_link_libraries(rgbd_save rgbd)
+add_dependencies(rgbd_save rgbd_generate_messages_cpp)
 
-rosbuild_add_executable(test_client test/test_client.cpp)
-target_link_libraries(test_client rgbd_transport)
+add_executable(rgbd_view src/view.cpp)
+target_link_libraries(rgbd_view rgbd)
+add_dependencies(rgbd_view rgbd_generate_messages_cpp)
 
-rosbuild_add_executable(test_serialization test/test_serialization.cpp)
-target_link_libraries(test_serialization rgbd_transport)
+add_executable(rgbd_test_client test/test_client.cpp)
+target_link_libraries(rgbd_test_client rgbd)
+add_dependencies(rgbd_test_client rgbd_generate_messages_cpp)
+
+add_executable(rgbd_test_serialization test/test_serialization.cpp)
+target_link_libraries(rgbd_test_serialization rgbd)
+add_dependencies(rgbd_test_serialization rgbd_generate_messages_cpp)
+
