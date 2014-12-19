@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="gdb" default="false"/>
+    <arg if="$(arg gdb)" name="launch-prefix" value="gdb -ex run --args"/>
+    <arg unless="$(arg gdb)" name="launch-prefix" value=""/>
+
+    <!-- TOP KINECT -->
+    <!-- <include file="$(find amigo_launch_files)/launch/sensors/top_kinect.launch"/> -->
+
+    <!-- Static tf publisher -->
+    <!-- <node pkg="tf" type="static_transform_publisher" name="static_top_kinect_tf_pub" args="0.049 1.273 0.396 -1.533 -1.192 3.103 /amigo/top_kinect/openni_rgb_optical_frame /amigo/base_link 1" /> -->
+
+    <!-- Static tf publisher -->
+    <!-- <node pkg="tf" type="static_transform_publisher" name="static_map_base_link_tf_pub" args="0 0 0 0 0 0 /amigo/base_link /map 1" /> -->
+
+    <node name="rgbd_encoder" pkg="rgbd" type="rgbd_server" output="screen" launch-prefix="$(arg launch-prefix)">
+        <remap from="cam_info" to="/camera/rgb/camera_info"/>
+        <remap from="rgb_image" to="/camera/rgb/image_color"/>
+		<remap from="depth_image" to="/camera/depth_registered/image_raw"/>
+        <remap from="output" to="/camera/rgbd"/>
+    </node>
+
+</launch>
