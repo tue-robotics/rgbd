@@ -5,6 +5,32 @@
 bool PAUSE = false;
 std::string MODE;
 
+std::vector<cv::Vec2i> mouse_points;
+
+// ----------------------------------------------------------------------------------------------------
+
+void CallBackFunc(int event, int x, int y, int flags, void* userdata)
+{
+     if  ( event == cv::EVENT_LBUTTONDOWN )
+     {
+         mouse_points.push_back(cv::Vec2i(x, y));
+     }
+     else if  ( event == cv::EVENT_RBUTTONDOWN )
+     {
+//          std::cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << std::endl;
+     }
+     else if  ( event == cv::EVENT_MBUTTONDOWN )
+     {
+//          std::cout << "Middle button of the mouse is clicked - position (" << x << ", " << y << ")" << std::endl;
+     }
+     else if ( event == cv::EVENT_MOUSEMOVE )
+     {
+//          std::cout << "Mouse move over the window - position (" << x << ", " << y << ")" << std::endl;
+     }
+}
+
+// ----------------------------------------------------------------------------------------------------
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rgbd_multitool");
@@ -19,7 +45,7 @@ int main(int argc, char **argv)
     {
         std::cout << "Usage:" << std::endl
                   << std::endl
-                  << "    multitool [ --file | --rgbd | --depth | --rgb ] FILE_OR_TOPIC" << std::endl
+                  << "    multitool --rgbd RGBD_TOPIC" << std::endl
                   << std::endl;
         return 1;
     }
@@ -45,9 +71,17 @@ int main(int argc, char **argv)
 
     std::cout << "Keys:" << std::endl
               << std::endl
-              << "    spacebar - Pauze" << std::endl
+              << "    spacebar - Pause" << std::endl
               << "    m        - Measure" << std::endl
               << std::endl;
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    //Create a window
+    cv::namedWindow("RGBD", 1);
+
+    //set the callback function for any mouse event
+    cv::setMouseCallback("RGBD", CallBackFunc, NULL);
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -123,6 +157,38 @@ int main(int argc, char **argv)
 
         if (PAUSE)
             cv::putText(canvas, "PAUSED", cv::Point(10, canvas.rows - 25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
+
+        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+        for(unsigned int i = 0; i < mouse_points.size(); ++i)
+        {
+            cv::circle(canvas, mouse_points[i], 5, cv::Scalar(0, 0, 255), 2);
+        }
+
+        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+        if (MODE == "MEASURE")
+        {
+            if (mouse_points.size() == 2)
+            {
+                rgbd::View view(*image, 640);
+
+                geo::Vector3 p1, p2;
+
+                if (view.getPoint3D(mouse_points[0][0], mouse_points[0][1], p1) && view.getPoint3D(mouse_points[1][0], mouse_points[1][1], p2))
+                {
+                    std::cout << (p1 - p2).length() << " m" << std::endl;
+                }
+
+                mouse_points.clear();
+            }
+        }
+        else
+        {
+            mouse_points.clear();
+        }
+
+        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
         cv::imshow("RGBD", canvas);
         int i_key = cv::waitKey(3);
