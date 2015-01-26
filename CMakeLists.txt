@@ -54,6 +54,8 @@ add_library(rgbd    src/Server.cpp
                     ${HEADER_FILES})
 target_link_libraries(rgbd ${catkin_LIBRARIES})
 
+# - - - - - - - - - - - - - - - - - TOOLS - - - - - - - - - - - - - - - - -
+
 add_executable(rgbd_server src/server.cpp)
 target_link_libraries(rgbd_server rgbd)
 
@@ -74,6 +76,9 @@ add_dependencies(rgbd ${PROJECT_NAME}_generate_messages_cpp)
 
 add_executable(record_to_video tools/record_to_video.cpp)
 target_link_libraries(record_to_video rgbd)
+
+add_executable(multitool tools/multitool.cpp)
+target_link_libraries(multitool rgbd)
 
 # - - - - - - - - - - - - - - - - - TESTS - - - - - - - - - - - - - - - - -
 
