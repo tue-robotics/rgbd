@@ -182,6 +182,8 @@ int main(int argc, char **argv)
         for(unsigned int i = 0; i < mouse_points.size(); ++i)
         {
             cv::circle(canvas, mouse_points[i], 5, cv::Scalar(0, 0, 255), 2);
+            if (canvas.cols > IMAGE_WIDTH)
+                cv::circle(canvas, mouse_points[i] + cv::Vec2i(IMAGE_WIDTH, 0), 5, cv::Scalar(0, 0, 255), 2);
         }
 
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
