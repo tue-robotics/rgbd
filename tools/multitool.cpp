@@ -5,28 +5,34 @@
 bool PAUSE = false;
 std::string MODE;
 
+int IMAGE_WIDTH, IMAGE_HEIGHT;
+
 std::vector<cv::Vec2i> mouse_points;
+cv::Vec2i mouse_pos;
 
 // ----------------------------------------------------------------------------------------------------
 
 void CallBackFunc(int event, int x, int y, int flags, void* userdata)
 {
-     if  ( event == cv::EVENT_LBUTTONDOWN )
-     {
-         mouse_points.push_back(cv::Vec2i(x, y));
-     }
-     else if  ( event == cv::EVENT_RBUTTONDOWN )
-     {
-//          std::cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << std::endl;
-     }
-     else if  ( event == cv::EVENT_MBUTTONDOWN )
-     {
-//          std::cout << "Middle button of the mouse is clicked - position (" << x << ", " << y << ")" << std::endl;
-     }
-     else if ( event == cv::EVENT_MOUSEMOVE )
-     {
-//          std::cout << "Mouse move over the window - position (" << x << ", " << y << ")" << std::endl;
-     }
+    x = x % IMAGE_WIDTH;
+    mouse_pos = cv::Vec2i(x, y);
+
+    if  ( event == cv::EVENT_LBUTTONDOWN )
+    {
+        mouse_points.push_back(mouse_pos);
+    }
+    else if  ( event == cv::EVENT_RBUTTONDOWN )
+    {
+        //          std::cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << std::endl;
+    }
+    else if  ( event == cv::EVENT_MBUTTONDOWN )
+    {
+        //          std::cout << "Middle button of the mouse is clicked - position (" << x << ", " << y << ")" << std::endl;
+    }
+    else if ( event == cv::EVENT_MOUSEMOVE )
+    {
+//        mouse_pos = cv::Vec2i(x, y);
+    }
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -100,6 +106,8 @@ int main(int argc, char **argv)
         }
 
         cv::Mat canvas;
+        IMAGE_WIDTH = 0;
+        IMAGE_HEIGHT = 0;
 
         if (image)
         {
@@ -124,13 +132,13 @@ int main(int argc, char **argv)
 
                 if (rgb.data)
                 {
-                    int width = std::min(rgb.cols, depth.cols);
-                    int height = std::min(rgb.rows, depth.rows);
+                    IMAGE_WIDTH = std::min(rgb.cols, depth.cols);
+                    IMAGE_HEIGHT = std::min(rgb.rows, depth.rows);
 
-                    canvas = cv::Mat(height, width * 2, CV_8UC3);
+                    canvas = cv::Mat(IMAGE_HEIGHT, IMAGE_WIDTH * 2, CV_8UC3);
 
-                    cv::Mat roi1 = canvas(cv::Rect(cv::Point(0, 0), cv::Size(width, height)));
-                    cv::Mat roi2 = canvas(cv::Rect(cv::Point(width, 0), cv::Size(width, height)));
+                    cv::Mat roi1 = canvas(cv::Rect(cv::Point(0, 0), cv::Size(IMAGE_WIDTH, IMAGE_HEIGHT)));
+                    cv::Mat roi2 = canvas(cv::Rect(cv::Point(IMAGE_WIDTH, 0), cv::Size(IMAGE_WIDTH, IMAGE_HEIGHT)));
 
                     rgb.copyTo(roi1);
                     depth_canvas.copyTo(roi2);
@@ -152,6 +160,17 @@ int main(int argc, char **argv)
             cv::line(canvas, cv::Point(0, 0), cv::Point(640, 480), cv::Scalar(255, 255, 255), 5);
             cv::line(canvas, cv::Point(0, 480), cv::Point(640, 0), cv::Scalar(255, 255, 255), 5);
         }
+
+        if (IMAGE_WIDTH == 0 || IMAGE_HEIGHT == 0)
+        {
+            IMAGE_WIDTH = canvas.cols;
+            IMAGE_HEIGHT = canvas.rows;
+        }
+
+        // Show mouse cursor(s)
+        cv::circle(canvas, mouse_pos, 5, cv::Scalar(255, 0, 0), 1);
+        if (canvas.cols > IMAGE_WIDTH)
+            cv::circle(canvas, mouse_pos + cv::Vec2i(IMAGE_WIDTH, 0), 5, cv::Scalar(255, 0, 0), 1);
 
         cv::putText(canvas, MODE, cv::Point(10, 20), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
 
