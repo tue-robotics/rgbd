@@ -40,7 +40,13 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
     }
     else
     {
-        a << CAMERA_MODEL_NONE;
+//        a << CAMERA_MODEL_NONE;
+        const geo::DepthCamera& rasterizer = image.rasterizer_;
+
+        a << CAMERA_MODEL_PINHOLE;
+        a << rasterizer.getFocalLengthX() << rasterizer.getFocalLengthY();
+        a << rasterizer.getOpticalCenterX() << rasterizer.getOpticalCenterY();
+        a << rasterizer.getOpticalTranslationX() << rasterizer.getOpticalTranslationY();
     }
 
     // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
@@ -224,7 +230,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         cam_info_msg.P[3] = tx;  // Tx
         cam_info_msg.P[5] = fy;  // fy
         cam_info_msg.P[6] = cy;  // cy
-        cam_info_msg.P[7] = cy;  // cy
+        cam_info_msg.P[7] = ty;  // Ty
         cam_info_msg.P[10] = 1.0;
 
         cam_info_msg.distortion_model = "plumb_bob";
