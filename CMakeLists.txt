@@ -68,8 +68,8 @@ target_link_libraries(rgbd_to_ros rgbd)
 add_executable(rgbd_save src/save.cpp)
 target_link_libraries(rgbd_save rgbd)
 
-add_executable(rgbd_view src/view.cpp)
-target_link_libraries(rgbd_view rgbd)
+#add_executable(rgbd_view src/view.cpp)
+#target_link_libraries(rgbd_view rgbd)
 
 # compile the library after messages have been generated
 add_dependencies(rgbd ${PROJECT_NAME}_generate_messages_cpp)
@@ -85,8 +85,8 @@ target_link_libraries(multitool rgbd)
 add_executable(rgbd_test_client test/test_client.cpp)
 target_link_libraries(rgbd_test_client rgbd)
 
-add_executable(rgbd_test_serialization test/test_serialization.cpp)
-target_link_libraries(rgbd_test_serialization rgbd)
+#add_executable(rgbd_test_serialization test/test_serialization.cpp)
+#target_link_libraries(rgbd_test_serialization rgbd)
 
 add_executable(rgbd_test_sharedmem_server test/test_sharedmem_server.cpp)
 target_link_libraries(rgbd_test_sharedmem_server rgbd rt)

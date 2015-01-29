@@ -19,7 +19,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
 
 // DESERIALIZATION
 
-bool deserialize(tue::serialization::InputArchive& a, Image& image);
+bool deserialize(const std::vector<unsigned char>& data, Image& image);
 
 }
 

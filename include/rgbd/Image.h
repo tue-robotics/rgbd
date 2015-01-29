@@ -81,7 +81,7 @@ public:
                           RGBStorageType rgb_type = RGB_STORAGE_JPG,
                           DepthStorageType depth_type = DEPTH_STORAGE_PNG);
 
-    friend bool deserialize(tue::serialization::InputArchive& a, Image& image);
+    friend bool deserialize(const std::vector<unsigned char>& data, Image& image);
 
 protected:
 

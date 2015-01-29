@@ -258,10 +258,10 @@ void Client::rgbdImageCallback(const rgbd::RGBDMsg::ConstPtr& msg) {
     }
     else if (msg->version == 2)
     {
-        std::stringstream stream;
-        tue::serialization::convert(msg->rgb, stream);
-        tue::serialization::InputArchive a(stream);
-        rgbd::deserialize(a, *image_ptr_);
+//        std::stringstream stream;
+//        tue::serialization::convert(msg->rgb, stream);
+//        tue::serialization::InputArchive a(stream);
+        rgbd::deserialize(msg->rgb, *image_ptr_);
         received_image_ = true;
     }
 }

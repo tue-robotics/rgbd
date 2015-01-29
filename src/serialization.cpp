@@ -184,20 +184,76 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
 //
 // ----------------------------------------------------------------------------------------------------
 
-bool deserialize(tue::serialization::InputArchive& a, Image& image)
+struct Reader
 {
-    // - - - - - - - - - - - - - - - - GENERAL INFO - - - - - - - - - - - - - - - -
+    Reader(const std::vector<unsigned char>& data) : i_(0), data_(data) {}
+
+    template<typename T>
+    bool read(T& d)
+    {
+        d = *reinterpret_cast<const T*>(&data_[i_]);
+        i_ += sizeof(T);
+        return true;
+    }
+
+    bool readString(std::string& s)
+    {
+        s.clear();
+        char c;
+        while(true) {
+            char c = data_[i_++];
+            if (c == '\0') {
+                break;
+            }
+            s += c;
+        }
+        return true;
+    }
+
+    bool copyTo(unsigned char* destination, std::size_t size)
+    {
+        memcpy (destination, &data_[i_], size);
+        i_ += size;
+    }
+
+    const unsigned char* ptr() const
+    {
+        return &data_[i_];
+    }
+
+    void skip(std::size_t size)
+    {
+        i_ += size;
+    }
+
+private:
+
+    std::size_t i_;
+
+    const std::vector<unsigned char>& data_;
+};
+
+// ----------------------------------------------------------------------------------------------------
+
+bool deserialize(const std::vector<unsigned char>& data, Image& image)
+{
+    Reader r(data);
+
+    int tue_serialization_version;
+    r.read<int>(tue_serialization_version);
 
     int version;
-    a >> version;
+    r.read<int>(version);
 
-    a >> image.frame_id_;
-    a >> image.timestamp_;
+     // - - - - - - - - - - - - - - - - GENERAL INFO - - - - - - - - - - - - - - - -
 
-    // - - - - - - - - - - - - - - - - CAMERA INFO - - - - - - - - - - - - - - - -
+    r.readString(image.frame_id_);
+    r.read<double>(image.timestamp_);
+
+//    // - - - - - - - - - - - - - - - - CAMERA INFO - - - - - - - - - - - - - - - -
 
     int cam_type;
-    a >> cam_type;
+    r.read<int>(cam_type);
 
     if (cam_type == CAMERA_MODEL_NONE)
     {
@@ -205,9 +261,12 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     else if (cam_type == CAMERA_MODEL_PINHOLE)
     {
         double fx, fy, cx, cy, tx, ty;
-        a >> fx >> fy;
-        a >> cx >> cy;
-        a >> tx >> ty;
+        r.read<double>(fx);
+        r.read<double>(fy);
+        r.read<double>(cx);
+        r.read<double>(cy);
+        r.read<double>(tx);
+        r.read<double>(ty);
 
         sensor_msgs::CameraInfo cam_info_msg;
 
@@ -249,10 +308,10 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         return false;
     }
 
-    // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
+//    // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
 
     int rgb_type;
-    a >> rgb_type;
+    r.read<int>(rgb_type);
 
     if (rgb_type == RGB_STORAGE_NONE)
     {
@@ -260,24 +319,21 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     else if (rgb_type == RGB_STORAGE_LOSSLESS)
     {
         int width, height;
-        a >> width;
-        a >> height;
+        r.read<int>(width);
+        r.read<int>(height);
 
         int size = width * height * 3;
         image.rgb_image_ = cv::Mat(height, width, CV_8UC3);
-        for(int i = 0; i < size; ++i)
-            a >> image.rgb_image_.data[i];
+        r.copyTo(image.rgb_image_.data, size);
     }
     else if (rgb_type == RGB_STORAGE_JPG)
     {
         int rgb_size;
-        a >> rgb_size;
+        r.read<int>(rgb_size);
 
-        std::vector<unsigned char> rgb_data(rgb_size);
-        for(int i = 0; i < rgb_size; ++i)
-            a >> rgb_data[i];
-
-        image.rgb_image_ = cv::imdecode(cv::Mat(rgb_data), CV_LOAD_IMAGE_UNCHANGED);
+        cv::_InputArray rgb_data(r.ptr(), rgb_size);
+        image.rgb_image_ = cv::imdecode(rgb_data, CV_LOAD_IMAGE_UNCHANGED);
+        r.skip(rgb_size);
     }
     else
     {
@@ -288,7 +344,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     // - - - - - - - - - - - - - - - - DEPTH IMAGE - - - - - - - - - - - - - - - -
 
     int depth_type;
-    a >> depth_type;
+    r.read<int>(depth_type);
 
     if (depth_type == DEPTH_STORAGE_NONE)
     {
@@ -296,27 +352,26 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     else if (depth_type == DEPTH_STORAGE_LOSSLESS)
     {
         int width, height;
-        a >> width;
-        a >> height;
+        r.read<int>(width);
+        r.read<int>(height);
 
         int size = width * height * 4;
-        image.depth_image_ = cv::Mat(480, 640, CV_32FC1);
-        for(int i = 0; i < size; ++i)
-            a >> image.depth_image_.data[i];
+        image.depth_image_ = cv::Mat(height, width, CV_32FC1);
+        r.copyTo(image.depth_image_.data, size);
     }
     else if (depth_type == DEPTH_STORAGE_PNG)
     {
         float depthQuantA, depthQuantB;
-        a >> depthQuantA >> depthQuantB;
+        r.read<float>(depthQuantA);
+        r.read<float>(depthQuantB);
 
         int depth_size;
-        a >> depth_size;
+        r.read<int>(depth_size);
 
-        std::vector<unsigned char> depth_data(depth_size);
-        for(int i = 0; i < depth_size; ++i)
-            a >> depth_data[i];
-
+        cv::_InputArray depth_data(r.ptr(), depth_size);
         cv::Mat decompressed = cv::imdecode(depth_data, CV_LOAD_IMAGE_UNCHANGED);
+        r.skip(depth_size);
+
         cv::Mat& depth_image = image.depth_image_;
         depth_image = cv::Mat(decompressed.size(), CV_32FC1);
 
