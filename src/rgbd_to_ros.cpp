@@ -7,6 +7,11 @@
 
 #include <rgbd/ros/conversions.h>
 
+// Point cloud
+#include <pcl_ros/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/point_cloud.h>
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rgbd_to_ros");
@@ -21,6 +26,7 @@ int main(int argc, char **argv)
     ros::Publisher pub_depth_info = nh.advertise<sensor_msgs::CameraInfo>("/depth/camera_info", 1);
     ros::Publisher pub_rgb_img = nh.advertise<sensor_msgs::Image>("/rgb/image", 1);
     ros::Publisher pub_depth_img = nh.advertise<sensor_msgs::Image>("/depth/image", 1);
+    ros::Publisher pub_depth_pc = nh.advertise<pcl::PointCloud<pcl::PointXYZ> >("/depth/points", 1);
 
     ros::Rate r(30);
     while (ros::ok())
@@ -45,6 +51,40 @@ int main(int argc, char **argv)
                 // Publish
                 pub_depth_img.publish(msg);
                 pub_depth_info.publish(info_msg);
+
+                // Create point cloud
+                pcl::PointCloud<pcl::PointXYZ>::Ptr pc_msg(new pcl::PointCloud<pcl::PointXYZ>());
+
+                pc_msg->header.stamp = image.getTimestamp() * 1e6;
+                pc_msg->header.frame_id = image.getFrameId();
+                pc_msg->width  = 0;
+                pc_msg->height  = 1;
+                pc_msg->is_dense = true;
+
+                // Fill point cloud
+                for(int y = 0; y < view.getHeight(); ++y)
+                {
+                    for(int x = 0; x < view.getWidth(); ++x)
+                    {
+                        geo::Vector3 p;
+                        if (view.getPoint3D(x, y, p))
+                        {
+                            // Push back and correct for geolib frame
+                            pc_msg->points.push_back(pcl::PointXYZ(p.x, -p.y, -p.z));
+                            pc_msg->width++;
+//                            std::cout << p << std::endl;
+                        }
+                        else
+                        {
+//                            pc_msg->points.push_back(pcl::PointXYZ(0, 0, 0));
+//                            pc_msg->width++;
+                            pc_msg->is_dense = false;
+                        }
+                    }
+                }
+
+                // Publish
+                pub_depth_pc.publish(pc_msg);
             }
 
             if (image.getRGBImage().data)
