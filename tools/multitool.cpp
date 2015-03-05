@@ -133,15 +133,19 @@ int main(int argc, char **argv)
                 if (rgb.data)
                 {
                     IMAGE_WIDTH = std::min(rgb.cols, depth.cols);
-                    IMAGE_HEIGHT = std::min(rgb.rows, depth.rows);
 
-                    canvas = cv::Mat(IMAGE_HEIGHT, IMAGE_WIDTH * 2, CV_8UC3);
+                    int rgb_height = IMAGE_WIDTH * rgb.rows / rgb.cols;
+                    int depth_height = IMAGE_WIDTH * depth.rows / depth.cols;
 
-                    cv::Mat roi1 = canvas(cv::Rect(cv::Point(0, 0), cv::Size(IMAGE_WIDTH, IMAGE_HEIGHT)));
-                    cv::Mat roi2 = canvas(cv::Rect(cv::Point(IMAGE_WIDTH, 0), cv::Size(IMAGE_WIDTH, IMAGE_HEIGHT)));
+                    IMAGE_HEIGHT = std::max(rgb_height, depth_height);
 
-                    rgb.copyTo(roi1);
-                    depth_canvas.copyTo(roi2);
+                    canvas = cv::Mat(IMAGE_HEIGHT, IMAGE_WIDTH * 2, CV_8UC3, cv::Scalar(50, 50, 50));
+
+                    cv::Mat rgb_roi = canvas(cv::Rect(cv::Point(0, 0), cv::Size(IMAGE_WIDTH, rgb_height)));
+                    cv::Mat depth_roi = canvas(cv::Rect(cv::Point(IMAGE_WIDTH, 0), cv::Size(IMAGE_WIDTH, depth_height)));
+
+                    cv::resize(rgb, rgb_roi, cv::Size(IMAGE_WIDTH, rgb_height));
+                    cv::resize(depth_canvas, depth_roi, cv::Size(IMAGE_WIDTH, depth_height));
                 }
                 else
                 {

@@ -300,7 +300,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         a >> height;
 
         int size = width * height * 4;
-        image.depth_image_ = cv::Mat(480, 640, CV_32FC1);
+        image.depth_image_ = cv::Mat(height, width, CV_32FC1);
         for(int i = 0; i < size; ++i)
             a >> image.depth_image_.data[i];
     }
