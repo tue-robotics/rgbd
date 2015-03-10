@@ -15,6 +15,8 @@ int main(int argc, char **argv) {
         rgbd::Image image;
         if (client.nextImage(image))
         {
+            std::cout << "Image: t = " << std::fixed << image.getTimestamp() << ", frame = " << image.getFrameId() << std::endl;
+
             cv::imshow("rgb", image.getRGBImage());
             cv::imshow("depth", image.getDepthImage() / 8);
             cv::waitKey(3);

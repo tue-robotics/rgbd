@@ -26,6 +26,10 @@ struct BufferHeader
     uint32_t rgb_height;        // height of rgb image
     uint32_t depth_width;       // width of depth image
     uint32_t depth_height;      // height of depth image
+
+    double timestamp;
+    double fx, fy, cx, cy, tx, ty; // intrinsic cam parameters
+    char frame_id[1000]; // TODO
 };
 
 } // end namespace rgbd

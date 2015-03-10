@@ -38,7 +38,7 @@ bool SharedMemClient::intialize(const std::string& server_name)
     }
     catch(ipc::interprocess_exception &ex)
     {
-        std::cout << ex.what() << std::endl;
+//        std::cout << ex.what() << std::endl;
         return false;
     }
 
@@ -77,8 +77,12 @@ bool SharedMemClient::nextImage(Image& image)
     memcpy(rgb.data, image_data, rgb_data_size);
     memcpy(depth.data, image_data + rgb_data_size, depth_data_size);
 
-    image.depth_image_ = depth;
-    image.rgb_image_ = rgb;
+    geo::DepthCamera cam_model;
+    cam_model.setFocalLengths(buffer_header->fx, buffer_header->fy);
+    cam_model.setOpticalCenter(buffer_header->cx, buffer_header->cy);
+    cam_model.setOpticalTranslation(buffer_header->tx, buffer_header->ty);
+
+    image = Image(rgb, depth, cam_model, buffer_header->frame_id, buffer_header->timestamp);
 
     sequence_nr = buffer_header->sequence_nr;
 }

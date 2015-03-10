@@ -19,7 +19,7 @@ int main(int argc, char **argv)
         cv::line(depth_image, cv::Point(x, 0), cv::Point(x, depth_image.rows - 1), 1.0);
 
         geo::DepthCamera cam_model;
-        rgbd::Image image(rgb_image, depth_image, cam_model, "", 0);
+        rgbd::Image image(rgb_image, depth_image, cam_model, "test_frame_id", ros::Time::now().toSec());
 
         server.send(image);
 

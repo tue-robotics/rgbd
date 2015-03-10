@@ -1,6 +1,7 @@
 #include "rgbd/shared_mem_server.h"
 
 #include "rgbd/Image.h"
+#include "rgbd/View.h"
 
 namespace ipc = boost::interprocess;
 
@@ -70,10 +71,22 @@ void SharedMemServer::send(const Image& image)
         buffer_header->rgb_height = rgb.rows;
         buffer_header->depth_width = depth.cols;
         buffer_header->depth_height = depth.rows;
+
+        rgbd::View view(image, image.getDepthImage().cols);
+        buffer_header->fx = view.getRasterizer().getFocalLengthX();
+        buffer_header->fy = view.getRasterizer().getFocalLengthY();
+        buffer_header->cx = view.getRasterizer().getOpticalCenterX();
+        buffer_header->cy = view.getRasterizer().getOpticalCenterY();
+        buffer_header->tx = view.getRasterizer().getOpticalTranslationX();
+        buffer_header->ty = view.getRasterizer().getOpticalTranslationY();
+
+        memcpy(buffer_header->frame_id, image.getFrameId().c_str(), image.getFrameId().size() + 1);
     }
 
     {
         ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header->mutex);
+
+        buffer_header->timestamp = image.getTimestamp();
 
         memcpy(image_data, rgb.data, rgb_data_size);
         memcpy(image_data + rgb_data_size, depth.data, depth_data_size);
