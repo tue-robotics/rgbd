@@ -15,6 +15,8 @@
 #include <ros/callback_queue.h>
 
 #include "rgbd/types.h"
+#include "rgbd/shared_mem_client.h"
+
 
 // ROS message serialization
 #include <sensor_msgs/Image.h>
@@ -46,6 +48,8 @@ public:
     ImagePtr nextImage();
 
 protected:
+
+    SharedMemClient shared_mem_client_;
 
     ros::NodeHandle* nh_;
 

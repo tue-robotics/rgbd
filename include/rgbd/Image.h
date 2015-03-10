@@ -42,6 +42,7 @@ class Image {
 
     friend class Server;
     friend class Client;
+    friend class SharedMemClient;
     friend class View;
 
 public:

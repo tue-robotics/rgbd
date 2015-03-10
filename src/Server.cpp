@@ -25,16 +25,27 @@ Server::~Server() {
 
 // ----------------------------------------------------------------------------------------
 
-void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type) {
+void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type)
+{
     ros::NodeHandle nh;
     pub_image_ = nh.advertise<rgbd::RGBDMsg>(name, 1);
     rgb_type_ = rgb_type;
     depth_type_ = depth_type;
+
+    // Initialize shared mem server
+    shared_mem_server_.initialize(name);
 }
 
 // ----------------------------------------------------------------------------------------
 
-void Server::send(const Image& image) {
+void Server::send(const Image& image)
+{
+    // Send image using shared memory
+    shared_mem_server_.send(image);
+
+    if (pub_image_.getNumSubscribers() == 0)
+        return;
+
     rgbd::RGBDMsg msg;
     msg.version = SERIALIZATION_VERSION;
 

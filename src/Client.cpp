@@ -54,7 +54,12 @@ Client::~Client()
 
 // ----------------------------------------------------------------------------------------
 
-void Client::intialize(const std::string& server_name) {
+void Client::intialize(const std::string& server_name)
+{
+    if (shared_mem_client_.intialize(server_name))
+        return;
+
+    // If the shared memory client could not be created, use ROS topics instead
 
     delete nh_;
     nh_ = new ros::NodeHandle();
@@ -89,6 +94,9 @@ void Client::intialize(const std::string& rgb_image_topic, const std::string& de
 
 bool Client::nextImage(Image& image)
 {
+    if (shared_mem_client_.initialized())
+        return shared_mem_client_.nextImage(image);
+
     received_image_ = false;
     image_ptr_ = &image;
     cb_queue_.callAvailable();
@@ -98,6 +106,15 @@ bool Client::nextImage(Image& image)
 // ----------------------------------------------------------------------------------------
 
 ImagePtr Client::nextImage() {
+    if (shared_mem_client_.initialized())
+    {
+        ImagePtr img(new Image); // TODO
+        if (shared_mem_client_.nextImage(*img))
+            return img;
+        else
+            return ImagePtr();
+    }
+
     image_ptr_ = 0;
     cb_queue_.callAvailable();
     return ImagePtr(image_ptr_);
