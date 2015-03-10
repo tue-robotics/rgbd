@@ -25,9 +25,11 @@ bool SharedMemClient::intialize(const std::string& server_name)
 {
     try
     {
+        std::string server_name_cp = server_name;
+        std::replace(server_name_cp.begin(), server_name_cp.end(), '/', '-');
 
         // Open already created shared memory object.
-        shm = ipc::shared_memory_object(ipc::open_only, server_name.c_str(), ipc::read_write);
+        shm = ipc::shared_memory_object(ipc::open_only, server_name_cp.c_str(), ipc::read_write);
 
         mem_buffer_header = ipc::mapped_region(shm, ipc::read_write, 0, sizeof(BufferHeader));
         mem_image = ipc::mapped_region(shm, ipc::read_only, sizeof(BufferHeader));
