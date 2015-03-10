@@ -14,11 +14,17 @@
 
 int main(int argc, char **argv)
 {
+    if (argc <= 1)
+    {
+        std::cout << "Please specify rgbd topic / name" << std::endl;
+        return 1;
+    }
+
     ros::init(argc, argv, "rgbd_to_ros");
 
     // Listener
     rgbd::Client client;
-    client.intialize("rgbd");
+    client.intialize(argv[1]);
 
     // Publishers
     ros::NodeHandle nh;
