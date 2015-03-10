@@ -3,6 +3,8 @@
 #include "rgbd/Image.h"
 #include "rgbd/View.h"
 
+#include <boost/interprocess/sync/scoped_lock.hpp>
+
 namespace ipc = boost::interprocess;
 
 namespace rgbd
