@@ -82,6 +82,9 @@ target_link_libraries(multitool rgbd)
 
 # - - - - - - - - - - - - - - - - - TESTS - - - - - - - - - - - - - - - - -
 
+add_executable(rgbd_test_server test/test_server.cpp)
+target_link_libraries(rgbd_test_server rgbd)
+
 add_executable(rgbd_test_client test/test_client.cpp)
 target_link_libraries(rgbd_test_client rgbd)
 
