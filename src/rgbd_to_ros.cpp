@@ -28,11 +28,11 @@ int main(int argc, char **argv)
 
     // Publishers
     ros::NodeHandle nh;
-    ros::Publisher pub_rgb_info = nh.advertise<sensor_msgs::CameraInfo>("/rgb/camera_info", 1);
-    ros::Publisher pub_depth_info = nh.advertise<sensor_msgs::CameraInfo>("/depth/camera_info", 1);
-    ros::Publisher pub_rgb_img = nh.advertise<sensor_msgs::Image>("/rgb/image", 1);
-    ros::Publisher pub_depth_img = nh.advertise<sensor_msgs::Image>("/depth/image", 1);
-    ros::Publisher pub_depth_pc = nh.advertise<pcl::PointCloud<pcl::PointXYZ> >("/depth/points", 1);
+    ros::Publisher pub_rgb_info = nh.advertise<sensor_msgs::CameraInfo>("rgb/camera_info", 1);
+    ros::Publisher pub_depth_info = nh.advertise<sensor_msgs::CameraInfo>("depth/camera_info", 1);
+    ros::Publisher pub_rgb_img = nh.advertise<sensor_msgs::Image>("rgb/image", 1);
+    ros::Publisher pub_depth_img = nh.advertise<sensor_msgs::Image>("depth/image", 1);
+    ros::Publisher pub_depth_pc = nh.advertise<pcl::PointCloud<pcl::PointXYZ> >("depth/points", 1);
 
     ros::Rate r(30);
     while (ros::ok())
