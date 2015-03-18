@@ -60,12 +60,12 @@ bool SharedMemClient::initialized()
 
 bool SharedMemClient::nextImage(Image& image)
 {
+    ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header->mutex);
+
     if (buffer_header->sequence_nr == sequence_nr)
         return false;
 
     cv::Mat rgb, depth;
-
-    ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header->mutex);
 
     //    if (buffer_header.sequence_nr == sequence_nr)
     //        buffer_header.cond_empty.wait(lock);
@@ -89,6 +89,8 @@ bool SharedMemClient::nextImage(Image& image)
     image = Image(rgb, depth, cam_model, buffer_header->frame_id, buffer_header->timestamp);
 
     sequence_nr = buffer_header->sequence_nr;
+
+    return true;
 }
 
 } // end namespace rgbd
