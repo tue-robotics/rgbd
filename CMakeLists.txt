@@ -56,7 +56,7 @@ add_library(rgbd    src/Server.cpp
                     src/shared_mem_client.cpp
 
                     ${HEADER_FILES})
-target_link_libraries(rgbd ${catkin_LIBRARIES})
+target_link_libraries(rgbd ${catkin_LIBRARIES} rt)
 
 # - - - - - - - - - - - - - - - - - TOOLS - - - - - - - - - - - - - - - - -
 
