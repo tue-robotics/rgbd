@@ -78,6 +78,11 @@ public:
 
     inline void setDepthImage(const cv::Mat& depth_image) { depth_image_ = depth_image; }
 
+    Image clone() const
+    {
+        return Image(rgb_image_.clone(), depth_image_.clone(), rasterizer_, frame_id_, timestamp_);
+    }
+
     friend bool serialize(const Image& image, tue::serialization::OutputArchive& a,
                           RGBStorageType rgb_type = RGB_STORAGE_JPG,
                           DepthStorageType depth_type = DEPTH_STORAGE_PNG);

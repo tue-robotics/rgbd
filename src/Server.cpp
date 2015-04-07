@@ -9,18 +9,23 @@
 
 #include <tue/profiling/timer.h>
 
+#include <ros/node_handle.h>
+
 namespace rgbd {
 
 const int Server::SERIALIZATION_VERSION = 2;
 
 // ----------------------------------------------------------------------------------------
 
-Server::Server() {
+Server::Server()
+{
 }
 
 // ----------------------------------------------------------------------------------------
 
-Server::~Server() {
+Server::~Server()
+{
+    send_thread_.join();
 }
 
 // ----------------------------------------------------------------------------------------
@@ -38,10 +43,31 @@ void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthS
 
 // ----------------------------------------------------------------------------------------
 
-void Server::send(const Image& image)
+void Server::send(const Image& image, bool threaded)
 {
+    if (!threaded)
+    {
+        sendImpl(image);
+        return;
+    }
+
+    send_thread_ = boost::thread(&Server::sendImpl, this, image);
+}
+
+// ----------------------------------------------------------------------------------------
+
+void Server::sendImpl(const Image& image)
+{    
+    rgbd::Image image_copy = image.clone();
+
     // Send image using shared memory
-    shared_mem_server_.send(image);
+    {
+        boost::mutex::scoped_lock lock(send_mutex_shared_, boost::try_to_lock);
+        if (!lock)
+            return;
+
+        shared_mem_server_.send(image_copy);
+    }
 
     if (pub_image_.getNumSubscribers() == 0)
         return;
@@ -51,9 +77,16 @@ void Server::send(const Image& image)
 
     std::stringstream stream;
     tue::serialization::OutputArchive a(stream);
-    serialize(image, a, rgb_type_, depth_type_);
+    serialize(image_copy, a, rgb_type_, depth_type_);
     tue::serialization::convert(stream, msg.rgb);
-    pub_image_.publish(msg);
+
+    {
+        boost::mutex::scoped_lock lock(send_mutex_topic_, boost::try_to_lock);
+        if (!lock)
+            return;
+
+        pub_image_.publish(msg);
+    }
 }
 
 }

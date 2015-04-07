@@ -1,5 +1,8 @@
 #include "rgbd/Server.h"
 
+#include <ros/init.h>
+#include <ros/rate.h>
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rgbd_transport_test_server");
@@ -21,7 +24,7 @@ int main(int argc, char **argv)
         geo::DepthCamera cam_model;
         rgbd::Image image(rgb_image, depth_image, cam_model, "test_frame_id", ros::Time::now().toSec());
 
-        server.send(image);
+        server.send(image, true);
 
         x = (x + 10) % rgb_image.cols;
 
