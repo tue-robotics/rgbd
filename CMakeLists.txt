@@ -84,6 +84,9 @@ target_link_libraries(record_to_video rgbd)
 add_executable(multitool tools/multitool.cpp)
 target_link_libraries(multitool rgbd)
 
+add_executable(presenter tools/presenter.cpp)
+target_link_libraries(presenter rgbd)
+
 # - - - - - - - - - - - - - - - - - TESTS - - - - - - - - - - - - - - - - -
 
 add_executable(rgbd_test_server test/test_server.cpp)
