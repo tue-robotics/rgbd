@@ -26,6 +26,7 @@ struct ROSImageSyncData
 
     ~ROSImageSyncData()
     {
+        sub_cam_info_.shutdown();
         delete sub_rgb_sync_;
         delete sub_depth_sync_;
         delete sync_;
@@ -50,6 +51,7 @@ Client::~Client()
 {
     delete nh_;
     delete ros_image_sync_data_;
+    sub_image_.shutdown();
 }
 
 // ----------------------------------------------------------------------------------------
