@@ -35,7 +35,7 @@ public:
     {
         float d = getDepth(x, y);
         p = rasterizer_.project2Dto3D(x, y) * d;
-        return (d == d);
+        return (d == d && d > 0);
     }
 
     inline bool getPoint3DSafe(int x, int y, geo::Vector3& p) const
@@ -45,7 +45,7 @@ public:
 
         float d = getDepth(x, y);
         p = rasterizer_.project2Dto3D(x, y) * d;
-        return (d == d);
+        return (d == d && d > 0);
     }
 
     inline const geo::DepthCamera& getRasterizer() const { return rasterizer_; }
