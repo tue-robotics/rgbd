@@ -59,7 +59,7 @@ int main(int argc, char **argv)
                 pub_depth_info.publish(info_msg);
 
                 // Create point cloud
-                pcl::PointCloud<pcl::PointXYZ>::Ptr pc_msg(new pcl::PointCloud<pcl::PointXYZ>());
+                pcl::PointCloud<pcl::PointXYZRGB>::Ptr pc_msg(new pcl::PointCloud<pcl::PointXYZRGB>());
 
                 pc_msg->header.stamp = image.getTimestamp() * 1e6;
                 pc_msg->header.frame_id = image.getFrameId();
@@ -75,8 +75,13 @@ int main(int argc, char **argv)
                         geo::Vector3 p;
                         if (view.getPoint3D(x, y, p))
                         {
+                            const cv::Vec3b& c = view.getColor(x, y);
+
                             // Push back and correct for geolib frame
-                            pc_msg->points.push_back(pcl::PointXYZ(p.x, -p.y, -p.z));
+                            pc_msg->points.push_back(pcl::PointXYZRGB());
+                            pcl::PointXYZRGB& p_pcl = pc_msg->points.back();
+                            p_pcl.x = p.x; p_pcl.y = -p.y; p_pcl.z = -p.z;
+                            p_pcl.r = c[2]; p_pcl.g = c[1]; p_pcl.b = c[0];
                             pc_msg->width++;
 //                            std::cout << p << std::endl;
                         }
