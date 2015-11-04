@@ -32,13 +32,13 @@ Server::~Server()
 
 void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type)
 {
-    ros::NodeHandle nh("~");
+    ros::NodeHandle nh;
     pub_image_ = nh.advertise<rgbd::RGBDMsg>(name, 1);
     rgb_type_ = rgb_type;
     depth_type_ = depth_type;
 
     nh.setCallbackQueue(&cb_queue_);
-    service_server_ = nh.advertiseService("get_rgbd", &Server::serviceServerCallback, this);
+    service_server_ = nh.advertiseService(name, &Server::serviceServerCallback, this);
 
     // Initialize shared mem server
     shared_mem_server_.initialize(name);
