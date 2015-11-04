@@ -18,6 +18,11 @@ add_message_files(
     RGBDMsg.msg
 )
 
+add_service_files(
+  FILES
+    GetRGBD.srv
+)
+
 generate_messages(
   DEPENDENCIES
     std_msgs

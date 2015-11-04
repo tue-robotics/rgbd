@@ -4,7 +4,12 @@
 #include "rgbd/Image.h"
 #include "rgbd/shared_mem_server.h"
 
+#include "rgbd/GetRGBD.h"
+
 #include <ros/publisher.h>
+#include <ros/callback_queue.h>
+#include <ros/service_server.h>
+
 #include <boost/thread.hpp>
 
 namespace rgbd {
@@ -28,8 +33,13 @@ public:
 protected:
 
     ros::Publisher pub_image_;
+    ros::ServiceServer service_server_;
+    ros::CallbackQueue cb_queue_;
+
     RGBStorageType rgb_type_;
     DepthStorageType depth_type_;
+
+    rgbd::Image image_copy_;
 
     SharedMemServer shared_mem_server_;
 
@@ -39,6 +49,8 @@ protected:
     boost::thread send_thread_;
 
     void sendImpl(const Image& image);
+
+    bool serviceServerCallback(GetRGBDRequest& req, GetRGBDResponse& resp);
 
 };
 

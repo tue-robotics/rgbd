@@ -32,10 +32,13 @@ Server::~Server()
 
 void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type)
 {
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");
     pub_image_ = nh.advertise<rgbd::RGBDMsg>(name, 1);
     rgb_type_ = rgb_type;
     depth_type_ = depth_type;
+
+    nh.setCallbackQueue(&cb_queue_);
+    service_server_ = nh.advertiseService("get_rgbd", &Server::serviceServerCallback, this);
 
     // Initialize shared mem server
     shared_mem_server_.initialize(name);
@@ -58,7 +61,10 @@ void Server::send(const Image& image, bool threaded)
 
 void Server::sendImpl(const Image& image)
 {    
-    rgbd::Image image_copy = image.clone();
+    image_copy_ = image.clone();
+
+    // Handle the service
+    cb_queue_.callAvailable();
 
     // Send image using shared memory
     {
@@ -66,7 +72,7 @@ void Server::sendImpl(const Image& image)
         if (!lock)
             return;
 
-        shared_mem_server_.send(image_copy);
+        shared_mem_server_.send(image_copy_);
     }
 
     if (pub_image_.getNumSubscribers() == 0)
@@ -77,7 +83,7 @@ void Server::sendImpl(const Image& image)
 
     std::stringstream stream;
     tue::serialization::OutputArchive a(stream);
-    serialize(image_copy, a, rgb_type_, depth_type_);
+    serialize(image_copy_, a, rgb_type_, depth_type_);
     tue::serialization::convert(stream, msg.rgb);
 
     {
@@ -87,6 +93,34 @@ void Server::sendImpl(const Image& image)
 
         pub_image_.publish(msg);
     }
+}
+
+bool Server::serviceServerCallback(GetRGBDRequest& req, GetRGBDResponse& resp)
+{
+    //! Check for valid input
+    if (req.compression != GetRGBDRequest::JPEG && req.compression != GetRGBDRequest::PNG)
+    {
+        ROS_ERROR("Invalid compression, only JPEG and PNG are supported (see ENUM in srv definition)");
+        return false;
+    }
+
+    //! Create resized images
+    cv::Mat resized_rgb, resized_depth;
+
+    double ratio_rgb = (double) req.width / image_copy_.getRGBImage().cols;
+    double ratio_depth = (double) req.width / image_copy_.getDepthImage().cols;
+
+    cv::resize(image_copy_.getRGBImage(), resized_rgb, cv::Size(req.width, image_copy_.getRGBImage().rows * ratio_rgb));
+    cv::resize(image_copy_.getDepthImage(), resized_depth, cv::Size(req.width, image_copy_.getDepthImage().rows * ratio_depth));
+
+    // Compress images
+    std::string compression_str = req.compression == GetRGBDRequest::JPEG ? ".jpeg" : ".png";
+    if (cv::imencode(compression_str, resized_rgb, resp.rgb_data) && cv::imencode(compression_str, resized_depth, resp.depth_data))
+        return true;
+
+    ROS_ERROR_STREAM("cv::imencode with compression_str " << compression_str << " failed!");
+
+    return false;
 }
 
 }
