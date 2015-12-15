@@ -39,7 +39,7 @@ void CallBackFunc(int event, int x, int y, int flags, void* userdata)
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "rgbd_multitool");
+    ros::init(argc, argv, "rgbd_multitool", ros::init_options::AnonymousName);
     ros::NodeHandle nh;
 
     rgbd::Client* client = 0;
