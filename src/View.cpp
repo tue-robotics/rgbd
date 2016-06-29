@@ -16,16 +16,15 @@ View::View(const Image& image, int width) :
     rgb_factor_ = (float) image.rgb_image_.cols / width_;
     depth_factor_ = (float) image.depth_image_.cols / width_;
 
-    // Unfortunately, the camera model interface of the geolib rasterizer is image size specific. Therefore,
-    // create a new rasterizer based on the FOV of the given model, but scaled to the width and height given here.
-    // ASSUMES: no optical translation in the given camera model
-    // TODO: get rid of assumption
-    float w_old = (image.rasterizer_.getOpticalCenterX() + 0.5) * 2;
-    float h_old = (image.rasterizer_.getOpticalCenterY() + 0.5) * 2;
+    // ASSUMPTION: here we assume that the camera model given in the image is based
+    // on the depth image, not the rgb image
+    float w_depth = image.depth_image_.cols;
+    float h_depth = image.depth_image_.rows;
 
-    rasterizer_.setFocalLengths(image.rasterizer_.getFocalLengthX() / w_old * width_,
-                                image.rasterizer_.getFocalLengthY() / h_old * height_);
-    rasterizer_.setOpticalCenter(width_ / 2 - 0.5, height_ / 2 - 0.5);
+    rasterizer_.setFocalLengths(image.rasterizer_.getFocalLengthX() / w_depth * width_,
+                                image.rasterizer_.getFocalLengthY() / h_depth * height_);
+    rasterizer_.setOpticalCenter(image.rasterizer_.getOpticalCenterX() / w_depth * width_,
+                                 image.rasterizer_.getOpticalCenterY() / h_depth * height_);
     rasterizer_.setOpticalTranslation(0, 0);
 }
 
