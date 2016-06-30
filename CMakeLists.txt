@@ -92,6 +92,9 @@ target_link_libraries(multitool rgbd)
 add_executable(presenter tools/presenter.cpp)
 target_link_libraries(presenter rgbd)
 
+add_executable(rgbd_analyser tools/analyser.cpp)
+target_link_libraries(rgbd_analyser rgbd)
+
 add_executable(rgbd_to_rgb_png tools/rgbd_to_rgb_png.cpp)
 target_link_libraries(rgbd_to_rgb_png rgbd)
 
