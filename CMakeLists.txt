@@ -15,6 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
+add_definitions(-std=c++11)
+
 add_message_files(
   FILES
     RGBDMsg.msg
@@ -78,6 +80,9 @@ target_link_libraries(rgbd_viewer rgbd)
 
 add_executable(rgbd_to_ros src/rgbd_to_ros.cpp)
 target_link_libraries(rgbd_to_ros rgbd)
+
+add_executable(get_3d_point_from_image_roi_node src/get_3d_point_from_image_roi_node.cpp)
+target_link_libraries(get_3d_point_from_image_roi_node rgbd)
 
 add_executable(rgbd_save src/save.cpp)
 target_link_libraries(rgbd_save rgbd)
