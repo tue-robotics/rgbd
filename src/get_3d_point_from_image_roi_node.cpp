@@ -102,7 +102,7 @@ int main(int argc, char **argv)
       if (image.getDepthImage().data)
       {
         g_last_img = std::shared_ptr<rgbd::Image>(new rgbd::Image(image));
-        ROS_INFO("Got msg...");
+        ROS_DEBUG("Got msg...");
       }
     }
   }
