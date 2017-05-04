@@ -4,11 +4,13 @@ project(rgbd)
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   geolib2
+  geometry_msgs
   image_geometry
   message_filters
   pcl_conversions
   pcl_ros
   roscpp
+  sensor_msgs
   tue_serialization
   message_generation
 )
@@ -21,10 +23,13 @@ add_message_files(
 add_service_files(
   FILES
     GetRGBD.srv
+    Project2DTo3D.srv
 )
 
 generate_messages(
   DEPENDENCIES
+    geometry_msgs
+    sensor_msgs
     std_msgs
 )
 
