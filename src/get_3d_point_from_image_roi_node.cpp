@@ -91,6 +91,8 @@ bool srvGet3dPointFromRoi(rgbd::Project2DTo3D::Request& req, rgbd::Project2DTo3D
 
     rgbd::View view(*last_image, last_image->getDepthImage().cols);
     geo::Vec3 pos = view.getRasterizer().project2Dto3D(roi_depth_center.x, roi_depth_center.y) * median_depth;
+    pos.y = -pos.y;
+    pos.z = -pos.z;
 
     ROS_INFO("Pose (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
 
