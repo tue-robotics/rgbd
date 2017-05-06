@@ -30,6 +30,7 @@ class RGBDMonitor(object):
         if duration > self._timeout:
             rospy.logerr("No messages received for {} seconds, restarting rgbd_to_ros node".format(duration.to_sec()))
             os.system("rosnode kill /amigo/top_kinect/rgbd_to_ros")
+            self._last_stamp = None
 
     def _image_callback(self, msg):
         """ Callback for messages. Stores the time at which the message is received
