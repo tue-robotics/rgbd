@@ -23,7 +23,7 @@
 // ----------------------------------------------------------------------------------------------------
 
 boost::circular_buffer<std::shared_ptr<rgbd::Image>> g_last_images_;
-bool srvGet3dPointFromRoi(rgbd::Project2DTo3D::Request& req, rgbd::Project2DTo3D::Response& res)
+bool srvGet3dPointFromROI(rgbd::Project2DTo3D::Request& req, rgbd::Project2DTo3D::Response& res)
 {
   std::shared_ptr<rgbd::Image> last_image;
 
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 
   // srv
   ros::NodeHandle nh;
-  ros::ServiceServer srv_project_2d_to_3d = nh.advertiseService("project_2d_to_3d", srvGet3dPointFromRoi);
+  ros::ServiceServer srv_project_2d_to_3d = nh.advertiseService("project_2d_to_3d", srvGet3dPointFromROI);
 
   ros::Rate r(30);
   while (ros::ok())
@@ -136,5 +136,6 @@ int main(int argc, char **argv)
         ROS_DEBUG("Got msg...");
       }
     }
+    r.sleep();
   }
 }
