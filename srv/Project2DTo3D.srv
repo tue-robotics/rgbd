@@ -1,3 +1,4 @@
-sensor_msgs/RegionOfInterest roi
+time stamp
+sensor_msgs/RegionOfInterest[] rois
 ---
-geometry_msgs/PointStamped point
+geometry_msgs/PointStamped[] points
