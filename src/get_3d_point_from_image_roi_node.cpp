@@ -77,29 +77,30 @@ bool srvGet3dPointFromROI(rgbd::Project2DTo3D::Request& req, rgbd::Project2DTo3D
             depths.push_back(d);
     }
 
-    if (depths.empty())
-    {
-      ROS_ERROR("All depths within ROI are invalid!");
-      return false;
-    }
-
-    std::sort(depths.begin(), depths.end());
-    float median_depth = depths[depths.size() / 2];
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // Determine roi location
-
-    rgbd::View view(*last_image, last_image->getDepthImage().cols);
-    geo::Vec3 pos = view.getRasterizer().project2Dto3D(roi_depth_center.x, roi_depth_center.y) * median_depth;
-    pos.y = -pos.y;
-    pos.z = -pos.z;
-
-    ROS_INFO("Pose (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
-
     geometry_msgs::PointStamped point_msg;
     point_msg.header.frame_id = last_image->getFrameId();
     point_msg.header.stamp = ros::Time(last_image->getTimestamp());
-    geo::convert(pos, point_msg.point);
+    if (depths.empty())
+    {
+      ROS_ERROR("All depths within ROI are invalid! We will send a NAN point");
+      point_msg.point.x = point_msg.point.y = point_msg.point.z = NAN;
+    }
+    else
+    {
+      std::sort(depths.begin(), depths.end());
+      float median_depth = depths[depths.size() / 2];
+
+      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      // Determine roi location
+
+      rgbd::View view(*last_image, last_image->getDepthImage().cols);
+      geo::Vec3 pos = view.getRasterizer().project2Dto3D(roi_depth_center.x, roi_depth_center.y) * median_depth;
+      pos.y = -pos.y;
+      pos.z = -pos.z;
+
+      ROS_INFO("Pose (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+      geo::convert(pos, point_msg.point);
+    }
 
     res.points.push_back(point_msg);
   }
