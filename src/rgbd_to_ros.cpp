@@ -34,14 +34,24 @@ int main(int argc, char **argv)
     ros::Publisher pub_depth_img = nh.advertise<sensor_msgs::Image>("depth/image", 1);
     ros::Publisher pub_depth_pc = nh.advertise<pcl::PointCloud<pcl::PointXYZ> >("depth/points", 1);
 
+    ros::Time last_image_stamp;
+
     ros::Rate r(30);
     while (ros::ok())
     {
+        if (!last_image_stamp.isZero() && ros::Time::now() - last_image_stamp > ros::Duration(5.0))
+        {
+          ROS_ERROR("rgbd to ros did not receive images for 5 seconds ... restarting ...");
+          exit(1);
+        }
+
         rgbd::Image image;
         if (client.nextImage(image))
         {
             if (image.getDepthImage().data)
             {
+                last_image_stamp = ros::Time(image.getTimestamp());
+
                 // Convert image to message
                 sensor_msgs::Image msg;
                 rgbd::convert(image.getDepthImage(), msg);
