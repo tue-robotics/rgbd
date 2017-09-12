@@ -52,75 +52,77 @@ int main(int argc, char **argv)
             {
                 last_image_stamp = ros::Time(image.getTimestamp());
 
-                // Convert image to message
-                sensor_msgs::Image msg;
-                rgbd::convert(image.getDepthImage(), msg);
-                msg.header.stamp = ros::Time(image.getTimestamp());
-                msg.header.frame_id = image.getFrameId();
-
                 // Convert camera info to message
                 rgbd::View view(image, image.getDepthImage().cols);
+
+                // Convert to image messages
+                sensor_msgs::Image msg;
                 sensor_msgs::CameraInfo info_msg;
-                rgbd::convert(view.getRasterizer(), info_msg);
-                info_msg.header = msg.header;
+                
+                rgbd::convert(image.getDepthImage(), view.getRasterizer(), msg, info_msg);
+
+                msg.header.stamp = ros::Time(image.getTimestamp());
+                msg.header.frame_id = image.getFrameId();
+                info_msg.header = msg.header;   
 
                 // Publish
                 pub_depth_img.publish(msg);
                 pub_depth_info.publish(info_msg);
 
-                // Create point cloud
-                pcl::PointCloud<pcl::PointXYZRGB>::Ptr pc_msg(new pcl::PointCloud<pcl::PointXYZRGB>());
+//                 // Create point cloud
+//                 pcl::PointCloud<pcl::PointXYZRGB>::Ptr pc_msg(new pcl::PointCloud<pcl::PointXYZRGB>());
 
-                pc_msg->header.stamp = image.getTimestamp() * 1e6;
-                pc_msg->header.frame_id = image.getFrameId();
-                pc_msg->width  = 0;
-                pc_msg->height  = 1;
-                pc_msg->is_dense = true;
+//                 pc_msg->header.stamp = image.getTimestamp() * 1e6;
+//                 pc_msg->header.frame_id = image.getFrameId();
+//                 pc_msg->width  = 0;
+//                 pc_msg->height  = 1;
+//                 pc_msg->is_dense = true;
 
-                // Fill point cloud
-                for(int y = 0; y < view.getHeight(); ++y)
-                {
-                    for(int x = 0; x < view.getWidth(); ++x)
-                    {
-                        geo::Vector3 p;
-                        if (view.getPoint3D(x, y, p))
-                        {
-                            const cv::Vec3b& c = view.getColor(x, y);
+//                 // Fill point cloud
+//                 for(int y = 0; y < view.getHeight(); ++y)
+//                 {
+//                     for(int x = 0; x < view.getWidth(); ++x)
+//                     {
+//                         geo::Vector3 p;
+//                         if (view.getPoint3D(x, y, p))
+//                         {
+//                             const cv::Vec3b& c = view.getColor(x, y);
 
-                            // Push back and correct for geolib frame
-                            pc_msg->points.push_back(pcl::PointXYZRGB());
-                            pcl::PointXYZRGB& p_pcl = pc_msg->points.back();
-                            p_pcl.x = p.x; p_pcl.y = -p.y; p_pcl.z = -p.z;
-                            p_pcl.r = c[2]; p_pcl.g = c[1]; p_pcl.b = c[0];
-                            pc_msg->width++;
-//                            std::cout << p << std::endl;
-                        }
-                        else
-                        {
-//                            pc_msg->points.push_back(pcl::PointXYZ(0, 0, 0));
-//                            pc_msg->width++;
-                            pc_msg->is_dense = false;
-                        }
-                    }
-                }
+//                             // Push back and correct for geolib frame
+//                             pc_msg->points.push_back(pcl::PointXYZRGB());
+//                             pcl::PointXYZRGB& p_pcl = pc_msg->points.back();
+//                             p_pcl.x = p.x; p_pcl.y = -p.y; p_pcl.z = -p.z;
+//                             p_pcl.r = c[2]; p_pcl.g = c[1]; p_pcl.b = c[0];
+//                             pc_msg->width++;
+// //                            std::cout << p << std::endl;
+//                         }
+//                         else
+//                         {
+// //                            pc_msg->points.push_back(pcl::PointXYZ(0, 0, 0));
+// //                            pc_msg->width++;
+//                             pc_msg->is_dense = false;
+//                         }
+//                     }
+//                 }
 
-                // Publish
-                pub_depth_pc.publish(pc_msg);
+//                 // Publish
+//                 pub_depth_pc.publish(pc_msg);
             }
 
             if (image.getRGBImage().data)
             {
-                // Convert image to message
-                sensor_msgs::Image msg;
-                rgbd::convert(image.getRGBImage(), msg);
-                msg.header.stamp = ros::Time(image.getTimestamp());
-                msg.header.frame_id = image.getFrameId();
-
                 // Convert camera info to message
                 rgbd::View view(image, image.getRGBImage().cols);
+
+                // Convert to image messages
+                sensor_msgs::Image msg;
                 sensor_msgs::CameraInfo info_msg;
-                rgbd::convert(view.getRasterizer(), info_msg);
-                info_msg.header = msg.header;
+                
+                rgbd::convert(image.getRGBImage(), view.getRasterizer(), msg, info_msg);
+
+                msg.header.stamp = ros::Time(image.getTimestamp());
+                msg.header.frame_id = image.getFrameId();
+                info_msg.header = msg.header;               
 
                 // Publish
                 pub_rgb_img.publish(msg);
