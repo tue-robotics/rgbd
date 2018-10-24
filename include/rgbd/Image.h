@@ -84,8 +84,8 @@ public:
     }
 
     friend bool serialize(const Image& image, tue::serialization::OutputArchive& a,
-                          RGBStorageType rgb_type = RGB_STORAGE_JPG,
-                          DepthStorageType depth_type = DEPTH_STORAGE_PNG);
+                          RGBStorageType rgb_type,
+                          DepthStorageType depth_type);
 
     friend bool deserialize(tue::serialization::InputArchive& a, Image& image);
 
