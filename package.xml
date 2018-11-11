@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>rgbd</name>
   <version>0.0.0</version>
   <description>The rgbd package</description>
