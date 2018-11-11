@@ -7,7 +7,6 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   image_geometry
   message_filters
-  pcl_conversions
   pcl_ros
   roscpp
   sensor_msgs
@@ -41,7 +40,7 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rgbd
-  CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_conversions pcl_ros roscpp tue_serialization
+  CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_ros roscpp sensor_msgs tue_serialization
 )
 
 ###########
