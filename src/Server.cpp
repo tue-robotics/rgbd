@@ -7,8 +7,6 @@
 
 #include <tue/serialization/conversions.h>
 
-#include <tue/profiling/timer.h>
-
 #include <ros/node_handle.h>
 
 namespace rgbd {
