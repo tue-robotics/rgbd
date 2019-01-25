@@ -16,9 +16,10 @@ class RGBDMonitor(object):
         """ Constructor
         :param timeout: if no messages have been received for <timeout> seconds, the rgbd to ros converter is killed
         """
+        self._ns = rospy.get_namespace()
         self._last_stamp = None
         self._timeout = rospy.Duration(timeout)
-        self._image_sub = rospy.Subscriber('/amigo/top_kinect/rgb/image', Image, self._image_callback)
+        self._image_sub = rospy.Subscriber('rgb/image', Image, self._image_callback)
 
     def update(self):
         """ Checks if an update has been received. Otherwise, it sends a system command to kill the node """
@@ -29,7 +30,7 @@ class RGBDMonitor(object):
         duration = rospy.Time.now() - self._last_stamp
         if duration > self._timeout:
             rospy.logerr("No messages received for {} seconds, restarting rgbd_to_ros node".format(duration.to_sec()))
-            os.system("rosnode kill /amigo/top_kinect/rgbd_to_ros")
+            os.system("rosnode kill {}rgbd_to_ros".format(self._ns)
             self._last_stamp = None
 
     def _image_callback(self, msg):
