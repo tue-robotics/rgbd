@@ -30,7 +30,7 @@ class RGBDMonitor(object):
         duration = rospy.Time.now() - self._last_stamp
         if duration > self._timeout:
             rospy.logerr("No messages received for {} seconds, restarting rgbd_to_ros node".format(duration.to_sec()))
-            os.system("rosnode kill {}rgbd_to_ros".format(self._ns)
+            os.system("rosnode kill {}rgbd_to_ros".format(self._ns))
             self._last_stamp = None
 
     def _image_callback(self, msg):
