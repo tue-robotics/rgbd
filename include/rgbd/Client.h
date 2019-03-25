@@ -11,7 +11,7 @@
 
 #include <ros/ros.h>
 
-#include "rgbd/RGBDMsg.h"
+#include "rgbd_msgs/RGBD.h"
 #include <ros/callback_queue.h>
 
 #include "rgbd/types.h"
@@ -61,7 +61,7 @@ protected:
 
     ROSImageSyncData* ros_image_sync_data_;
 
-    void rgbdImageCallback(const rgbd::RGBDMsg::ConstPtr& msg);
+    void rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg);
 
     void camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_msg);
 

@@ -4,7 +4,7 @@
 #include "rgbd/Image.h"
 #include "rgbd/shared_mem_server.h"
 
-#include "rgbd/GetRGBD.h"
+#include "rgbd_msgs/GetRGBD.h"
 
 #include <ros/publisher.h>
 #include <ros/callback_queue.h>
@@ -50,7 +50,7 @@ protected:
 
     void sendImpl(const Image& image);
 
-    bool serviceServerCallback(GetRGBDRequest& req, GetRGBDResponse& resp);
+    bool serviceServerCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetRGBDResponse& resp);
 
 };
 
