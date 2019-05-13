@@ -31,8 +31,8 @@ int main(int argc, char **argv)
     views.push_back(ChannelView("/amigo/ed/kinect/viz/sensor_normals", 0.71, 0, 0.28));
     views.push_back(ChannelView("/amigo/ed/kinect/viz/model_normals", 0.71, 0.26, 0.28));
 
-    cv::namedWindow("Presenter", CV_WINDOW_NORMAL);
-    cv::setWindowProperty("Presenter", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
+    cv::namedWindow("Presenter", cv::WINDOW_NORMAL);
+    cv::setWindowProperty("Presenter", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
 
     cv::Mat canvas(600, 1024, CV_8UC3, cv::Scalar(0, 0, 0));
 

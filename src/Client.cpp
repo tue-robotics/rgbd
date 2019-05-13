@@ -209,14 +209,14 @@ void Client::rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg) {
     {
         // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
 
-        image_ptr_->rgb_image_ = cv::imdecode(cv::Mat(msg->rgb), CV_LOAD_IMAGE_UNCHANGED);
+        image_ptr_->rgb_image_ = cv::imdecode(cv::Mat(msg->rgb), cv::IMREAD_UNCHANGED);
 
         // - - - - - - - - - - - - - - - - DEPTH IMAGE - - - - - - - - - - - - - - - -
 
         float depthQuantA = msg->params[0];
         float depthQuantB = msg->params[1];
 
-        cv::Mat decompressed = cv::imdecode(msg->depth, CV_LOAD_IMAGE_UNCHANGED);
+        cv::Mat decompressed = cv::imdecode(msg->depth, cv::IMREAD_UNCHANGED);
         image_ptr_->depth_image_ = cv::Mat(decompressed.size(), CV_32FC1);
 
         // Depth conversion

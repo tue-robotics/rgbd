@@ -10,8 +10,8 @@ int main(int argc, char **argv)
 //    client.intialize("rgbd");
     client.intialize("/amigo/top_kinect/rgbd");
 
-    cv::namedWindow("AMIGO VIEW", CV_WINDOW_NORMAL);
-    cv::setWindowProperty("AMIGO VIEW", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
+    cv::namedWindow("AMIGO VIEW", cv::WINDOW_NORMAL);
+    cv::setWindowProperty("AMIGO VIEW", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
 
     ros::Rate r(30);
     while (ros::ok())
