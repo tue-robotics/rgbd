@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
             {
                 // If not, do so
                 video_size = cv::Size2i(size * rgb_image.cols, size * rgb_image.rows);
-                video_writer.open(filename.c_str(), CV_FOURCC(format[0], format[1], format[2], format[3]), video_frame_rate, video_size);
+                video_writer.open(filename.c_str(), cv::VideoWriter::fourcc(format[0], format[1], format[2], format[3]), video_frame_rate, video_size);
 
                 if (!video_writer.isOpened())
                 {
