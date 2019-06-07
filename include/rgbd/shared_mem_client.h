@@ -19,6 +19,11 @@ public:
 
     ~SharedMemClient();
 
+    /**
+     * @brief intialize Initialize shared memory client
+     * @param server_name Fully resolved server name
+     * @return indicates success
+     */
     bool intialize(const std::string& server_name);
 
     bool initialized();

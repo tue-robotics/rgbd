@@ -37,6 +37,10 @@ public:
 
     virtual ~Client();
 
+    /**
+     * @brief intialize Initialize the client
+     * @param server_name Fully resolved server name
+     */
     void intialize(const std::string& server_name);
 
     void intialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic);
