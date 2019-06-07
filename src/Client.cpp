@@ -22,7 +22,7 @@ namespace rgbd {
 
 struct ROSImageSyncData
 {
-    ROSImageSyncData() : sync_(0), sub_rgb_sync_(0), sub_depth_sync_(0) {}
+    ROSImageSyncData() : sync_(nullptr), sub_rgb_sync_(nullptr), sub_depth_sync_(nullptr) {}
 
     ~ROSImageSyncData()
     {
@@ -41,7 +41,7 @@ struct ROSImageSyncData
 
 // ----------------------------------------------------------------------------------------
 
-Client::Client() : nh_(0), ros_image_sync_data_(0)
+Client::Client() : nh_(nullptr), ros_image_sync_data_(nullptr)
 {
 }
 
@@ -117,7 +117,7 @@ ImagePtr Client::nextImage() {
             return ImagePtr();
     }
 
-    image_ptr_ = 0;
+    image_ptr_ = nullptr;
     cb_queue_.callAvailable();
     return ImagePtr(image_ptr_);
 }
@@ -170,10 +170,9 @@ void Client::imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs
         return;
     }
 
-    if (!image_ptr_) {
+    if (!image_ptr_)
         // in this case, the pointer will always be wrapped in a shared ptr, so no mem leaks (see nextImage() )
         image_ptr_ = new Image();
-    }
 
     image_ptr_->rgb_image_ = img_ptr->image;
     image_ptr_->depth_image_ = depth_img_ptr->image;
@@ -200,10 +199,9 @@ void Client::rgbdImageCallback(const rgbd::RGBDMsg::ConstPtr& msg) {
         return;
     }
 
-    if (!image_ptr_) {
+    if (!image_ptr_)
         // in this case, the pointer will always be wrapped in a shared ptr, so no mem leaks (see nextImage() )
         image_ptr_ = new Image();
-    }
 
     if (msg->version == 1)
     {
