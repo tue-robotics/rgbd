@@ -11,7 +11,7 @@ namespace rgbd
 
 // ----------------------------------------------------------------------------------------------------
 
-SharedMemClient::SharedMemClient() : buffer_header(0)
+SharedMemClient::SharedMemClient() : buffer_header(nullptr)
 {
 }
 
@@ -53,7 +53,7 @@ bool SharedMemClient::intialize(const std::string& server_name)
 
 bool SharedMemClient::initialized()
 {
-    return (buffer_header != 0);
+    return (buffer_header != nullptr);
 }
 
 // ----------------------------------------------------------------------------------------------------
