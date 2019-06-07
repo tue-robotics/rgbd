@@ -110,7 +110,7 @@ bool Client::nextImage(Image& image)
 ImagePtr Client::nextImage() {
     if (shared_mem_client_.initialized())
     {
-        ImagePtr img(new Image); // TODO
+        ImagePtr img(new Image);
         if (shared_mem_client_.nextImage(*img))
             return img;
         else
