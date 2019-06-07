@@ -38,7 +38,7 @@ int main(int argc, char **argv)
                     for(int x = 0; x < view.getWidth(); ++x)
                     {
                         float d = view.getDepth(x, y);
-                        if (d == d)
+                        if (d == d) // ToDo: This will always be true.
                         {
                             cv::Vec3b hsv = image_hsv.at<cv::Vec3b>(y, x);
                             hsv[2] = 255 - (d / 8 * 255);
