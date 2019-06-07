@@ -56,9 +56,9 @@ Client::~Client()
 
 // ----------------------------------------------------------------------------------------
 
-void Client::intialize(const std::string& server_name)
+void Client::intialize(const std::string& server_name, float timeout)
 {
-    if (shared_mem_client_.intialize(server_name))
+    if (shared_mem_client_.intialize(server_name, timeout))
         return;
 
     // If the shared memory client could not be created, use ROS topics instead
@@ -107,7 +107,8 @@ bool Client::nextImage(Image& image)
 
 // ----------------------------------------------------------------------------------------
 
-ImagePtr Client::nextImage() {
+ImagePtr Client::nextImage()
+{
     if (shared_mem_client_.initialized())
     {
         ImagePtr img(new Image);
