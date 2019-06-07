@@ -24,6 +24,12 @@ public:
 
     virtual ~Server();
 
+    /**
+     * @brief initialize initialize server
+     * @param name Fully resolved server name
+     * @param rgb_type
+     * @param depth_type
+     */
     void initialize(const std::string& name, RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS, DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS);
 
     void send(const Image& image, bool threaded = false);
