@@ -111,10 +111,8 @@ ImagePtr Client::nextImage() {
     if (shared_mem_client_.initialized())
     {
         ImagePtr img;
-        if (shared_mem_client_.nextImage(*img))
+        shared_mem_client_.nextImage(*img);
             return img;
-        else
-            return ImagePtr();
     }
 
     image_ptr_ = nullptr;
