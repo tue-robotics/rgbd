@@ -57,6 +57,7 @@ include_directories(
 file(GLOB_RECURSE HEADER_FILES include/*.h)
 
 add_library(rgbd    src/Server.cpp
+                    src/Server_shm_only.cpp
                     src/Client.cpp
                     src/ClientRaw.cpp
                     src/Image.cpp
@@ -77,6 +78,9 @@ add_dependencies(rgbd ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 add_executable(rgbd_server src/server.cpp)
 target_link_libraries(rgbd_server rgbd)
+
+add_executable(rgbd_shm_server src/server_shm_only.cpp)
+target_link_libraries(rgbd_shm_server rgbd)
 
 add_executable(rgbd_viewer src/viewer.cpp)
 target_link_libraries(rgbd_viewer rgbd)
