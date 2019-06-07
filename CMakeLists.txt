@@ -79,8 +79,8 @@ add_dependencies(rgbd ${${PROJECT_NAME}_EXPORTED_TARGETS})
 add_executable(rgbd_server src/server.cpp)
 target_link_libraries(rgbd_server rgbd)
 
-add_executable(rgbd_shm_server src/server_shm_only.cpp)
-target_link_libraries(rgbd_shm_server rgbd)
+add_executable(rgbd_to_shm src/rgbd_to_shm.cpp)
+target_link_libraries(rgbd_to_shm rgbd)
 
 add_executable(rgbd_viewer src/viewer.cpp)
 target_link_libraries(rgbd_viewer rgbd)
