@@ -88,7 +88,7 @@ int main(int argc, char **argv)
     cv::namedWindow("RGBD", 1);
 
     //set the callback function for any mouse event
-    cv::setMouseCallback("RGBD", CallBackFunc, NULL);
+    cv::setMouseCallback("RGBD", CallBackFunc, nullptr);
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

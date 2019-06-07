@@ -189,7 +189,6 @@ void Client::camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_msg
 }
 
 // ----------------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------------
 
 void Client::rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg) {
 
