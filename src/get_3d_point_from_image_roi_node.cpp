@@ -113,15 +113,16 @@ bool srvGet3dPointFromROI(rgbd_msgs::Project2DTo3D::Request& req, rgbd_msgs::Pro
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "get_3d_point_from_image_roi");
+  ros::NodeHandle nh;
 
   // Listener
   rgbd::Client client;
-  client.intialize("rgbd");
+
+  client.intialize(ros::names::resolve("rgbd"));
 
   g_last_images_.set_capacity(100);
 
   // srv
-  ros::NodeHandle nh;
   ros::ServiceServer srv_project_2d_to_3d = nh.advertiseService("project_2d_to_3d", srvGet3dPointFromROI);
   ros::Time last_image_stamp;
 
