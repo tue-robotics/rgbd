@@ -1,4 +1,4 @@
-#include "rgbd/Server_shm_only.h"
+#include "rgbd/ServerShmOnly.h"
 #include "rgbd/RGBDMsg.h"
 #include "rgbd/Image.h"
 #include "rgbd/serialization.h"
