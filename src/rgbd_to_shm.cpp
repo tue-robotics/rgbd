@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 
-#include "rgbd/Server_shm_only.h"
+#include "rgbd/ServerShmOnly.h"
 
 #include "rgbd/ros/conversions.h"
 
