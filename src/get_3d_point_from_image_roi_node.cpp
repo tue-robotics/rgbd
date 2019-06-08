@@ -138,12 +138,12 @@ int main(int argc, char **argv)
         last_image_stamp = ros::Time(image.getTimestamp());
 
         g_last_images_.push_back(std::shared_ptr<rgbd::Image>(new rgbd::Image(image)));
-        ROS_DEBUG("[get_3d_point_from_image_roi] New image added to buffer");
+        ROS_DEBUG("New image added to buffer");
       }
     }
     if (!last_image_stamp.isZero() && ros::Time::now() - last_image_stamp > ros::Duration(5.0))
     {
-        ROS_ERROR("[get_3d_point_from_image_roi] No new images received images for 5 seconds, ...restarting");
+        ROS_ERROR("No new images received images for 5 seconds, ...restarting");
         exit(1);
     }
     r.sleep();
