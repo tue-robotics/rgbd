@@ -7,7 +7,6 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "rgbd_viewer");
 
     rgbd::Client client;
-//    client.intialize("rgbd");
     client.intialize("rgbd");
 
     ros::Rate r(30);

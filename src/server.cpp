@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
 
     // ------------------------------
 
-    rgbd_server.initialize("output", rgb_type, depth_type);
+    rgbd_server.initialize(ros::names::resolve("rgbd"), rgb_type, depth_type);
 
     ros::Subscriber sub_cam_info = nh.subscribe("cam_info", 1, &camInfoCallback);
 

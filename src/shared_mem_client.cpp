@@ -11,7 +11,7 @@ namespace rgbd
 
 // ----------------------------------------------------------------------------------------------------
 
-SharedMemClient::SharedMemClient() : buffer_header(0)
+SharedMemClient::SharedMemClient() : buffer_header(nullptr)
 {
 }
 
@@ -23,37 +23,46 @@ SharedMemClient::~SharedMemClient()
 
 // ----------------------------------------------------------------------------------------------------
 
-bool SharedMemClient::intialize(const std::string& server_name)
+bool SharedMemClient::intialize(const std::string& server_name, float timeout)
 {
-    try
+    ros::Time start = ros::Time::now();
+    ros::Time now;
+    ros::Duration d(0.1);
+    do
     {
-        std::string server_name_cp = server_name;
-        std::replace(server_name_cp.begin(), server_name_cp.end(), '/', '-');
+        try
+        {
+            std::string server_name_cp = server_name;
+            std::replace(server_name_cp.begin(), server_name_cp.end(), '/', '-');
 
-        // Open already created shared memory object.
-        shm = ipc::shared_memory_object(ipc::open_only, server_name_cp.c_str(), ipc::read_write);
+            // Open already created shared memory object.
+            shm = ipc::shared_memory_object(ipc::open_only, server_name_cp.c_str(), ipc::read_write);
 
-        mem_buffer_header = ipc::mapped_region(shm, ipc::read_write, 0, sizeof(BufferHeader));
-        mem_image = ipc::mapped_region(shm, ipc::read_only, sizeof(BufferHeader));
+            mem_buffer_header = ipc::mapped_region(shm, ipc::read_write, 0, sizeof(BufferHeader));
+            mem_image = ipc::mapped_region(shm, ipc::read_only, sizeof(BufferHeader));
 
-        buffer_header = static_cast<BufferHeader*>(mem_buffer_header.get_address());
+            buffer_header = static_cast<BufferHeader*>(mem_buffer_header.get_address());
 
-        sequence_nr = 0;
-    }
-    catch(ipc::interprocess_exception &ex)
-    {
-//        std::cout << ex.what() << std::endl;
-        return false;
-    }
+            sequence_nr = 0;
+            return true;
+        }
+        catch(ipc::interprocess_exception &ex)
+        {
+//            std::cout << ex.what() << std::endl;
+        }
+        d.sleep();
+        now = ros::Time::now();
+     }
+     while ((now - start).toSec() < timeout);
 
-    return true;
+    return false;
 }
 
 // ----------------------------------------------------------------------------------------------------
 
 bool SharedMemClient::initialized()
 {
-    return (buffer_header != 0);
+    return (buffer_header != nullptr);
 }
 
 // ----------------------------------------------------------------------------------------------------

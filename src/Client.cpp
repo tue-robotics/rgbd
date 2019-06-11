@@ -22,7 +22,7 @@ namespace rgbd {
 
 struct ROSImageSyncData
 {
-    ROSImageSyncData() : sync_(0), sub_rgb_sync_(0), sub_depth_sync_(0) {}
+    ROSImageSyncData() : sync_(nullptr), sub_rgb_sync_(nullptr), sub_depth_sync_(nullptr) {}
 
     ~ROSImageSyncData()
     {
@@ -41,7 +41,7 @@ struct ROSImageSyncData
 
 // ----------------------------------------------------------------------------------------
 
-Client::Client() : nh_(0), ros_image_sync_data_(0)
+Client::Client() : nh_(nullptr), ros_image_sync_data_(nullptr)
 {
 }
 
@@ -56,9 +56,9 @@ Client::~Client()
 
 // ----------------------------------------------------------------------------------------
 
-void Client::intialize(const std::string& server_name)
+void Client::intialize(const std::string& server_name, float timeout)
 {
-    if (shared_mem_client_.intialize(server_name))
+    if (shared_mem_client_.intialize(server_name, timeout))
         return;
 
     // If the shared memory client could not be created, use ROS topics instead
@@ -107,17 +107,18 @@ bool Client::nextImage(Image& image)
 
 // ----------------------------------------------------------------------------------------
 
-ImagePtr Client::nextImage() {
+ImagePtr Client::nextImage()
+{
     if (shared_mem_client_.initialized())
     {
-        ImagePtr img(new Image); // TODO
+        ImagePtr img(new Image);
         if (shared_mem_client_.nextImage(*img))
             return img;
         else
             return ImagePtr();
     }
 
-    image_ptr_ = 0;
+    image_ptr_ = nullptr;
     cb_queue_.callAvailable();
     return ImagePtr(image_ptr_);
 }
@@ -170,10 +171,9 @@ void Client::imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs
         return;
     }
 
-    if (!image_ptr_) {
+    if (!image_ptr_)
         // in this case, the pointer will always be wrapped in a shared ptr, so no mem leaks (see nextImage() )
         image_ptr_ = new Image();
-    }
 
     image_ptr_->rgb_image_ = img_ptr->image;
     image_ptr_->depth_image_ = depth_img_ptr->image;
@@ -190,7 +190,6 @@ void Client::camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_msg
 }
 
 // ----------------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------------
 
 void Client::rgbdImageCallback(const rgbd::RGBDMsg::ConstPtr& msg) {
 
@@ -200,10 +199,9 @@ void Client::rgbdImageCallback(const rgbd::RGBDMsg::ConstPtr& msg) {
         return;
     }
 
-    if (!image_ptr_) {
+    if (!image_ptr_)
         // in this case, the pointer will always be wrapped in a shared ptr, so no mem leaks (see nextImage() )
         image_ptr_ = new Image();
-    }
 
     if (msg->version == 1)
     {
