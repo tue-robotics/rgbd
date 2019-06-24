@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 
     // Listener
     rgbd::Client client;
-    client.intialize(argv[1]);
+    client.intialize(ros::names::resolve(argv[1]));
 
     // Publishers
     ros::NodeHandle nh;
