@@ -21,6 +21,7 @@ int main(int argc, char **argv)
     }
 
     ros::init(argc, argv, "rgbd_to_ros");
+    ros::start();
 
     // Listener
     rgbd::Client client;
