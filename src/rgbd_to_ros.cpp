@@ -21,10 +21,11 @@ int main(int argc, char **argv)
     }
 
     ros::init(argc, argv, "rgbd_to_ros");
+    ros::start(); // Required to use ros::names::resolve, without creating a nodehandle
 
     // Listener
     rgbd::Client client;
-    client.intialize(argv[1]);
+    client.intialize(ros::names::resolve(argv[1]));
 
     // Publishers
     ros::NodeHandle nh;
