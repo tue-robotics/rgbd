@@ -12,7 +12,7 @@ add_definitions(-std=c++11)
 
 add_message_files(
   FILES
-    RGBDMsg.msg
+    RGBD.msg
 )
 
 add_service_files(
