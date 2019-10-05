@@ -4,7 +4,7 @@
 #include "rgbd/Image.h"
 #include "rgbd/shared_mem_server.h"
 
-#include "rgbd/RGBDMsg.h"
+#include "rgbd_msgs/RGBDMsg.h"
 
 #include <boost/thread.hpp>
 

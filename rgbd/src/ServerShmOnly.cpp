@@ -1,5 +1,5 @@
 #include "rgbd/ServerShmOnly.h"
-#include "rgbd/RGBDMsg.h"
+#include "rgbd_msgs/RGBDMsg.h"
 #include "rgbd/Image.h"
 #include "rgbd/serialization.h"
 
