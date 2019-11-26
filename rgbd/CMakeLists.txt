@@ -104,6 +104,6 @@ target_link_libraries(rgbd_test_client rgbd)
 add_executable(rgbd_test_serialization test/test_serialization.cpp)
 target_link_libraries(rgbd_test_serialization rgbd)
 
-add_executable(amigo_full_screen src/amigo_full_screen.cpp)
-target_link_libraries(amigo_full_screen rgbd)
+add_executable(full_screen_viewer src/full_screen_viewer.cpp)
+target_link_libraries(full_screen_viewer rgbd)
 
