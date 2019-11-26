@@ -1,5 +1,5 @@
 #include "rgbd/ServerShmOnly.h"
-#include "rgbd/RGBDMsg.h"
+#include "rgbd_msgs/RGBD.h"
 #include "rgbd/Image.h"
 #include "rgbd/serialization.h"
 
@@ -38,7 +38,7 @@ void ServerShmOnly::initialize(const std::string& name, RGBStorageType rgb_type,
     shared_mem_server_.initialize(name);
 }
 
-void ServerShmOnly::rgbdImageCallback(const rgbd::RGBDMsg::ConstPtr& msg)
+void ServerShmOnly::rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg)
 {
     if (msg->version == 0)
     {

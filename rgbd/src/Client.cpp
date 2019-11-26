@@ -67,7 +67,7 @@ void Client::intialize(const std::string& server_name, float timeout)
     nh_ = new ros::NodeHandle();
 
     ros::SubscribeOptions sub_options =
-            ros::SubscribeOptions::create<rgbd::RGBDMsg>(
+            ros::SubscribeOptions::create<rgbd_msgs::RGBD>(
                 server_name, 1, boost::bind(&Client::rgbdImageCallback, this, _1), ros::VoidPtr(), &cb_queue_);
 
     sub_image_ = nh_->subscribe(sub_options);
@@ -191,7 +191,7 @@ void Client::camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_msg
 
 // ----------------------------------------------------------------------------------------
 
-void Client::rgbdImageCallback(const rgbd::RGBDMsg::ConstPtr& msg) {
+void Client::rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg) {
 
     if (msg->version == 0)
     {

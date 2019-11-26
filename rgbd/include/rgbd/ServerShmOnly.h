@@ -4,7 +4,7 @@
 #include "rgbd/Image.h"
 #include "rgbd/shared_mem_server.h"
 
-#include "rgbd/RGBDMsg.h"
+#include "rgbd_msgs/RGBD.h"
 
 #include <boost/thread.hpp>
 
@@ -22,7 +22,7 @@ public:
 
     void initialize(const std::string& name, RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS, DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS);
 
-    void rgbdImageCallback(const RGBDMsg::ConstPtr& msg);
+    void rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg);
 
     void send(const Image& image, bool threaded = false);
 

@@ -9,31 +9,13 @@ find_package(catkin REQUIRED COMPONENTS
   message_filters
   pcl_conversions
   pcl_ros
+  rgbd_msgs
   roscpp
   sensor_msgs
   tue_serialization
-  message_generation
 )
 
 add_definitions(-std=c++11)
-
-add_message_files(
-  FILES
-    RGBDMsg.msg
-)
-
-add_service_files(
-  FILES
-    GetRGBD.srv
-    Project2DTo3D.srv
-)
-
-generate_messages(
-  DEPENDENCIES
-    geometry_msgs
-    sensor_msgs
-    std_msgs
-)
 
 ###################################
 ## catkin specific configuration ##
@@ -41,7 +23,7 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rgbd
-  CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_conversions pcl_ros roscpp tue_serialization
+  CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_conversions pcl_ros rgbd_msgs roscpp tue_serialization
 )
 
 ###########
@@ -71,8 +53,7 @@ add_library(rgbd    src/Server.cpp
                     ${HEADER_FILES})
 target_link_libraries(rgbd ${catkin_LIBRARIES} rt)
 
-# compile the library after messages have been generated
-add_dependencies(rgbd ${${PROJECT_NAME}_EXPORTED_TARGETS})
+add_dependencies(rgbd ${catkin_EXPORTED_TARGETS})
 
 # - - - - - - - - - - - - - - - - - TOOLS - - - - - - - - - - - - - - - - -
 
