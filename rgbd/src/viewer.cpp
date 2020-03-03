@@ -7,7 +7,6 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "rgbd_viewer");
 
     rgbd::Client client;
-//    client.intialize("rgbd");
     client.intialize("rgbd");
 
     ros::Rate r(30);
@@ -28,7 +27,7 @@ int main(int argc, char **argv)
             if (image.getDepthImage().data && image.getRGBImage().data)
             {
                 cv::Mat image_hsv;
-                cv::cvtColor(image.getRGBImage(), image_hsv, CV_BGR2HSV);
+                cv::cvtColor(image.getRGBImage(), image_hsv, cv::COLOR_BGR2HSV);
 
                 rgbd::View view(image, image_hsv.cols);
 
@@ -49,7 +48,7 @@ int main(int argc, char **argv)
                 }
 
                 cv::Mat canvas_bgr;
-                cv::cvtColor(canvas_hsv, canvas_bgr, CV_HSV2BGR);
+                cv::cvtColor(canvas_hsv, canvas_bgr, cv::COLOR_HSV2BGR);
                 cv::imshow("image + depth", canvas_bgr);
             }
 

@@ -19,6 +19,10 @@ public:
 
     ~SharedMemServer();
 
+    /**
+     * @brief initialize Initialize shared memory server
+     * @param name Fully resolved server name
+     */
     void initialize(const std::string& name);
 
     void send(const Image& image);

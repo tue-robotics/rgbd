@@ -19,7 +19,13 @@ public:
 
     ~SharedMemClient();
 
-    bool intialize(const std::string& server_name);
+    /**
+     * @brief intialize Initialize shared memory client
+     * @param server_name Fully resolved server name
+     * @param timeout Timeout to wait for shared memory server
+     * @return indicates success
+     */
+    bool intialize(const std::string& server_name, float timeout = 5.0);
 
     bool initialized();
 
@@ -32,7 +38,7 @@ private:
     boost::interprocess::mapped_region mem_buffer_header;
     boost::interprocess::mapped_region mem_image;
 
-    int sequence_nr;
+    uint64_t sequence_nr;
 
     BufferHeader* buffer_header;
 

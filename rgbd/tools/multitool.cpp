@@ -40,9 +40,9 @@ void CallBackFunc(int event, int x, int y, int flags, void* userdata)
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rgbd_multitool", ros::init_options::AnonymousName);
-    ros::NodeHandle nh;
+    ros::start();
 
-    rgbd::Client* client = 0;
+    rgbd::Client* client = nullptr;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
         if (opt == "--rgbd")
         {
             client = new rgbd::Client;
-            client->intialize(arg);
+            client->intialize(ros::names::resolve(arg));
         }
         else
         {
@@ -80,6 +80,7 @@ int main(int argc, char **argv)
               << std::endl
               << "    spacebar - Pause" << std::endl
               << "    m        - Measure" << std::endl
+              << "    q        - Quit" << std::endl
               << std::endl;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -88,7 +89,7 @@ int main(int argc, char **argv)
     cv::namedWindow("RGBD", 1);
 
     //set the callback function for any mouse event
-    cv::setMouseCallback("RGBD", CallBackFunc, NULL);
+    cv::setMouseCallback("RGBD", CallBackFunc, nullptr);
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -192,8 +193,11 @@ int main(int argc, char **argv)
         }
 
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-        if (MODE == "MEASURE")
+        if (MODE == "DONE")
+        {
+            break;
+        }
+        else if (MODE == "MEASURE")
         {
             if (mouse_points.size() == 2)
             {
@@ -220,13 +224,15 @@ int main(int argc, char **argv)
         int i_key = cv::waitKey(3);
         if (i_key >= 0)
         {
-            char key = i_key;
+            char key = static_cast<char>(i_key);
 
             switch (key)
             {
             case ' ': PAUSE = !PAUSE;
                 break;
             case 'm': MODE = "MEASURE";
+                break;
+            case 'q': MODE="DONE";
                 break;
             default: MODE = "";
                 break;
@@ -235,8 +241,6 @@ int main(int argc, char **argv)
 
         r.sleep();
     }
-
-    ros::spin();
 
     return 0;
 }

@@ -75,7 +75,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
         std::vector<int> rgb_params;
         rgb_params.resize(3, 0);
 
-        rgb_params[0] = CV_IMWRITE_JPEG_QUALITY;
+        rgb_params[0] = cv::IMWRITE_JPEG_QUALITY;
         rgb_params[1] = 95; // default is 95
 
         std::vector<unsigned char> rgb_data;
@@ -152,7 +152,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
         std::vector<int> params;
         params.resize(3, 0);
 
-        params[0] = CV_IMWRITE_PNG_COMPRESSION;
+        params[0] = cv::IMWRITE_PNG_COMPRESSION;
         params[1] = 1;
 
         std::vector<unsigned char> depth_data;
@@ -277,7 +277,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         for(int i = 0; i < rgb_size; ++i)
             a >> rgb_data[i];
 
-        image.rgb_image_ = cv::imdecode(cv::Mat(rgb_data), CV_LOAD_IMAGE_UNCHANGED);
+        image.rgb_image_ = cv::imdecode(cv::Mat(rgb_data), cv::IMREAD_UNCHANGED);
     }
     else
     {
@@ -316,7 +316,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         for(int i = 0; i < depth_size; ++i)
             a >> depth_data[i];
 
-        cv::Mat decompressed = cv::imdecode(depth_data, CV_LOAD_IMAGE_UNCHANGED);
+        cv::Mat decompressed = cv::imdecode(depth_data, cv::IMREAD_UNCHANGED);
         cv::Mat& depth_image = image.depth_image_;
         depth_image = cv::Mat(decompressed.size(), CV_32FC1);
 

@@ -41,6 +41,7 @@ enum DepthStorageType
 class Image {
 
     friend class Server;
+    friend class ServerShmOnly;
     friend class Client;
     friend class SharedMemClient;
     friend class View;
@@ -77,6 +78,7 @@ public:
     }
 
     inline void setDepthImage(const cv::Mat& depth_image) { depth_image_ = depth_image; }
+    inline void setRGBImage(const cv::Mat& rgb_image) { rgb_image_ = rgb_image; }
 
     Image clone() const
     {

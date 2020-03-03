@@ -17,13 +17,13 @@
 
 #include <memory>
 
-#include <rgbd/Project2DTo3D.h>
+#include <rgbd_msgs/Project2DTo3D.h>
 #include <boost/circular_buffer.hpp>
 
 // ----------------------------------------------------------------------------------------------------
 
 boost::circular_buffer<std::shared_ptr<rgbd::Image>> g_last_images_;
-bool srvGet3dPointFromROI(rgbd::Project2DTo3D::Request& req, rgbd::Project2DTo3D::Response& res)
+bool srvGet3dPointFromROI(rgbd_msgs::Project2DTo3D::Request& req, rgbd_msgs::Project2DTo3D::Response& res)
 {
   std::shared_ptr<rgbd::Image> last_image;
 
@@ -113,15 +113,16 @@ bool srvGet3dPointFromROI(rgbd::Project2DTo3D::Request& req, rgbd::Project2DTo3D
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "get_3d_point_from_image_roi");
+  ros::NodeHandle nh;
 
   // Listener
   rgbd::Client client;
-  client.intialize("rgbd");
+
+  client.intialize(ros::names::resolve("rgbd"));
 
   g_last_images_.set_capacity(100);
 
   // srv
-  ros::NodeHandle nh;
   ros::ServiceServer srv_project_2d_to_3d = nh.advertiseService("project_2d_to_3d", srvGet3dPointFromROI);
   ros::Time last_image_stamp;
 
@@ -137,12 +138,12 @@ int main(int argc, char **argv)
         last_image_stamp = ros::Time(image.getTimestamp());
 
         g_last_images_.push_back(std::shared_ptr<rgbd::Image>(new rgbd::Image(image)));
-        ROS_DEBUG("Got msg...");
+        ROS_DEBUG("New image added to buffer");
       }
     }
     if (!last_image_stamp.isZero() && ros::Time::now() - last_image_stamp > ros::Duration(5.0))
     {
-        ROS_ERROR("get_3d_point_from_image_roi did not receive images for 5 seconds ... restarting ...");
+        ROS_ERROR("No new images received images for 5 seconds, ...restarting");
         exit(1);
     }
     r.sleep();

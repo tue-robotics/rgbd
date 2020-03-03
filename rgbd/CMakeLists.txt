@@ -8,31 +8,13 @@ find_package(catkin REQUIRED COMPONENTS
   image_geometry
   message_filters
   pcl_ros
+  rgbd_msgs
   roscpp
   sensor_msgs
   tue_serialization
-  message_generation
 )
 
 add_definitions(-std=c++11)
-
-add_message_files(
-  FILES
-    RGBDMsg.msg
-)
-
-add_service_files(
-  FILES
-    GetRGBD.srv
-    Project2DTo3D.srv
-)
-
-generate_messages(
-  DEPENDENCIES
-    geometry_msgs
-    sensor_msgs
-    std_msgs
-)
 
 ###################################
 ## catkin specific configuration ##
@@ -40,7 +22,7 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rgbd
-  CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_ros roscpp sensor_msgs tue_serialization
+  CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_ros rgbd_msgs roscpp sensor_msgs tue_serialization
 )
 
 ###########
@@ -56,6 +38,7 @@ include_directories(
 file(GLOB_RECURSE HEADER_FILES include/*.h)
 
 add_library(rgbd    src/Server.cpp
+                    src/ServerShmOnly.cpp
                     src/Client.cpp
                     src/ClientRaw.cpp
                     src/Image.cpp
@@ -69,10 +52,15 @@ add_library(rgbd    src/Server.cpp
                     ${HEADER_FILES})
 target_link_libraries(rgbd ${catkin_LIBRARIES} rt)
 
+add_dependencies(rgbd ${catkin_EXPORTED_TARGETS})
+
 # - - - - - - - - - - - - - - - - - TOOLS - - - - - - - - - - - - - - - - -
 
 add_executable(rgbd_server src/server.cpp)
 target_link_libraries(rgbd_server rgbd)
+
+add_executable(rgbd_to_shm src/rgbd_to_shm.cpp)
+target_link_libraries(rgbd_to_shm rgbd)
 
 add_executable(rgbd_viewer src/viewer.cpp)
 target_link_libraries(rgbd_viewer rgbd)
@@ -88,9 +76,6 @@ target_link_libraries(rgbd_save rgbd)
 
 add_executable(rgbd_view src/view.cpp)
 target_link_libraries(rgbd_view rgbd)
-
-# compile the library after messages have been generated
-add_dependencies(rgbd ${PROJECT_NAME}_generate_messages_cpp)
 
 add_executable(record_to_video tools/record_to_video.cpp)
 target_link_libraries(record_to_video rgbd)
@@ -118,6 +103,6 @@ target_link_libraries(rgbd_test_client rgbd)
 add_executable(rgbd_test_serialization test/test_serialization.cpp)
 target_link_libraries(rgbd_test_serialization rgbd)
 
-add_executable(amigo_full_screen src/amigo_full_screen.cpp)
-target_link_libraries(amigo_full_screen rgbd)
+add_executable(full_screen_viewer src/full_screen_viewer.cpp)
+target_link_libraries(full_screen_viewer rgbd)
 

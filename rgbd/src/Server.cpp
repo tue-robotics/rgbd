@@ -1,5 +1,5 @@
 #include "rgbd/Server.h"
-#include "rgbd/RGBDMsg.h"
+#include "rgbd_msgs/RGBD.h"
 #include "rgbd/Image.h"
 #include "rgbd/serialization.h"
 
@@ -31,7 +31,7 @@ Server::~Server()
 void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type)
 {
     ros::NodeHandle nh;
-    pub_image_ = nh.advertise<rgbd::RGBDMsg>(name, 1);
+    pub_image_ = nh.advertise<rgbd_msgs::RGBD>(name, 1);
     rgb_type_ = rgb_type;
     depth_type_ = depth_type;
 
@@ -76,7 +76,7 @@ void Server::sendImpl(const Image& image)
     if (pub_image_.getNumSubscribers() == 0)
         return;
 
-    rgbd::RGBDMsg msg;
+    rgbd_msgs::RGBD msg;
     msg.version = SERIALIZATION_VERSION;
 
     std::stringstream stream;
@@ -93,10 +93,10 @@ void Server::sendImpl(const Image& image)
     }
 }
 
-bool Server::serviceServerCallback(GetRGBDRequest& req, GetRGBDResponse& resp)
+bool Server::serviceServerCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetRGBDResponse& resp)
 {
     //! Check for valid input
-    if (req.compression != GetRGBDRequest::JPEG && req.compression != GetRGBDRequest::PNG)
+    if (req.compression != rgbd_msgs::GetRGBDRequest::JPEG && req.compression != rgbd_msgs::GetRGBDRequest::PNG)
     {
         ROS_ERROR("Invalid compression, only JPEG and PNG are supported (see ENUM in srv definition)");
         return false;
@@ -112,7 +112,7 @@ bool Server::serviceServerCallback(GetRGBDRequest& req, GetRGBDResponse& resp)
     cv::resize(image_copy_.getDepthImage(), resized_depth, cv::Size(req.width, image_copy_.getDepthImage().rows * ratio_depth));
 
     // Compress images
-    std::string compression_str = req.compression == GetRGBDRequest::JPEG ? ".jpeg" : ".png";
+    std::string compression_str = req.compression == rgbd_msgs::GetRGBDRequest::JPEG ? ".jpeg" : ".png";
     if (cv::imencode(compression_str, resized_rgb, resp.rgb_data) && cv::imencode(compression_str, resized_depth, resp.depth_data))
         return true;
 
