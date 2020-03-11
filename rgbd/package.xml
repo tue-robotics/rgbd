@@ -20,8 +20,5 @@
   <depend>roscpp</depend>
   <depend>sensor_msgs</depend>
   <depend>tue_serialization</depend>
-  <build_depend>message_generation</build_depend>
-
-  <exec_depend>message_runtime</exec_depend>
 
 </package>
