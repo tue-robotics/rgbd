@@ -14,7 +14,7 @@
 #include <sensor_msgs/image_encodings.h>
 #include <image_geometry/pinhole_camera_model.h>
 
-typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> KinectApproxPolicy;
+typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> RGBDApproxPolicy;
 
 namespace rgbd {
 
@@ -32,7 +32,7 @@ struct ROSImageSyncData
         delete sync_;
     }
 
-    message_filters::Synchronizer<KinectApproxPolicy>* sync_;
+    message_filters::Synchronizer<RGBDApproxPolicy>* sync_;
     message_filters::Subscriber<sensor_msgs::Image>* sub_rgb_sync_;
     message_filters::Subscriber<sensor_msgs::Image>* sub_depth_sync_;
     ros::Subscriber sub_cam_info_;
@@ -88,7 +88,7 @@ void Client::intialize(const std::string& rgb_image_topic, const std::string& de
     ros_image_sync_data_->sub_rgb_sync_ = new message_filters::Subscriber<sensor_msgs::Image>(*nh_, rgb_image_topic, 1);
     ros_image_sync_data_->sub_depth_sync_ = new message_filters::Subscriber<sensor_msgs::Image>(*nh_, depth_image_topic, 1);
 
-    ros_image_sync_data_->sync_ = new message_filters::Synchronizer<KinectApproxPolicy>(KinectApproxPolicy(10), *ros_image_sync_data_->sub_rgb_sync_, *ros_image_sync_data_->sub_depth_sync_);
+    ros_image_sync_data_->sync_ = new message_filters::Synchronizer<RGBDApproxPolicy>(RGBDApproxPolicy(10), *ros_image_sync_data_->sub_rgb_sync_, *ros_image_sync_data_->sub_depth_sync_);
     ros_image_sync_data_->sync_->registerCallback(boost::bind(&Client::imageCallback, this, _1, _2));
 }
 

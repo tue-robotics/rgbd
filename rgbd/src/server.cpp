@@ -20,7 +20,7 @@
 
 image_geometry::PinholeCameraModel cam_model_;
 
-typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> KinectApproxPolicy;
+typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> RGBDApproxPolicy;
 
 rgbd::Server rgbd_server;
 
@@ -134,7 +134,7 @@ int main(int argc, char **argv) {
     message_filters::Subscriber<sensor_msgs::Image> sub_rgb_sync_(nh, "rgb_image", 1);
     message_filters::Subscriber<sensor_msgs::Image> sub_depth_sync_(nh, "depth_image", 1);
 
-    message_filters::Synchronizer<KinectApproxPolicy> sync_(KinectApproxPolicy(10), sub_rgb_sync_, sub_depth_sync_);
+    message_filters::Synchronizer<RGBDApproxPolicy> sync_(RGBDApproxPolicy(10), sub_rgb_sync_, sub_depth_sync_);
     sync_.registerCallback(boost::bind(&imageCallback, _1, _2));
 
     ros::Rate r(max_fps);
