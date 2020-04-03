@@ -1,33 +1,21 @@
 /**
- * This client can either be used to listen to RGBD messages on a single topic
- * (use initialize(_)) or to seperate RGB / Depth / camera info topics
- * (use initialize(_, _, _)).
- *
- * The client will always convert the incoming data to rgbd::Image data structures.
+ * This client listens to RGBD messages on a single topic or via shared memory, directy rgbd::Image.
  */
 
-#ifndef RGBD_TRANSPORT_CLIENT_H_
-#define RGBD_TRANSPORT_CLIENT_H_
+#ifndef RGBD_CLIENT_H_
+#define RGBD_CLIENT_H_
 
-#include <ros/ros.h>
-
-#include "rgbd_msgs/RGBD.h"
+#include <ros/node_handle.h>
+#include <ros/subscriber.h>
 #include <ros/callback_queue.h>
 
 #include "rgbd/types.h"
 #include "rgbd/shared_mem_client.h"
 
+#include "rgbd_msgs/RGBD.h"
 
-// ROS message serialization
-#include <sensor_msgs/Image.h>
-#include <sensor_msgs/CameraInfo.h>
 
 namespace rgbd {
-
-// Forward declare struct that holds all approximate time sync stuff
-struct ROSImageSyncData;
-
-class Image;
 
 class Client {
 
@@ -43,9 +31,7 @@ public:
      */
     void intialize(const std::string& server_name, float timeout = 5.0);
 
-    void intialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic);
-
-    bool initialized() { return !sub_image_.getTopic().empty() || ros_image_sync_data_; }
+    bool initialized() { return !sub_image_.getTopic().empty(); }
 
     bool nextImage(Image& image);
 
@@ -60,19 +46,13 @@ protected:
     ros::Subscriber sub_image_;
     ros::CallbackQueue cb_queue_;
 
-    bool received_image_;
+    bool new_image_;
     Image* image_ptr_;
 
-    ROSImageSyncData* ros_image_sync_data_;
-
     void rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg);
-
-    void camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_msg);
-
-    void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageConstPtr depth_image_msg);
 
 };
 
 }
 
-#endif
+#endif // RGBD_CLIENT_H_

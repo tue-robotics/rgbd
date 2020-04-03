@@ -8,6 +8,8 @@
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
 
+#include <ros/init.h>
+#include <ros/names.h>
 #include <ros/service_client.h>
 #include <ros/node_handle.h>
 #include <ros/console.h>

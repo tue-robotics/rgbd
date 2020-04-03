@@ -1,3 +1,6 @@
+#include <ros/init.h>
+#include <ros/names.h>
+
 #include "rgbd/Client.h"
 #include "rgbd/View.h"
 #include <opencv2/highgui/highgui.hpp>
