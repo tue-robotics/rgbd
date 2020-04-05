@@ -38,6 +38,7 @@ include_directories(
 file(GLOB_RECURSE HEADER_FILES include/*.h)
 
 add_library(rgbd    src/Server.cpp
+                    src/Server_RGBD.cpp
                     src/ServerShmOnly.cpp
                     src/Client.cpp
                     src/Client_ROS.cpp
