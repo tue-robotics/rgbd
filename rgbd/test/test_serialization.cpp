@@ -6,12 +6,18 @@
 
 #include <opencv2/highgui/highgui.hpp>
 
+#include <sensor_msgs/CameraInfo.h>
+#include <sensor_msgs/distortion_models.h>
+
 int main(int argc, char **argv) {
 
     std::string test_filename = "/tmp/rgbd_test_image";
 
     {
+        sensor_msgs::CameraInfo cam_info;
+        cam_info.distortion_model = sensor_msgs::distortion_models::PLUMB_BOB;
         image_geometry::PinholeCameraModel cam_model;
+        cam_model.fromCameraInfo(cam_info);
 
         cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0,0,255));
         cv::line(rgb_image, cv::Point2i(100, 100), cv::Point2i(200, 300), cv::Scalar(255, 0, 0), 3);
