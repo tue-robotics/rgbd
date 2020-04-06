@@ -40,13 +40,8 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
     }
     else
     {
-//        a << CAMERA_MODEL_NONE;
-        const geo::DepthCamera& rasterizer = image.rasterizer_;
-
-        a << CAMERA_MODEL_PINHOLE;
-        a << rasterizer.getFocalLengthX() << rasterizer.getFocalLengthY();
-        a << rasterizer.getOpticalCenterX() << rasterizer.getOpticalCenterY();
-        a << rasterizer.getOpticalTranslationX() << rasterizer.getOpticalTranslationY();
+        std::cout << "rgbd::serialize: cam_model not initialized" << std::endl;
+        return false;
     }
 
     // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
@@ -237,11 +232,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
 //        cam_info_msg.width = image_ptr_->rgb_image_.cols;
 //        cam_info_msg.height = image_ptr_->rgb_image_.rows;
 
-        image_geometry::PinholeCameraModel cam_model;
-        cam_model.fromCameraInfo(cam_info_msg);
-        image.cam_model_ = cam_model;
-
-        image.setupRasterizer();
+        image.cam_model_.fromCameraInfo(cam_info_msg);
     }
     else
     {

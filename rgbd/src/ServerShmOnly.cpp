@@ -114,8 +114,6 @@ void ServerShmOnly::rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg)
         image_ptr_->cam_model_ = cam_model;
         image_ptr_->timestamp_ = msg->header.stamp.toSec();
         image_ptr_->frame_id_ = msg->header.frame_id;
-
-        image_ptr_->setupRasterizer();
     }
     else if (msg->version == 2)
     {

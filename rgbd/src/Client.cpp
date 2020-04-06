@@ -8,8 +8,6 @@
 #include "rgbd/serialization.h"
 #include <tue/serialization/conversions.h>
 
-#include <image_geometry/pinhole_camera_model.h>
-
 namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
@@ -149,14 +147,9 @@ void Client::rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg) {
         cam_info_msg.width = image_ptr_->rgb_image_.cols;
         cam_info_msg.height = image_ptr_->rgb_image_.rows;
 
-        image_geometry::PinholeCameraModel cam_model;
-        cam_model.fromCameraInfo(cam_info_msg);
-
-        image_ptr_->cam_model_ = cam_model;
+        image_ptr_->cam_model_.fromCameraInfo(cam_info_msg);
         image_ptr_->timestamp_ = msg->header.stamp.toSec();
         image_ptr_->frame_id_ = msg->header.frame_id;
-
-        image_ptr_->setupRasterizer();
 
         new_image_ = true;
     }

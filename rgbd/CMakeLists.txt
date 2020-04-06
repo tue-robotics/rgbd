@@ -42,7 +42,6 @@ add_library(rgbd    src/Server.cpp
                     src/ServerShmOnly.cpp
                     src/Client.cpp
                     src/Client_ROS.cpp
-                    src/Image.cpp
                     src/View.cpp
                     src/serialization.cpp
                     src/ros/conversions.cpp

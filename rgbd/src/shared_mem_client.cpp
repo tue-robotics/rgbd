@@ -2,6 +2,8 @@
 
 #include "rgbd/Image.h"
 
+#include <sensor_msgs/CameraInfo.h>
+
 #include <boost/interprocess/sync/scoped_lock.hpp>
 
 namespace ipc = boost::interprocess;
@@ -74,7 +76,8 @@ bool SharedMemClient::nextImage(Image& image)
     if (buffer_header->sequence_nr == sequence_nr)
         return false;
 
-    cv::Mat rgb, depth;
+    cv::Mat* rgb = &(image.rgb_image_);
+    cv::Mat* depth = &(image.depth_image_);
 
     //    if (buffer_header.sequence_nr == sequence_nr)
     //        buffer_header.cond_empty.wait(lock);
@@ -84,18 +87,42 @@ bool SharedMemClient::nextImage(Image& image)
     uint64_t rgb_data_size = buffer_header->rgb_width * buffer_header->rgb_height * 3;
     uint64_t depth_data_size = buffer_header->depth_width * buffer_header->depth_height * 4;
 
-    rgb = cv::Mat(buffer_header->rgb_height, buffer_header->rgb_width, CV_8UC3);
-    depth = cv::Mat(buffer_header->depth_height, buffer_header->depth_width, CV_32FC1);
+    *rgb = cv::Mat(buffer_header->rgb_height, buffer_header->rgb_width, CV_8UC3);
+    *depth = cv::Mat(buffer_header->depth_height, buffer_header->depth_width, CV_32FC1);
 
-    memcpy(rgb.data, image_data, rgb_data_size);
-    memcpy(depth.data, image_data + rgb_data_size, depth_data_size);
+    memcpy(rgb->data, image_data, rgb_data_size);
+    memcpy(depth->data, image_data + rgb_data_size, depth_data_size);
 
-    geo::DepthCamera cam_model;
-    cam_model.setFocalLengths(buffer_header->fx, buffer_header->fy);
-    cam_model.setOpticalCenter(buffer_header->cx, buffer_header->cy);
-    cam_model.setOpticalTranslation(buffer_header->tx, buffer_header->ty);
 
-    image = Image(rgb, depth, cam_model, buffer_header->frame_id, buffer_header->timestamp);
+    if (!image.cam_model_.initialized())
+    {
+        sensor_msgs::CameraInfo cam_info_msg;
+        cam_info_msg.header.frame_id = buffer_header->frame_id;
+        cam_info_msg.header.stamp.fromSec(buffer_header->timestamp);
+
+        cam_info_msg.height = buffer_header->height;
+        cam_info_msg.width = buffer_header->width;
+        cam_info_msg.binning_x = buffer_header->binning_x;
+        cam_info_msg.binning_y = buffer_header->binning_y;
+        cam_info_msg.distortion_model = buffer_header->distortion_model;
+        memcpy(&(cam_info_msg.D), buffer_header->D, 5*sizeof(double));
+        memcpy(&(cam_info_msg.K), buffer_header->K, 9*sizeof(double));
+        memcpy(&(cam_info_msg.R), buffer_header->R, 9*sizeof(double));
+        memcpy(&(cam_info_msg.P), buffer_header->P, 12*sizeof(double));
+        // CameraInfo/roi
+        cam_info_msg.roi.x_offset = buffer_header->roi_x_offset;
+        cam_info_msg.roi.y_offset = buffer_header->roi_y_offset;
+        cam_info_msg.roi.height = buffer_header->roi_height;
+        cam_info_msg.roi.width = buffer_header->roi_width;
+        cam_info_msg.roi.do_rectify = buffer_header->roi_do_rectify;
+
+        image_geometry::PinholeCameraModel cam_model;
+        cam_model.fromCameraInfo(cam_info_msg);
+        image.cam_model_ = cam_model;
+    }
+
+    image.frame_id_ = buffer_header->frame_id;
+    image.timestamp_ = buffer_header->timestamp;
 
     sequence_nr = buffer_header->sequence_nr;
 

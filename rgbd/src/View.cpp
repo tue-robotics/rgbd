@@ -21,10 +21,10 @@ View::View(const Image& image, int width) :
     float w_depth = image.depth_image_.cols;
     float h_depth = image.depth_image_.rows;
 
-    rasterizer_.setFocalLengths(image.rasterizer_.getFocalLengthX() / w_depth * width_,
-                                image.rasterizer_.getFocalLengthY() / h_depth * height_);
-    rasterizer_.setOpticalCenter(image.rasterizer_.getOpticalCenterX() / w_depth * width_,
-                                 image.rasterizer_.getOpticalCenterY() / h_depth * height_);
+    rasterizer_.setFocalLengths(image.cam_model_.fx() / w_depth * width_,
+                                image.cam_model_.fy() / h_depth * height_);
+    rasterizer_.setOpticalCenter(image.cam_model_.cx() / w_depth * width_,
+                                 image.cam_model_.cy() / h_depth * height_);
     rasterizer_.setOpticalTranslation(0, 0);
 }
 

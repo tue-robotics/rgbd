@@ -50,21 +50,22 @@ class Image {
 
 public:
 
-    Image();
+    Image()
+    {
+    }
 
     Image(const cv::Mat& rgb_image,
-              const cv::Mat& depth_image,
-              const image_geometry::PinholeCameraModel& cam_model,
-              const std::string& frame_id,
-              double timestamp);
-
-    Image(const cv::Mat& rgb_image,
-              const cv::Mat& depth_image,
-              const geo::DepthCamera& cam_model,
-              const std::string& frame_id,
-              double timestamp);
-
-    void setupRasterizer();
+          const cv::Mat& depth_image,
+          const image_geometry::PinholeCameraModel& cam_model,
+          const std::string& frame_id,
+          double timestamp) :
+    rgb_image_(rgb_image),
+    depth_image_(depth_image),
+    cam_model_(cam_model),
+    frame_id_(frame_id),
+    timestamp_(timestamp)
+    {
+    }
 
     inline const cv::Mat& getDepthImage() const { return depth_image_; }
     inline const cv::Mat& getRGBImage() const { return rgb_image_; }
@@ -79,12 +80,19 @@ public:
         return timestamp_;
     }
 
+    inline const image_geometry::PinholeCameraModel& getCameraModel() const
+    {
+        return cam_model_;
+    }
+
     inline void setDepthImage(const cv::Mat& depth_image) { depth_image_ = depth_image; }
     inline void setRGBImage(const cv::Mat& rgb_image) { rgb_image_ = rgb_image; }
+    inline void setFrameId(const std::string frame_id) { frame_id_ = frame_id; }
+    inline void setTimestamp(const double timestamp) { timestamp_ = timestamp; }
 
     Image clone() const
     {
-        return Image(rgb_image_.clone(), depth_image_.clone(), rasterizer_, frame_id_, timestamp_);
+        return Image(rgb_image_.clone(), depth_image_.clone(), cam_model_, frame_id_, timestamp_);
     }
 
     friend bool serialize(const Image& image, tue::serialization::OutputArchive& a,
@@ -99,7 +107,6 @@ protected:
     cv::Mat depth_image_;
 
     image_geometry::PinholeCameraModel cam_model_;
-    geo::DepthCamera rasterizer_;
 
     std::string frame_id_;
     double timestamp_;

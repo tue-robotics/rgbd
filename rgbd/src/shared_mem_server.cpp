@@ -75,15 +75,25 @@ void SharedMemServer::send(const Image& image)
         buffer_header->depth_width = depth.cols;
         buffer_header->depth_height = depth.rows;
 
-        rgbd::View view(image, image.getDepthImage().cols);
-        buffer_header->fx = view.getRasterizer().getFocalLengthX();
-        buffer_header->fy = view.getRasterizer().getFocalLengthY();
-        buffer_header->cx = view.getRasterizer().getOpticalCenterX();
-        buffer_header->cy = view.getRasterizer().getOpticalCenterY();
-        buffer_header->tx = view.getRasterizer().getOpticalTranslationX();
-        buffer_header->ty = view.getRasterizer().getOpticalTranslationY();
-
         memcpy(buffer_header->frame_id, image.getFrameId().c_str(), image.getFrameId().size() + 1);
+
+        // CameraInfo
+        const sensor_msgs::CameraInfo& cam_info = image.getCameraModel().cameraInfo();
+        buffer_header->height = cam_info.height;
+        buffer_header->width = cam_info.width;
+        buffer_header->binning_x = cam_info.binning_x;
+        buffer_header->binning_y = cam_info.binning_y;
+        memcpy(buffer_header->distortion_model, cam_info.distortion_model.c_str(), cam_info.distortion_model.size() + 1);
+        memcpy(buffer_header->D, &(cam_info.D), 5*sizeof(double));
+        memcpy(buffer_header->K, &(cam_info.K), 9*sizeof(double));
+        memcpy(buffer_header->R, &(cam_info.R), 9*sizeof(double));
+        memcpy(buffer_header->P, &(cam_info.P), 12*sizeof(double));
+        // CameraInfo/roi
+        buffer_header->roi_x_offset = cam_info.roi.x_offset;
+        buffer_header->roi_y_offset = cam_info.roi.y_offset;
+        buffer_header->roi_height = cam_info.roi.height;
+        buffer_header->roi_width = cam_info.roi.width;
+        buffer_header->roi_do_rectify = cam_info.roi.do_rectify;
     }
 
     {
