@@ -13,7 +13,7 @@ namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
 
-ClientROS::ClientROS() : sync_(nullptr), sub_rgb_sync_(nullptr), sub_depth_sync_(nullptr)
+ClientROS::ClientROS() : sync_(nullptr), sub_rgb_sync_(nullptr), sub_depth_sync_(nullptr), image_ptr_(nullptr)
 {
 }
 
