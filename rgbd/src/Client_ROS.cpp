@@ -73,12 +73,12 @@ void ClientROS::camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_
 
 void ClientROS::imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageConstPtr depth_image_msg)
 {
-    cv_bridge::CvImagePtr img_ptr, depth_img_ptr;
+    cv_bridge::CvImagePtr rgb_img_ptr, depth_img_ptr;
 
     // Convert RGB image
     try
     {
-        img_ptr = cv_bridge::toCvCopy(rgb_image_msg, sensor_msgs::image_encodings::BGR8);
+        rgb_img_ptr = cv_bridge::toCvCopy(rgb_image_msg, sensor_msgs::image_encodings::BGR8);
     }
     catch (cv_bridge::Exception& e)
     {
@@ -117,7 +117,7 @@ void ClientROS::imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_m
         // in this case, the pointer will always be wrapped in a shared ptr, so no mem leaks (see nextImage() )
         image_ptr_ = new Image();
 
-    image_ptr_->rgb_image_ = img_ptr->image;
+    image_ptr_->rgb_image_ = rgb_img_ptr->image;
     image_ptr_->depth_image_ = depth_img_ptr->image;
     image_ptr_->cam_model_ = cam_model_;
     image_ptr_->frame_id_ = rgb_image_msg->header.frame_id;
