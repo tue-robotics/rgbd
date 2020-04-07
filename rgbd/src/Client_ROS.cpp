@@ -66,7 +66,14 @@ ImagePtr ClientROS::nextImage()
 void ClientROS::camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_msg)
 {
     if (!cam_model_.initialized())
+    {
         cam_model_.fromCameraInfo(cam_info_msg);
+        sub_cam_info_.shutdown();
+    }
+    else
+    {
+        ROS_ERROR("CameraInfo should unsubsribe after inititializing the camera model");
+    }
 }
 
 // ----------------------------------------------------------------------------------------
