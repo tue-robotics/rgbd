@@ -105,10 +105,11 @@ bool SharedMemClient::nextImage(Image& image)
         cam_info_msg.binning_x = buffer_header->binning_x;
         cam_info_msg.binning_y = buffer_header->binning_y;
         cam_info_msg.distortion_model = buffer_header->distortion_model;
-        memcpy(&(cam_info_msg.D), buffer_header->D, 5*sizeof(double));
-        memcpy(&(cam_info_msg.K), buffer_header->K, 9*sizeof(double));
-        memcpy(&(cam_info_msg.R), buffer_header->R, 9*sizeof(double));
-        memcpy(&(cam_info_msg.P), buffer_header->P, 12*sizeof(double));
+        cam_info_msg.D.resize(5); // std::vector
+        memcpy(cam_info_msg.D.data(), buffer_header->D, 5*sizeof(double)); // std::vector
+        memcpy(&(cam_info_msg.K.elems), buffer_header->K, 9*sizeof(double)); // boost::array
+        memcpy(&(cam_info_msg.R.elems), buffer_header->R, 9*sizeof(double)); // boost::array
+        memcpy(&(cam_info_msg.P.elems), buffer_header->P, 12*sizeof(double)); // boost::array
         // CameraInfo/roi
         cam_info_msg.roi.x_offset = buffer_header->roi_x_offset;
         cam_info_msg.roi.y_offset = buffer_header->roi_y_offset;
@@ -116,9 +117,7 @@ bool SharedMemClient::nextImage(Image& image)
         cam_info_msg.roi.width = buffer_header->roi_width;
         cam_info_msg.roi.do_rectify = buffer_header->roi_do_rectify;
 
-        image_geometry::PinholeCameraModel cam_model;
-        cam_model.fromCameraInfo(cam_info_msg);
-        image.cam_model_ = cam_model;
+        image.cam_model_.fromCameraInfo(cam_info_msg);
     }
 
     image.frame_id_ = buffer_header->frame_id;
