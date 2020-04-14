@@ -13,6 +13,7 @@
 #include <ros/service_client.h>
 #include <ros/node_handle.h>
 #include <ros/console.h>
+#include <ros/time.h>
 
 #include <std_srvs/Empty.h>
 #include <sensor_msgs/RegionOfInterest.h>
@@ -24,7 +25,7 @@
 
 // ----------------------------------------------------------------------------------------------------
 
-boost::circular_buffer<std::shared_ptr<rgbd::Image>> g_last_images_;
+boost::circular_buffer<std::shared_ptr<rgbd::Image> > g_last_images_;
 bool srvGet3dPointFromROI(rgbd_msgs::Project2DTo3D::Request& req, rgbd_msgs::Project2DTo3D::Response& res)
 {
   std::shared_ptr<rgbd::Image> last_image;
