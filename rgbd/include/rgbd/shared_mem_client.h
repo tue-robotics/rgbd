@@ -10,13 +10,26 @@
 namespace rgbd
 {
 
+/**
+ * @brief Client which uses shared memory, requires a server on the same machine
+ */
 class SharedMemClient
 {
 
 public:
 
+    /**
+     * @brief Constructor
+     *
+     * buffer_header pointer is initialized to nullptr
+     */
     SharedMemClient();
 
+    /**
+     * @brief Destructor
+     *
+     * buffer_header is not deleted as the client doesn't close the shared memory
+     */
     ~SharedMemClient();
 
     /**
@@ -27,8 +40,18 @@ public:
      */
     bool intialize(const std::string& server_name, float timeout = 5.0);
 
+    /**
+     * @brief Check if the client is initialized. nextImage should not be called if client is not initialized.
+     * @return initialized or not
+     */
     bool initialized();
 
+    /**
+     * @brief Get a new Image. If no new image has been received, the sequence nummer is still the same as the previous call,
+     * no image will be written and false will be returned.
+     * @param image Image reference which will be written.
+     * @return valid image written
+     */
     bool nextImage(Image& image);
 
 private:
@@ -38,6 +61,9 @@ private:
     boost::interprocess::mapped_region mem_buffer_header;
     boost::interprocess::mapped_region mem_image;
 
+    /**
+     * @brief sequence_nr Contains the sequence nummer of the last NextImage call
+     */
     uint64_t sequence_nr;
 
     BufferHeader* buffer_header;
