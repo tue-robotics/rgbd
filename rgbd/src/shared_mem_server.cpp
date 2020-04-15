@@ -12,7 +12,7 @@ namespace rgbd
 
 // ----------------------------------------------------------------------------------------------------
 
-SharedMemServer::SharedMemServer() : buffer_header(nullptr)
+SharedMemServer::SharedMemServer() : buffer_header(nullptr), image_data(nullptr)
 {
 }
 

@@ -10,13 +10,26 @@
 namespace rgbd
 {
 
+/**
+ * @brief Server which uses shared memory, this only works for clients on the same machine
+ */
 class SharedMemServer
 {
 
 public:
 
+    /**
+     * @brief Constructor
+     *
+     * buffer_header pointer is initialized to nullptr
+     */
     SharedMemServer();
 
+    /**
+     * @brief Destructor
+     *
+     * Shared memory object is deleted
+     */
     ~SharedMemServer();
 
     /**
@@ -25,6 +38,10 @@ public:
      */
     void initialize(const std::string& name);
 
+    /**
+     * @brief send Write a new image to the shared memory
+     * @param image Image to be written to the shared memory
+     */
     void send(const Image& image);
 
 private:
