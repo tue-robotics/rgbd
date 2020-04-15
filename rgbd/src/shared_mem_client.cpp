@@ -105,8 +105,8 @@ bool SharedMemClient::nextImage(Image& image)
         cam_info_msg.binning_x = buffer_header->binning_x;
         cam_info_msg.binning_y = buffer_header->binning_y;
         cam_info_msg.distortion_model = buffer_header->distortion_model;
-        cam_info_msg.D.resize(5); // std::vector
-        memcpy(cam_info_msg.D.data(), buffer_header->D, 5*sizeof(double)); // std::vector
+        cam_info_msg.D.resize(buffer_header->size_D); // std::vector
+        memcpy(cam_info_msg.D.data(), buffer_header->D, buffer_header->size_D*sizeof(double)); // std::vector
         memcpy(&(cam_info_msg.K.elems), buffer_header->K, 9*sizeof(double)); // boost::array
         memcpy(&(cam_info_msg.R.elems), buffer_header->R, 9*sizeof(double)); // boost::array
         memcpy(&(cam_info_msg.P.elems), buffer_header->P, 12*sizeof(double)); // boost::array

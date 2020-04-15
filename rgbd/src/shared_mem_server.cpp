@@ -84,7 +84,8 @@ void SharedMemServer::send(const Image& image)
         buffer_header->binning_x = cam_info.binning_x;
         buffer_header->binning_y = cam_info.binning_y;
         memcpy(buffer_header->distortion_model, cam_info.distortion_model.c_str(), cam_info.distortion_model.size() + 1);
-        memcpy(buffer_header->D, cam_info.D.data(), std::min<size_t>(cam_info.D.size(), 5)*sizeof(double)); // std::vector
+        buffer_header->size_D = std::min<size_t>(cam_info.D.size(), 5); // Max 5
+        memcpy(buffer_header->D, cam_info.D.data(), buffer_header->size_D*sizeof(double)); // std::vector
         memcpy(buffer_header->K, &(cam_info.K.elems), 9*sizeof(double)); // boost::array
         memcpy(buffer_header->R, &(cam_info.R.elems), 9*sizeof(double)); // boost::array
         memcpy(buffer_header->P, &(cam_info.P.elems), 12*sizeof(double)); // boost::array
