@@ -106,3 +106,8 @@ target_link_libraries(rgbd_test_client rgbd)
 add_executable(rgbd_test_serialization test/test_serialization.cpp)
 target_link_libraries(rgbd_test_serialization rgbd)
 
+if (CATKIN_ENABLE_TESTING)
+  catkin_add_gtest(serialization_gtest test/serialization_gtest.cpp)
+  target_link_libraries(serialization_gtest rgbd ${catkin_LIBRARIES})
+endif()
+
