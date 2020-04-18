@@ -92,6 +92,9 @@ target_link_libraries(rgbd_analyser rgbd)
 add_executable(rgbd_to_rgb_png tools/rgbd_to_rgb_png.cpp)
 target_link_libraries(rgbd_to_rgb_png rgbd)
 
+add_executable(full_screen_viewer src/full_screen_viewer.cpp)
+target_link_libraries(full_screen_viewer rgbd)
+
 # - - - - - - - - - - - - - - - - - TESTS - - - - - - - - - - - - - - - - -
 
 add_executable(rgbd_test_server test/test_server.cpp)
@@ -102,7 +105,4 @@ target_link_libraries(rgbd_test_client rgbd)
 
 add_executable(rgbd_test_serialization test/test_serialization.cpp)
 target_link_libraries(rgbd_test_serialization rgbd)
-
-add_executable(full_screen_viewer src/full_screen_viewer.cpp)
-target_link_libraries(full_screen_viewer rgbd)
 
