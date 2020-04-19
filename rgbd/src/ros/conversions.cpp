@@ -87,8 +87,8 @@ void convert(const geo::DepthCamera& cam_model, sensor_msgs::CameraInfo& cam_mod
     cam_model_msg.P[11] = 0;
 
     // TODO: add width and height field to DepthCamera
-    cam_model_msg.width = (cam_model.getOpticalCenterX() + 0.5) * 2; // 0.5 instead of 1 to round up properly
-    cam_model_msg.height = (cam_model.getOpticalCenterY() + 0.5) * 2;
+    cam_model_msg.width = static_cast<unsigned int>((cam_model.getOpticalCenterX() + 0.5) * 2); // 0.5 instead of 1 to round up properly
+    cam_model_msg.height = static_cast<unsigned int>((cam_model.getOpticalCenterY() + 0.5) * 2);
 
     cam_model_msg.binning_x = 0;
     cam_model_msg.binning_y = 0;
@@ -108,13 +108,15 @@ bool convert(const cv::Mat& image,
     cv_bridge::CvImage image_cv_bridge;
 
     cv::Mat img_rect;
-    if (image.type() == CV_32FC1) { // Depth image 
+    if (image.type() == CV_32FC1) // Depth image
+    {
         image_cv_bridge.encoding = "32FC1";
-        img_rect = cv::Mat(height, width, CV_32FC1, cv::Scalar(0));
+        img_rect = cv::Mat(static_cast<int>(height), static_cast<int>(width), CV_32FC1, cv::Scalar(0));
     }
-    else if (image.type() == CV_8UC3)  { // RGB image;
+    else if (image.type() == CV_8UC3) // RGB image
+    {
         image_cv_bridge.encoding = "bgr8";
-        img_rect = cv::Mat(height, width, CV_8UC3, cv::Scalar(0, 0, 0));
+        img_rect = cv::Mat(static_cast<int>(height), static_cast<int>(width), CV_8UC3, cv::Scalar(0, 0, 0));
     }
     else
         return false;
