@@ -85,14 +85,14 @@ bool ServerRGBD::serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetR
         boost::unique_lock<boost::mutex> ul(image_mutex_);
         image = image_.clone();
     }
-    //! Check for valid input
+    // Check for valid input
     if (req.compression != rgbd_msgs::GetRGBDRequest::JPEG && req.compression != rgbd_msgs::GetRGBDRequest::PNG)
     {
         ROS_ERROR("Invalid compression, only JPEG and PNG are supported (see ENUM in srv definition)");
         return false;
     }
 
-    //! Create resized images
+    // Create resized images
     cv::Mat resized_rgb, resized_depth;
 
     double ratio_rgb = static_cast<double>(req.width / image.getRGBImage().cols);
