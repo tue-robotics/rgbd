@@ -12,7 +12,7 @@
 
 namespace rgbd {
 
-const int ServerRGBD::SERIALIZATION_VERSION = 2;
+const int ServerRGBD::MESSAGE_VERSION = 2;
 
 // ----------------------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ void ServerRGBD::sendImpl(const Image& image)
         return;
 
     rgbd_msgs::RGBD msg;
-    msg.version = SERIALIZATION_VERSION;
+    msg.version = MESSAGE_VERSION;
 
     std::stringstream stream;
     tue::serialization::OutputArchive a(stream);

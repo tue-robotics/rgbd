@@ -31,7 +31,7 @@ public:
 
     void send(const Image& image, bool threaded = false);
 
-    const static int SERIALIZATION_VERSION;
+    const static int MESSAGE_VERSION;
 
 protected:
 
