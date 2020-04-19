@@ -54,7 +54,7 @@ target_link_libraries(rgbd ${catkin_LIBRARIES} rt)
 
 add_dependencies(rgbd ${catkin_EXPORTED_TARGETS})
 
-# - - - - - - - - - - - - - - - - - TOOLS - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - NODES - - - - - - - - - - - - - - - - -
 
 add_executable(rgbd_server src/server.cpp)
 target_link_libraries(rgbd_server rgbd)
@@ -62,23 +62,19 @@ target_link_libraries(rgbd_server rgbd)
 add_executable(rgbd_to_shm src/rgbd_to_shm.cpp)
 target_link_libraries(rgbd_to_shm rgbd)
 
-add_executable(rgbd_viewer src/viewer.cpp)
-target_link_libraries(rgbd_viewer rgbd)
-
 add_executable(rgbd_to_ros src/rgbd_to_ros.cpp)
 target_link_libraries(rgbd_to_ros rgbd)
 
 add_executable(get_3d_point_from_image_roi_node src/get_3d_point_from_image_roi_node.cpp)
 target_link_libraries(get_3d_point_from_image_roi_node rgbd)
 
-add_executable(rgbd_save src/save.cpp)
-target_link_libraries(rgbd_save rgbd)
+# - - - - - - - - - - - - - - - - - TOOLS - - - - - - - - - - - - - - - - -
 
-add_executable(rgbd_view src/view.cpp)
-target_link_libraries(rgbd_view rgbd)
+add_executable(analyser tools/analyser.cpp)
+target_link_libraries(analyser rgbd)
 
-add_executable(record_to_video tools/record_to_video.cpp)
-target_link_libraries(record_to_video rgbd)
+add_executable(full_screen_viewer tools/full_screen_viewer.cpp)
+target_link_libraries(full_screen_viewer rgbd)
 
 add_executable(multitool tools/multitool.cpp)
 target_link_libraries(multitool rgbd)
@@ -86,14 +82,20 @@ target_link_libraries(multitool rgbd)
 add_executable(presenter tools/presenter.cpp)
 target_link_libraries(presenter rgbd)
 
-add_executable(rgbd_analyser tools/analyser.cpp)
-target_link_libraries(rgbd_analyser rgbd)
+add_executable(record_to_video tools/record_to_video.cpp)
+target_link_libraries(record_to_video rgbd)
 
 add_executable(rgbd_to_rgb_png tools/rgbd_to_rgb_png.cpp)
 target_link_libraries(rgbd_to_rgb_png rgbd)
 
-add_executable(full_screen_viewer src/full_screen_viewer.cpp)
-target_link_libraries(full_screen_viewer rgbd)
+add_executable(save tools/save.cpp)
+target_link_libraries(save rgbd)
+
+add_executable(view tools/view.cpp)
+target_link_libraries(view rgbd)
+
+add_executable(viewer tools/viewer.cpp)
+target_link_libraries(viewer rgbd)
 
 # - - - - - - - - - - - - - - - - - TESTS - - - - - - - - - - - - - - - - -
 
@@ -106,8 +108,9 @@ target_link_libraries(rgbd_test_client rgbd)
 add_executable(rgbd_test_serialization test/test_serialization.cpp)
 target_link_libraries(rgbd_test_serialization rgbd)
 
+# - - - - - - - - - - - - - - - - - - CI - - - - - - - - - - - - - - - - -
+
 if (CATKIN_ENABLE_TESTING)
   catkin_add_gtest(serialization_gtest test/serialization_gtest.cpp)
   target_link_libraries(serialization_gtest rgbd ${catkin_LIBRARIES})
 endif()
-
