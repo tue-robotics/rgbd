@@ -11,8 +11,6 @@
 
 namespace rgbd {
 
-const int ServerShmOnly::SERIALIZATION_VERSION = 2;
-
 // ----------------------------------------------------------------------------------------
 
 ServerShmOnly::ServerShmOnly()

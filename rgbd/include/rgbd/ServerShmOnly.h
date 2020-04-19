@@ -26,8 +26,6 @@ public:
 
     void send(const Image& image, bool threaded = false);
 
-    const static int SERIALIZATION_VERSION;
-
 protected:
 
     RGBStorageType rgb_type_;
