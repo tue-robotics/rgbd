@@ -1,14 +1,16 @@
 #include "rgbd/Server_RGBD.h"
-#include "rgbd/Image.h"
-#include "rgbd/serialization.h"
-#include "rgbd_msgs/RGBD.h"
+
+#include <opencv2/core/mat.hpp>
+#include <opencv2/imgcodecs.hpp>
+
+#include <rgbd_msgs/RGBD.h>
+
+#include <ros/node_handle.h>
 
 #include <tue/serialization/conversions.h>
 
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/core/mat.hpp>
-
-#include <ros/node_handle.h>
+#include "rgbd/Image.h"
+#include "rgbd/serialization.h"
 
 namespace rgbd {
 

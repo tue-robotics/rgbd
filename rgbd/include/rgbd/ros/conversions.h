@@ -1,8 +1,12 @@
 #ifndef RGBD_ROS_CONVERSIONS_H_
 #define RGBD_ROS_CONVERSIONS_H_
 
+#include <rgbd_msgs/RGBD.h>
+
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
+
+#include "rgbd/Image.h"
 
 namespace cv { class Mat; }
 namespace geo { class DepthCamera; }
@@ -15,6 +19,10 @@ bool convert(const cv::Mat& image, sensor_msgs::Image& image_msg);
 void convert(const geo::DepthCamera& cam_model, sensor_msgs::CameraInfo& cam_model_msg);
 
 bool convert(const cv::Mat& image, const geo::DepthCamera& cam_model, sensor_msgs::Image& image_msg, sensor_msgs::CameraInfo& cam_model_msg);
+
+bool convert(rgbd_msgs::RGBDConstPtr msg, rgbd::ImagePtr image);
+
+bool convert(rgbd_msgs::RGBDConstPtr msg, rgbd::Image* image);
 
 }
 

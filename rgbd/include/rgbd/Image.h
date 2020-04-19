@@ -6,6 +6,7 @@
 #include <opencv2/core/core.hpp>
 #include <image_geometry/pinhole_camera_model.h>
 #include <geolib/sensors/DepthCamera.h>
+#include <rgbd_msgs/RGBD.h>
 
 namespace tue
 {
@@ -100,6 +101,8 @@ public:
                           DepthStorageType depth_type);
 
     friend bool deserialize(tue::serialization::InputArchive& a, Image& image);
+
+    friend bool convert(rgbd_msgs::RGBDConstPtr msg, rgbd::Image* image);
 
 protected:
 

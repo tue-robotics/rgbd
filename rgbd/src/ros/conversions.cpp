@@ -1,9 +1,18 @@
 #include "rgbd/ros/conversions.h"
 
-#include <opencv2/core/core.hpp>
+#include <cv_bridge/cv_bridge.h>
+
 #include <geolib/sensors/DepthCamera.h>
 
-#include <cv_bridge/cv_bridge.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+
+#include <sensor_msgs/distortion_models.h>
+
+#include <tue/serialization/conversions.h>
+
+#include "rgbd/serialization.h"
+
 
 namespace rgbd
 {
@@ -23,6 +32,8 @@ bool convert(const cv::Mat& image, sensor_msgs::Image& image_msg)
 
     image_cv_bridge.image = image;
     image_cv_bridge.toImageMsg(image_msg);
+
+    return true;
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -83,6 +94,8 @@ void convert(const geo::DepthCamera& cam_model, sensor_msgs::CameraInfo& cam_mod
     cam_model_msg.binning_y = 0;
 }
 
+// ----------------------------------------------------------------------------------------------------
+
 bool convert(const cv::Mat& image, 
              const geo::DepthCamera& cam_model, 
              sensor_msgs::Image& image_msg, 
@@ -112,6 +125,107 @@ bool convert(const cv::Mat& image,
 
     image_cv_bridge.image = img_rect;
     image_cv_bridge.toImageMsg(image_msg);
+
+    return true;
+}
+
+// ----------------------------------------------------------------------------------------------------
+
+bool convert(rgbd_msgs::RGBDConstPtr msg, rgbd::ImagePtr image)
+{
+    if (!image)
+        image.reset(new rgbd::Image);
+    return convert(msg, &(*image));
+}
+
+// ----------------------------------------------------------------------------------------------------
+
+bool convert(rgbd_msgs::RGBDConstPtr msg, rgbd::Image* image)
+{
+    if (msg->version == 0)
+    {
+        std::cout << "convert: version 0 not supported" << std::endl;
+        return false;
+    }
+
+    if (!image)
+        image = new rgbd::Image;
+
+    if (msg->version == 1)
+    {
+        // - - - - - - - - - - - - - - - - RGB IMAGE - - - - - - - - - - - - - - - -
+
+        image->rgb_image_ = cv::imdecode(cv::Mat(msg->rgb), cv::IMREAD_UNCHANGED);
+
+        // - - - - - - - - - - - - - - - - DEPTH IMAGE - - - - - - - - - - - - - - - -
+
+        float depthQuantA = static_cast<float>(msg->params[0]);
+        float depthQuantB = static_cast<float>(msg->params[1]);
+
+        cv::Mat decompressed = cv::imdecode(msg->depth, cv::IMREAD_UNCHANGED);
+        image->depth_image_ = cv::Mat(decompressed.size(), CV_32FC1);
+
+        // Depth conversion
+        cv::MatIterator_<float> itDepthImg = image->depth_image_.begin<float>(),
+                itDepthImg_end = image->depth_image_.end<float>();
+        cv::MatConstIterator_<unsigned short> itInvDepthImg = decompressed.begin<unsigned short>(),
+                itInvDepthImg_end = decompressed.end<unsigned short>();
+
+        for (; (itDepthImg != itDepthImg_end) && (itInvDepthImg != itInvDepthImg_end); ++itDepthImg, ++itInvDepthImg)
+        {
+            // check for NaN & max depth
+            if (*itInvDepthImg)
+            {
+                *itDepthImg = depthQuantA / (static_cast<float>(*itInvDepthImg) - depthQuantB);
+            } else{
+                *itDepthImg = std::numeric_limits<float>::quiet_NaN();
+            }
+        }
+
+        // - - - - - - - - - - - - - - - - CAMERA INFO - - - - - - - - - - - - - - - -
+
+        sensor_msgs::CameraInfo cam_info_msg;
+
+        cam_info_msg.D.resize(5, 0.0);
+        cam_info_msg.K.fill(0.0);
+        cam_info_msg.K[0] = msg->cam_info[0];  // fx
+        cam_info_msg.K[2] = msg->cam_info[2];  // cx
+        cam_info_msg.K[4] = msg->cam_info[1];  // fy
+        cam_info_msg.K[5] = msg->cam_info[3];  // cy
+        cam_info_msg.K[8] = 1.0;
+
+        cam_info_msg.R.fill(0.0);
+        cam_info_msg.R[0] = 1.0;
+        cam_info_msg.R[4] = 1.0;
+        cam_info_msg.R[8] = 1.0;
+
+        cam_info_msg.P.fill(0.0);
+        cam_info_msg.P[0] = msg->cam_info[0];  // fx
+        cam_info_msg.P[2] = msg->cam_info[2];  // cx
+        cam_info_msg.P[3] = msg->cam_info[4];  // Tx
+        cam_info_msg.P[5] = msg->cam_info[1];  // fy
+        cam_info_msg.P[6] = msg->cam_info[3];  // cy
+        cam_info_msg.P[7] = msg->cam_info[5];  // cy
+        cam_info_msg.P[10] = 1.0;
+
+        cam_info_msg.distortion_model = sensor_msgs::distortion_models::PLUMB_BOB;
+        cam_info_msg.width = static_cast<unsigned int>(image->rgb_image_.cols);
+        cam_info_msg.height = static_cast<unsigned int>(image->rgb_image_.rows);
+        image_geometry::PinholeCameraModel cam_model;
+        cam_model.fromCameraInfo(cam_info_msg);
+
+        image->cam_model_ = cam_model;
+        image->timestamp_ = msg->header.stamp.toSec();
+        image->frame_id_ = msg->header.frame_id;
+    }
+    else if (msg->version == 2)
+    {
+        std::stringstream stream;
+        tue::serialization::convert(msg->rgb, stream);
+        tue::serialization::InputArchive a(stream);
+        rgbd::deserialize(a, *image);
+    }
+    return true;
 }
 
 }
