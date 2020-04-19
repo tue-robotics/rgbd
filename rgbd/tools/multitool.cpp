@@ -1,5 +1,7 @@
+#include <ros/duration.h>
 #include <ros/init.h>
 #include <ros/names.h>
+#include <ros/rate.h>
 
 #include "rgbd/Client.h"
 #include "rgbd/View.h"
@@ -88,11 +90,12 @@ int main(int argc, char **argv)
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    const std::string window_name = "RGBD";
     //Create a window
-    cv::namedWindow("RGBD", 1);
+    cv::namedWindow(window_name, 1);
 
     //set the callback function for any mouse event
-    cv::setMouseCallback("RGBD", CallBackFunc, nullptr);
+    cv::setMouseCallback(window_name, CallBackFunc, nullptr);
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -223,7 +226,7 @@ int main(int argc, char **argv)
 
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-        cv::imshow("RGBD", canvas);
+        cv::imshow(window_name, canvas);
         int i_key = cv::waitKey(3);
         if (i_key >= 0)
         {
@@ -244,6 +247,9 @@ int main(int argc, char **argv)
 
         r.sleep();
     }
+
+    delete client;
+    ros::Duration(0.5).sleep(); // To prevent segfaults on closing the the window
 
     return 0;
 }
