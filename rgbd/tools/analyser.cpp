@@ -61,7 +61,5 @@ int main(int argc, char **argv)
         r.sleep();
     }
 
-    ros::spin();
-
     return 0;
 }
