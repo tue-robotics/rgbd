@@ -1,4 +1,3 @@
-#include <ros/duration.h>
 #include <ros/init.h>
 #include <ros/names.h>
 
@@ -52,7 +51,7 @@ int main(int argc, char **argv)
         r.sleep();
     }
 
-    ros::Duration(0.5).sleep();
+    usleep(500000);
 
     return 0;
 }

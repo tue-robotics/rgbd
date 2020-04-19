@@ -1,4 +1,3 @@
-#include <ros/duration.h>
 #include <ros/init.h>
 #include <ros/names.h>
 #include <ros/rate.h>
@@ -249,7 +248,7 @@ int main(int argc, char **argv)
     }
 
     delete client;
-    ros::Duration(0.5).sleep(); // To prevent segfaults on closing the the window
+    usleep(500000); // To prevent segfaults on closing the the window
 
     return 0;
 }
