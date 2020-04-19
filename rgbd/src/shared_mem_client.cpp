@@ -2,6 +2,9 @@
 
 #include "rgbd/Image.h"
 
+#include <ros/init.h>
+#include <ros/time.h>
+
 #include <sensor_msgs/CameraInfo.h>
 
 #include <boost/interprocess/sync/scoped_lock.hpp>
@@ -55,7 +58,7 @@ bool SharedMemClient::intialize(const std::string& server_name, float timeout)
         d.sleep();
         now = ros::Time::now();
      }
-     while ((now - start).toSec() < timeout);
+     while (ros::ok() && (now - start).toSec() < timeout);
 
     return false;
 }
