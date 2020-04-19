@@ -46,6 +46,7 @@ void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthS
 
 void Server::send(const Image& image, bool threaded)
 {
+    threaded = false; // Running threaded causes a memory leak.
     if (!threaded)
     {
         sendImpl(image);
