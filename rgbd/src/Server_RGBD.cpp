@@ -95,11 +95,11 @@ bool ServerRGBD::serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetR
     //! Create resized images
     cv::Mat resized_rgb, resized_depth;
 
-    double ratio_rgb = (double) req.width / image.getRGBImage().cols;
-    double ratio_depth = (double) req.width / image.getDepthImage().cols;
+    double ratio_rgb = static_cast<double>(req.width / image.getRGBImage().cols);
+    double ratio_depth = static_cast<double>( req.width / image.getDepthImage().cols);
 
-    cv::resize(image.getRGBImage(), resized_rgb, cv::Size(req.width, image.getRGBImage().rows * ratio_rgb));
-    cv::resize(image.getDepthImage(), resized_depth, cv::Size(req.width, image.getDepthImage().rows * ratio_depth));
+    cv::resize(image.getRGBImage(), resized_rgb, cv::Size(req.width, static_cast<int>(image.getRGBImage().rows * ratio_rgb)));
+    cv::resize(image.getDepthImage(), resized_depth, cv::Size(req.width, static_cast<int>(image.getDepthImage().rows * ratio_depth)));
 
     // Compress images
     std::string compression_str = req.compression == rgbd_msgs::GetRGBDRequest::JPEG ? ".jpeg" : ".png";
