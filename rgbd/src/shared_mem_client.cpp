@@ -71,6 +71,9 @@ bool SharedMemClient::initialized()
 
 bool SharedMemClient::nextImage(Image& image)
 {
+    if (!initialized())
+        return false;
+
     ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header->mutex);
 
     if (buffer_header->sequence_nr == sequence_nr)

@@ -41,7 +41,7 @@ public:
     bool intialize(const std::string& server_name, float timeout = 5.0);
 
     /**
-     * @brief Check if the client is initialized. nextImage should not be called if client is not initialized.
+     * @brief Check if the client is initialized. nextImage shouldn't be called if client is not initialized.
      * @return initialized or not
      */
     bool initialized();
