@@ -44,9 +44,6 @@ protected:
 
     ClientSHM client_shm_;
 
-    bool new_image_;
-    Image* image_ptr_;
-
 };
 
 }
