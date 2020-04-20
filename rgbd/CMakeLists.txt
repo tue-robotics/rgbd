@@ -56,8 +56,8 @@ add_dependencies(rgbd ${catkin_EXPORTED_TARGETS})
 
 # - - - - - - - - - - - - - - - - - NODES - - - - - - - - - - - - - - - - -
 
-add_executable(rgbd_server src/server.cpp)
-target_link_libraries(rgbd_server rgbd)
+add_executable(ros_to_rgbd src/ros_to_rgbd.cpp)
+target_link_libraries(ros_to_rgbd rgbd)
 
 add_executable(rgbd_to_shm src/rgbd_to_shm.cpp)
 target_link_libraries(rgbd_to_shm rgbd)

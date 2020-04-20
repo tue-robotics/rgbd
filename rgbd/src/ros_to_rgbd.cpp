@@ -1,25 +1,18 @@
-#include <ros/ros.h>
-
-#include <sensor_msgs/Image.h>
-#include <sensor_msgs/CameraInfo.h>
-
-#include <sensor_msgs/image_encodings.h>
-
-// CV bridge
-#include <cv_bridge/cv_bridge.h>
+#include <ros/init.h>
+#include <ros/names.h>
+#include <ros/node_handle.h>
+#include <ros/rate.h>
 
 #include "rgbd/Client_ROS.h"
 #include "rgbd/Image.h"
 #include "rgbd/Server.h"
-
-#include <image_geometry/pinhole_camera_model.h>
+#include "rgbd/types.h"
 
 // ----------------------------------------------------------------------------------------
 
 int main(int argc, char **argv) {
-    ros::init(argc, argv, "rgbd_transport_server");
+    ros::init(argc, argv, "ros_to_rgbd");
 
-    ros::NodeHandle nh;
     ros::NodeHandle nh_private("~");
 
     double max_fps = 30;
@@ -63,18 +56,20 @@ int main(int argc, char **argv) {
 
     // ------------------------------
 
-    rgbd::ClientROS client_ros;
-    client_ros.intialize("rgb_image", "depth_image", "cam_info");
-    rgbd::Server rgbd_server;
-    rgbd_server.initialize(ros::names::resolve("rgbd"), rgb_type, depth_type);
+    rgbd::ClientROS client;
+    rgbd::Server server;
+
+    client.intialize("rgb_image", "depth_image", "cam_info");
+    server.initialize(ros::names::resolve("rgbd"), rgb_type, depth_type);
 
     rgbd::ImagePtr image_ptr;
 
     ros::Rate r(max_fps);
-    while (ros::ok()) {
-        image_ptr = client_ros.nextImage();
+    while (ros::ok())
+    {
+        image_ptr = client.nextImage();
         if (image_ptr)
-            rgbd_server.send(*image_ptr);
+            server.send(*image_ptr);
         r.sleep();
     }
 
