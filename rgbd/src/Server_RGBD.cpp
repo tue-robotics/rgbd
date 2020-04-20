@@ -48,6 +48,7 @@ void ServerRGBD::initialize(const std::string& name, RGBStorageType rgb_type, De
 
 void ServerRGBD::send(const Image& image, bool threaded)
 {
+    threaded = false; // Running threaded causes a memory leak.
     if (!threaded)
     {
         sendImpl(image);
