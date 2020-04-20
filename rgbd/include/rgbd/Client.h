@@ -10,7 +10,7 @@
 #include <ros/callback_queue.h>
 
 #include "rgbd/types.h"
-#include "rgbd/shared_mem_client.h"
+#include "rgbd/Client_SHM.h"
 
 #include "rgbd_msgs/RGBD.h"
 
@@ -39,7 +39,7 @@ public:
 
 protected:
 
-    SharedMemClient shared_mem_client_;
+    ClientSHM client_shm_;
 
     ros::NodeHandle* nh_;
 

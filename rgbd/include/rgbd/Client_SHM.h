@@ -1,5 +1,5 @@
-#ifndef RGBD_SHARED_MEM_CLIENT_H_
-#define RGBD_SHARED_MEM_CLIENT_H_
+#ifndef RGBD_CLIENT_SHM_H_
+#define RGBD_CLIENT_SHM_H_
 
 #include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/mapped_region.hpp>
@@ -13,7 +13,7 @@ namespace rgbd
 /**
  * @brief Client which uses shared memory, requires a server on the same machine
  */
-class SharedMemClient
+class ClientSHM
 {
 
 public:
@@ -23,14 +23,14 @@ public:
      *
      * buffer_header pointer is initialized to nullptr
      */
-    SharedMemClient();
+    ClientSHM();
 
     /**
      * @brief Destructor
      *
      * buffer_header is not deleted as the client doesn't close the shared memory
      */
-    ~SharedMemClient();
+    ~ClientSHM();
 
     /**
      * @brief intialize Initialize shared memory client

@@ -47,7 +47,7 @@ class Image {
     friend class Client;
     friend class ClientRGBD;
     friend class ClientROS;
-    friend class SharedMemClient;
+    friend class ClientSHM;
     friend class View;
 
 public:

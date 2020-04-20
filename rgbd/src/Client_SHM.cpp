@@ -1,4 +1,4 @@
-#include "rgbd/shared_mem_client.h"
+#include "rgbd/Client_SHM.h"
 
 #include "rgbd/Image.h"
 
@@ -16,19 +16,19 @@ namespace rgbd
 
 // ----------------------------------------------------------------------------------------------------
 
-SharedMemClient::SharedMemClient() : buffer_header(nullptr)
+ClientSHM::ClientSHM() : buffer_header(nullptr)
 {
 }
 
 // ----------------------------------------------------------------------------------------------------
 
-SharedMemClient::~SharedMemClient()
+ClientSHM::~ClientSHM()
 {
 }
 
 // ----------------------------------------------------------------------------------------------------
 
-bool SharedMemClient::intialize(const std::string& server_name, float timeout)
+bool ClientSHM::intialize(const std::string& server_name, float timeout)
 {
     ros::Time start = ros::Time::now();
     ros::Time now;
@@ -65,14 +65,14 @@ bool SharedMemClient::intialize(const std::string& server_name, float timeout)
 
 // ----------------------------------------------------------------------------------------------------
 
-bool SharedMemClient::initialized()
+bool ClientSHM::initialized()
 {
     return (buffer_header != nullptr);
 }
 
 // ----------------------------------------------------------------------------------------------------
 
-bool SharedMemClient::nextImage(Image& image)
+bool ClientSHM::nextImage(Image& image)
 {
     if (!initialized())
         return false;
