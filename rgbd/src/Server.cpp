@@ -39,7 +39,7 @@ void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthS
     service_server_ = nh.advertiseService(name, &Server::serviceServerCallback, this);
 
     // Initialize shared mem server
-    shared_mem_server_.initialize(name);
+    server_shm_.initialize(name);
 }
 
 // ----------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ void Server::sendImpl(const Image& image)
         if (!lock)
             return;
 
-        shared_mem_server_.send(image_copy_);
+        server_shm_.send(image_copy_);
     }
 
     if (pub_image_.getNumSubscribers() == 0)

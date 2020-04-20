@@ -1,4 +1,4 @@
-#include "rgbd/shared_mem_server.h"
+#include "rgbd/Server_SHM.h"
 
 #include "rgbd/Image.h"
 #include "rgbd/View.h"
@@ -12,13 +12,13 @@ namespace rgbd
 
 // ----------------------------------------------------------------------------------------------------
 
-SharedMemServer::SharedMemServer() : buffer_header(nullptr), image_data(nullptr)
+ServerSHM::ServerSHM() : buffer_header(nullptr), image_data(nullptr)
 {
 }
 
 // ----------------------------------------------------------------------------------------------------
 
-SharedMemServer::~SharedMemServer()
+ServerSHM::~ServerSHM()
 {
     if (!shared_mem_name_.empty())
         ipc::shared_memory_object::remove(shared_mem_name_.c_str());
@@ -26,7 +26,7 @@ SharedMemServer::~SharedMemServer()
 
 // ----------------------------------------------------------------------------------------------------
 
-void SharedMemServer::initialize(const std::string& name)
+void ServerSHM::initialize(const std::string& name)
 {
     shared_mem_name_ = name;
     std::replace(shared_mem_name_.begin(), shared_mem_name_.end(), '/', '-');
@@ -34,7 +34,7 @@ void SharedMemServer::initialize(const std::string& name)
 
 // ----------------------------------------------------------------------------------------------------
 
-void SharedMemServer::send(const Image& image)
+void ServerSHM::send(const Image& image)
 {
     if (shared_mem_name_.empty())
     {

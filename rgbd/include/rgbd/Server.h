@@ -2,7 +2,7 @@
 #define RGBD_TRANSPORT_SERVER_H_
 
 #include "rgbd/Image.h"
-#include "rgbd/shared_mem_server.h"
+#include "rgbd/Server_SHM.h"
 
 #include "rgbd_msgs/GetRGBD.h"
 
@@ -47,7 +47,7 @@ protected:
 
     rgbd::Image image_copy_;
 
-    SharedMemServer shared_mem_server_;
+    ServerSHM server_shm_;
 
     // Threaded sending
     boost::mutex send_mutex_shared_;

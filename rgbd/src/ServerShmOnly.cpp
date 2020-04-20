@@ -34,7 +34,7 @@ void ServerShmOnly::initialize(const std::string& name, RGBStorageType rgb_type,
     depth_type_ = depth_type;
 
     // Initialize shared mem server
-    shared_mem_server_.initialize(name);
+    server_shm_.initialize(name);
 }
 
 void ServerShmOnly::rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg)
@@ -67,7 +67,7 @@ void ServerShmOnly::sendImpl(const Image& image)
     if (!lock)
         return;
 
-    shared_mem_server_.send(image);
+    server_shm_.send(image);
 }
 
 }

@@ -2,7 +2,7 @@
 #define SERVER_SHM_ONLY_H_
 
 #include "rgbd/Image.h"
-#include "rgbd/shared_mem_server.h"
+#include "rgbd/Server_SHM.h"
 
 #include "rgbd_msgs/RGBD.h"
 
@@ -33,7 +33,7 @@ protected:
 
     ImagePtr image_ptr_;
 
-    SharedMemServer shared_mem_server_;
+    ServerSHM server_shm_;
 
     // Threaded sending
     boost::mutex send_mutex_shared_;

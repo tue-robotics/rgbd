@@ -39,6 +39,7 @@ file(GLOB_RECURSE HEADER_FILES include/*.h)
 
 add_library(rgbd    src/Server.cpp
                     src/Server_RGBD.cpp
+                    src/Server_SHM.cpp
                     src/ServerShmOnly.cpp
                     src/Client.cpp
                     src/Client_RGBD.cpp
@@ -47,8 +48,6 @@ add_library(rgbd    src/Server.cpp
                     src/View.cpp
                     src/serialization.cpp
                     src/ros/conversions.cpp
-
-                    src/shared_mem_server.cpp
 
                     ${HEADER_FILES})
 target_link_libraries(rgbd ${catkin_LIBRARIES} rt)
