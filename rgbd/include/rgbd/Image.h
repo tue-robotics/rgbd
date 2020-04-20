@@ -45,6 +45,7 @@ class Image {
     friend class ServerRGBD;
     friend class ServerShmOnly;
     friend class Client;
+    friend class ClientRGBD;
     friend class ClientROS;
     friend class SharedMemClient;
     friend class View;

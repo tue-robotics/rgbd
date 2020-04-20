@@ -41,6 +41,7 @@ add_library(rgbd    src/Server.cpp
                     src/Server_RGBD.cpp
                     src/ServerShmOnly.cpp
                     src/Client.cpp
+                    src/Client_RGBD.cpp
                     src/Client_ROS.cpp
                     src/View.cpp
                     src/serialization.cpp
