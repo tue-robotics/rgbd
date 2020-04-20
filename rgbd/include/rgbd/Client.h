@@ -10,6 +10,7 @@
 #include <ros/callback_queue.h>
 
 #include "rgbd/types.h"
+#include "rgbd/Client_RGBD.h"
 #include "rgbd/Client_SHM.h"
 
 #include "rgbd_msgs/RGBD.h"
@@ -31,7 +32,7 @@ public:
      */
     void intialize(const std::string& server_name, float timeout = 5.0);
 
-    bool initialized() { return !sub_image_.getTopic().empty(); }
+    bool initialized() { return (client_shm_.initialized() || client_rgbd_.initialized()); }
 
     bool nextImage(Image& image);
 
@@ -39,17 +40,12 @@ public:
 
 protected:
 
+    ClientRGBD client_rgbd_;
+
     ClientSHM client_shm_;
-
-    ros::NodeHandle* nh_;
-
-    ros::Subscriber sub_image_;
-    ros::CallbackQueue cb_queue_;
 
     bool new_image_;
     Image* image_ptr_;
-
-    void rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg);
 
 };
 

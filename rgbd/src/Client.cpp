@@ -9,7 +9,7 @@ namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
 
-Client::Client() : nh_(nullptr)
+Client::Client()
 {
 }
 
@@ -17,8 +17,6 @@ Client::Client() : nh_(nullptr)
 
 Client::~Client()
 {
-    sub_image_.shutdown();
-    delete nh_;
 }
 
 // ----------------------------------------------------------------------------------------
@@ -28,16 +26,7 @@ void Client::intialize(const std::string& server_name, float timeout)
     if (client_shm_.intialize(server_name, timeout))
         return;
 
-    // If the shared memory client could not be created, use ROS topics instead
-
-    delete nh_;
-    nh_ = new ros::NodeHandle();
-
-    ros::SubscribeOptions sub_options =
-            ros::SubscribeOptions::create<rgbd_msgs::RGBD>(
-                server_name, 1, boost::bind(&Client::rgbdImageCallback, this, _1), ros::VoidPtr(), &cb_queue_);
-
-    sub_image_ = nh_->subscribe(sub_options);
+    client_rgbd_.intialize(server_name);
 }
 
 // ----------------------------------------------------------------------------------------
@@ -47,10 +36,7 @@ bool Client::nextImage(Image& image)
     if (client_shm_.initialized())
         return client_shm_.nextImage(image);
 
-    new_image_ = false;
-    image_ptr_ = &image;
-    cb_queue_.callAvailable();
-    return new_image_;
+    return client_rgbd_.nextImage(image);
 }
 
 // ----------------------------------------------------------------------------------------
@@ -66,16 +52,7 @@ ImagePtr Client::nextImage()
             return ImagePtr();
     }
 
-    image_ptr_ = nullptr;
-    cb_queue_.callAvailable();
-    return ImagePtr(image_ptr_);
-}
-
-// ----------------------------------------------------------------------------------------
-
-void Client::rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg)
-{
-    new_image_ = convert(msg, image_ptr_);
+    return client_rgbd_.nextImage();
 }
 
 }
