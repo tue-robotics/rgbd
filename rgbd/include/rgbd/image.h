@@ -43,10 +43,8 @@ class Image {
 
     friend class ServerRGBD;
     friend class ServerSHM;
-    friend class ClientRGBD;
     friend class ClientROS;
     friend class ClientSHM;
-    friend class View;
 
 public:
 
