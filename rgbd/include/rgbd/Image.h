@@ -101,7 +101,7 @@ public:
 
     friend bool deserialize(tue::serialization::InputArchive& a, Image& image);
 
-    friend bool convert(rgbd_msgs::RGBDConstPtr msg, rgbd::Image* image);
+    friend bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image* image);
 
 protected:
 

@@ -133,16 +133,7 @@ bool convert(const cv::Mat& image,
 
 // ----------------------------------------------------------------------------------------------------
 
-bool convert(rgbd_msgs::RGBDConstPtr msg, rgbd::ImagePtr image)
-{
-    if (!image)
-        image.reset(new rgbd::Image);
-    return convert(msg, &(*image));
-}
-
-// ----------------------------------------------------------------------------------------------------
-
-bool convert(rgbd_msgs::RGBDConstPtr msg, rgbd::Image* image)
+bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image* image)
 {
     if (msg->version == 0)
     {

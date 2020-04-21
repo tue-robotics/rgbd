@@ -20,9 +20,7 @@ void convert(const geo::DepthCamera& cam_model, sensor_msgs::CameraInfo& cam_mod
 
 bool convert(const cv::Mat& image, const geo::DepthCamera& cam_model, sensor_msgs::Image& image_msg, sensor_msgs::CameraInfo& cam_model_msg);
 
-bool convert(rgbd_msgs::RGBDConstPtr msg, rgbd::ImagePtr image);
-
-bool convert(rgbd_msgs::RGBDConstPtr msg, rgbd::Image* image);
+bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image* image);
 
 }
 
