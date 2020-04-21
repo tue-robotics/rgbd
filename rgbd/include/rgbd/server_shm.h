@@ -48,14 +48,14 @@ private:
 
     std::string shared_mem_name_;
 
-    boost::interprocess::shared_memory_object shm;
+    boost::interprocess::shared_memory_object shm_;
 
-    boost::interprocess::mapped_region mem_buffer_header;
-    boost::interprocess::mapped_region mem_image;
+    boost::interprocess::mapped_region mem_buffer_header_;
+    boost::interprocess::mapped_region mem_image_;
 
-    BufferHeader* buffer_header;
+    BufferHeader* buffer_header_;
 
-    unsigned char* image_data;
+    unsigned char* image_data_;
 
 };
 

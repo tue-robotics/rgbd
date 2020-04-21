@@ -12,7 +12,7 @@ namespace rgbd
 
 // ----------------------------------------------------------------------------------------------------
 
-ServerSHM::ServerSHM() : buffer_header(nullptr), image_data(nullptr)
+ServerSHM::ServerSHM() : buffer_header_(nullptr), image_data_(nullptr)
 {
 }
 
@@ -49,64 +49,64 @@ void ServerSHM::send(const Image& image)
     uint64_t depth_data_size = depth.cols * depth.rows * 4;
     uint64_t image_data_size = rgb_data_size + depth_data_size;
 
-    if (!buffer_header)
+    if (!buffer_header_)
     {
         // First time
         // Make sure possibly existing memory with same name is removed
         ipc::shared_memory_object::remove(shared_mem_name_.c_str());
 
         //Create a shared memory object.
-        shm = ipc::shared_memory_object(ipc::create_only, shared_mem_name_.c_str(), ipc::read_write);
+        shm_ = ipc::shared_memory_object(ipc::create_only, shared_mem_name_.c_str(), ipc::read_write);
 
         //Set size
-        shm.truncate(sizeof(BufferHeader) + image_data_size);
+        shm_.truncate(sizeof(BufferHeader) + image_data_size);
 
         // Map buffer region
-        mem_buffer_header = ipc::mapped_region(shm, ipc::read_write, 0, sizeof(BufferHeader));
-        mem_image = ipc::mapped_region(shm, ipc::read_write, sizeof(BufferHeader));
+        mem_buffer_header_ = ipc::mapped_region(shm_, ipc::read_write, 0, sizeof(BufferHeader));
+        mem_image_ = ipc::mapped_region(shm_, ipc::read_write, sizeof(BufferHeader));
 
-        buffer_header = new (mem_buffer_header.get_address()) BufferHeader;
-        buffer_header->sequence_nr = 0;
+        buffer_header_ = new (mem_buffer_header_.get_address()) BufferHeader;
+        buffer_header_->sequence_nr = 0;
 
-        image_data = new (mem_image.get_address()) uchar[image_data_size];
+        image_data_ = new (mem_image_.get_address()) uchar[image_data_size];
 
-        buffer_header->rgb_width = rgb.cols;
-        buffer_header->rgb_height = rgb.rows;
-        buffer_header->depth_width = depth.cols;
-        buffer_header->depth_height = depth.rows;
+        buffer_header_->rgb_width = rgb.cols;
+        buffer_header_->rgb_height = rgb.rows;
+        buffer_header_->depth_width = depth.cols;
+        buffer_header_->depth_height = depth.rows;
 
-        memcpy(buffer_header->frame_id, image.getFrameId().c_str(), image.getFrameId().size() + 1);
+        memcpy(buffer_header_->frame_id, image.getFrameId().c_str(), image.getFrameId().size() + 1);
 
         // CameraInfo
         const sensor_msgs::CameraInfo& cam_info = image.getCameraModel().cameraInfo();
-        buffer_header->height = cam_info.height;
-        buffer_header->width = cam_info.width;
-        buffer_header->binning_x = cam_info.binning_x;
-        buffer_header->binning_y = cam_info.binning_y;
-        memcpy(buffer_header->distortion_model, cam_info.distortion_model.c_str(), cam_info.distortion_model.size() + 1);
-        buffer_header->size_D = std::min<size_t>(cam_info.D.size(), 5); // Max 5
-        memcpy(buffer_header->D, cam_info.D.data(), buffer_header->size_D*sizeof(double)); // std::vector
-        memcpy(buffer_header->K, &(cam_info.K.elems), 9*sizeof(double)); // boost::array
-        memcpy(buffer_header->R, &(cam_info.R.elems), 9*sizeof(double)); // boost::array
-        memcpy(buffer_header->P, &(cam_info.P.elems), 12*sizeof(double)); // boost::array
+        buffer_header_->height = cam_info.height;
+        buffer_header_->width = cam_info.width;
+        buffer_header_->binning_x = cam_info.binning_x;
+        buffer_header_->binning_y = cam_info.binning_y;
+        memcpy(buffer_header_->distortion_model, cam_info.distortion_model.c_str(), cam_info.distortion_model.size() + 1);
+        buffer_header_->size_D = std::min<size_t>(cam_info.D.size(), 5); // Max 5
+        memcpy(buffer_header_->D, cam_info.D.data(), buffer_header_->size_D*sizeof(double)); // std::vector
+        memcpy(buffer_header_->K, &(cam_info.K.elems), 9*sizeof(double)); // boost::array
+        memcpy(buffer_header_->R, &(cam_info.R.elems), 9*sizeof(double)); // boost::array
+        memcpy(buffer_header_->P, &(cam_info.P.elems), 12*sizeof(double)); // boost::array
         // CameraInfo/roi
-        buffer_header->roi_x_offset = cam_info.roi.x_offset;
-        buffer_header->roi_y_offset = cam_info.roi.y_offset;
-        buffer_header->roi_height = cam_info.roi.height;
-        buffer_header->roi_width = cam_info.roi.width;
-        buffer_header->roi_do_rectify = cam_info.roi.do_rectify;
+        buffer_header_->roi_x_offset = cam_info.roi.x_offset;
+        buffer_header_->roi_y_offset = cam_info.roi.y_offset;
+        buffer_header_->roi_height = cam_info.roi.height;
+        buffer_header_->roi_width = cam_info.roi.width;
+        buffer_header_->roi_do_rectify = cam_info.roi.do_rectify;
     }
 
     {
-        ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header->mutex);
+        ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header_->mutex);
 
-        buffer_header->timestamp = image.getTimestamp();
+        buffer_header_->timestamp = image.getTimestamp();
 
-        memcpy(image_data, rgb.data, rgb_data_size);
-        memcpy(image_data + rgb_data_size, depth.data, depth_data_size);
+        memcpy(image_data_, rgb.data, rgb_data_size);
+        memcpy(image_data_ + rgb_data_size, depth.data, depth_data_size);
 
-        buffer_header->cond_empty.notify_one();
-        ++buffer_header->sequence_nr;
+        buffer_header_->cond_empty.notify_one();
+        ++buffer_header_->sequence_nr;
     }
 }
 
