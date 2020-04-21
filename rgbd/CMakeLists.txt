@@ -37,15 +37,15 @@ include_directories(
 # to show header files in Qt Creator
 file(GLOB_RECURSE HEADER_FILES include/*.h)
 
-add_library(rgbd    src/Server.cpp
-                    src/Server_RGBD.cpp
-                    src/Server_SHM.cpp
-                    src/Client.cpp
+add_library(rgbd    src/Client.cpp
                     src/Client_RGBD.cpp
                     src/Client_ROS.cpp
                     src/Client_SHM.cpp
-                    src/View.cpp
                     src/serialization.cpp
+                    src/Server.cpp
+                    src/Server_RGBD.cpp
+                    src/Server_SHM.cpp
+                    src/View.cpp
                     src/ros/conversions.cpp
 
                     ${HEADER_FILES})
