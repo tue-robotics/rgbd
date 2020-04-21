@@ -1,4 +1,4 @@
-#include "rgbd/Server.h"
+#include "rgbd/server.h"
 
 namespace rgbd {
 

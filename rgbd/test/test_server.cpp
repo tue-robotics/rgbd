@@ -1,4 +1,4 @@
-#include "rgbd/Server.h"
+#include "rgbd/server.h"
 
 #include <ros/init.h>
 #include <ros/names.h>

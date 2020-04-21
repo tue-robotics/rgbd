@@ -1,8 +1,8 @@
-#include "rgbd/Client.h"
+#include "rgbd/client.h"
 
 #include <opencv2/core/mat.hpp>
 
-#include "rgbd/Image.h"
+#include "rgbd/image.h"
 #include "rgbd/ros/conversions.h"
 
 namespace rgbd {

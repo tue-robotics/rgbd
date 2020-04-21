@@ -1,7 +1,7 @@
-#include "rgbd/Server_SHM.h"
+#include "rgbd/server_shm.h"
 
-#include "rgbd/Image.h"
-#include "rgbd/View.h"
+#include "rgbd/image.h"
+#include "rgbd/view.h"
 
 #include <boost/interprocess/sync/scoped_lock.hpp>
 

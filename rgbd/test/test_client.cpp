@@ -4,8 +4,8 @@
 #include <ros/names.h>
 #include <ros/rate.h>
 
-#include "rgbd/Client.h"
-#include "rgbd/Image.h"
+#include "rgbd/client.h"
+#include "rgbd/image.h"
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "rgbd_transport_test_client");

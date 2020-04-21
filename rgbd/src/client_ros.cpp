@@ -1,5 +1,5 @@
-#include "rgbd/Client_ROS.h"
-#include "rgbd/Image.h"
+#include "rgbd/client_ros.h"
+#include "rgbd/image.h"
 
 // ROS message serialization
 #include <cv_bridge/cv_bridge.h>

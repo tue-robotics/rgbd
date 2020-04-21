@@ -1,7 +1,7 @@
 #ifndef RGBD_SERVER_RGBD_H_
 #define RGBD_SERVER_RGBD_H_
 
-#include "rgbd/Image.h"
+#include "rgbd/image.h"
 #include "rgbd_msgs/GetRGBD.h"
 
 #include <ros/callback_queue.h>

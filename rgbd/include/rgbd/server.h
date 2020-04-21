@@ -1,9 +1,9 @@
 #ifndef RGBD_SERVER_H_
 #define RGBD_SERVER_H_
 
-#include "rgbd/Image.h"
-#include "rgbd/Server_RGBD.h"
-#include "rgbd/Server_SHM.h"
+#include "rgbd/image.h"
+#include "rgbd/server_rgbd.h"
+#include "rgbd/server_shm.h"
 
 namespace rgbd {
 

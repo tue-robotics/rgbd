@@ -1,5 +1,5 @@
 #include <rgbd/serialization.h>
-#include <rgbd/Image.h>
+#include <rgbd/image.h>
 
 #include <fstream>
 

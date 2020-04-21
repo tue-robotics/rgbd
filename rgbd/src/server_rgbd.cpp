@@ -1,4 +1,4 @@
-#include "rgbd/Server_RGBD.h"
+#include "rgbd/server_rgbd.h"
 
 #include <opencv2/core/mat.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -9,7 +9,7 @@
 
 #include <tue/serialization/conversions.h>
 
-#include "rgbd/Image.h"
+#include "rgbd/image.h"
 #include "rgbd/serialization.h"
 
 namespace rgbd {

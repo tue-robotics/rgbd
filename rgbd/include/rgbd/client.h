@@ -10,8 +10,8 @@
 #include <ros/callback_queue.h>
 
 #include "rgbd/types.h"
-#include "rgbd/Client_RGBD.h"
-#include "rgbd/Client_SHM.h"
+#include "rgbd/client_rgbd.h"
+#include "rgbd/client_shm.h"
 
 #include "rgbd_msgs/RGBD.h"
 

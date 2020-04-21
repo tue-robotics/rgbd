@@ -1,7 +1,7 @@
 #ifndef RGBD_VIEW_H_
 #define RGBD_VIEW_H_
 
-#include <rgbd/Image.h>
+#include <rgbd/image.h>
 
 namespace rgbd {
 

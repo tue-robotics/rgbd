@@ -6,7 +6,7 @@
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
 
-#include "rgbd/Image.h"
+#include "rgbd/image.h"
 
 namespace cv { class Mat; }
 namespace geo { class DepthCamera; }

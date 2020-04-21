@@ -1,5 +1,5 @@
-#include <rgbd/View.h>
-#include <rgbd/Client.h>
+#include <rgbd/view.h>
+#include <rgbd/client.h>
 #include <opencv2/highgui/highgui.hpp>
 
 #include <geolib/datatypes.h>

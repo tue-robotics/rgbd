@@ -1,6 +1,6 @@
-#include "rgbd/Client_SHM.h"
+#include "rgbd/client_shm.h"
 
-#include "rgbd/Image.h"
+#include "rgbd/image.h"
 
 #include <ros/init.h>
 #include <ros/time.h>

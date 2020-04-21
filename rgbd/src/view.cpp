@@ -1,4 +1,4 @@
-#include "rgbd/View.h"
+#include "rgbd/view.h"
 
 namespace rgbd {
 

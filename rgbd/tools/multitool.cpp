@@ -2,8 +2,8 @@
 #include <ros/names.h>
 #include <ros/rate.h>
 
-#include "rgbd/Client.h"
-#include "rgbd/View.h"
+#include "rgbd/client.h"
+#include "rgbd/view.h"
 #include <opencv2/highgui/highgui.hpp>
 
 bool PAUSE = false;

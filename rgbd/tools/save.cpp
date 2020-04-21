@@ -2,8 +2,8 @@
 #include <ros/names.h>
 #include <ros/rate.h>
 
-#include "rgbd/Client.h"
-#include "rgbd/Image.h"
+#include "rgbd/client.h"
+#include "rgbd/image.h"
 
 #include <rgbd/serialization.h>
 #include <fstream>

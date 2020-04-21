@@ -3,9 +3,9 @@
 #include <ros/node_handle.h>
 #include <ros/rate.h>
 
-#include "rgbd/Client_RGBD.h"
-#include "rgbd/Image.h"
-#include "rgbd/Server_SHM.h"
+#include "rgbd/client_rgbd.h"
+#include "rgbd/image.h"
+#include "rgbd/server_shm.h"
 #include "rgbd/types.h"
 
 // ----------------------------------------------------------------------------------------

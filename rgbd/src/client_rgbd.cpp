@@ -1,4 +1,4 @@
-#include "rgbd/Client_RGBD.h"
+#include "rgbd/client_rgbd.h"
 
 #include "rgbd/types.h"
 #include "rgbd/ros/conversions.h"
