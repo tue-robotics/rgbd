@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rgbd)
 
+find_package(Boost REQUIRED COMPONENTS thread)
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   geolib2
@@ -23,6 +24,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rgbd
   CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_ros rgbd_msgs roscpp sensor_msgs tue_serialization
+  DEPENDS Boost
 )
 
 ###########
@@ -32,6 +34,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${BOOST_INCLUDE_DIRS}
 )
 
 # to show header files in Qt Creator
@@ -49,8 +52,7 @@ add_library(rgbd    src/client.cpp
                     src/ros/conversions.cpp
 
                     ${HEADER_FILES})
-target_link_libraries(rgbd ${catkin_LIBRARIES} rt)
-
+target_link_libraries(rgbd ${catkin_LIBRARIES} ${BOOST_LIBRARIES} rt)
 add_dependencies(rgbd ${catkin_EXPORTED_TARGETS})
 
 # - - - - - - - - - - - - - - - - - NODES - - - - - - - - - - - - - - - - -
