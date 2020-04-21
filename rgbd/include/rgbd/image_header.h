@@ -43,4 +43,4 @@ struct BufferHeader
 
 } // end namespace rgbd
 
-#endif
+#endif // RGBD_IMAGE_HEADER_H_

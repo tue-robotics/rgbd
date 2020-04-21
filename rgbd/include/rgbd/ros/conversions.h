@@ -26,4 +26,4 @@ bool convert(rgbd_msgs::RGBDConstPtr msg, rgbd::Image* image);
 
 }
 
-#endif
+#endif // RGBD_ROS_CONVERSIONS_H_

@@ -72,4 +72,4 @@ private:
 
 } // end namespace rgbd
 
-#endif
+#endif // RGBD_CLIENT_SHM_H_

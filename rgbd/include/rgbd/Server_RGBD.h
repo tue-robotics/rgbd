@@ -1,5 +1,5 @@
-#ifndef RGBD_SERVER_RGBD_H
-#define RGBD_SERVER_RGBD_H
+#ifndef RGBD_SERVER_RGBD_H_
+#define RGBD_SERVER_RGBD_H_
 
 #include "rgbd/Image.h"
 #include "rgbd_msgs/GetRGBD.h"
@@ -95,4 +95,4 @@ protected:
 
 }
 
-#endif // RGBD_SERVER_RGBD_H
+#endif // RGBD_SERVER_RGBD_H_

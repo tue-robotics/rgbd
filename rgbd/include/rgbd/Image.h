@@ -1,5 +1,5 @@
-#ifndef RGBD_TRANSPORT_IMAGE_H_
-#define RGBD_TRANSPORT_IMAGE_H_
+#ifndef RGBD_IMAGE_H_
+#define RGBD_IMAGE_H_
 
 #include "rgbd/types.h"
 
@@ -117,4 +117,4 @@ protected:
 
 }
 
-#endif
+#endif // RGBD_IMAGE_H_

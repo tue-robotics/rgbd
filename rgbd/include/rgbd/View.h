@@ -1,5 +1,5 @@
-#ifndef RGBD_TRANSPORT_VIEW_H_
-#define RGBD_TRANSPORT_VIEW_H_
+#ifndef RGBD_VIEW_H_
+#define RGBD_VIEW_H_
 
 #include <rgbd/Image.h>
 
@@ -64,4 +64,4 @@ protected:
 
 }
 
-#endif
+#endif // RGBD_VIEW_H_

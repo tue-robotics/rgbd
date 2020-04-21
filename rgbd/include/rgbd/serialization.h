@@ -23,4 +23,4 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image);
 
 }
 
-#endif
+#endif // RGBD_SERIALIZATION_H_

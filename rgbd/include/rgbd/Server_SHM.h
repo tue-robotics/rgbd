@@ -61,4 +61,4 @@ private:
 
 } // end namespace rgbd
 
-#endif
+#endif // RGBD_SERVER_SHM_H_
