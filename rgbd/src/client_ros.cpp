@@ -96,9 +96,10 @@ void ClientROS::imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_m
     // Convert depth image
     try
     {
+        // cv_bridge doesn't support changing the encoding of depth images, so just creating ImagePtr
         depth_img_ptr = cv_bridge::toCvCopy(depth_image_msg, depth_image_msg->encoding);
 
-        if (depth_image_msg->encoding == "16UC1")
+        if (depth_image_msg->encoding == sensor_msgs::image_encodings::TYPE_16UC1)
         {
             // depths are 16-bit unsigned ints, in mm. Convert to 32-bit float (meters)
             cv::Mat depth_image(depth_img_ptr->image.rows, depth_img_ptr->image.cols, CV_32FC1);
@@ -106,7 +107,7 @@ void ClientROS::imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_m
             {
                 for(int y = 0; y < depth_image.rows; ++y)
                 {
-                    depth_image.at<float>(y, x) = ((float)depth_img_ptr->image.at<unsigned short>(y, x)) / 1000; // (mm to m)
+                    depth_image.at<float>(y, x) = static_cast<float>(depth_img_ptr->image.at<unsigned short>(y, x)) / 1000; // (mm to m)
                 }
             }
 
