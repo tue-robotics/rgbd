@@ -14,10 +14,11 @@ int main(int argc, char **argv) {
     rgbd::Client client;
     client.intialize(ros::names::resolve("test"));
 
+    rgbd::Image image;
+
     ros::Rate r(30);
     while (ros::ok())
     {
-        rgbd::Image image;
         if (client.nextImage(image))
         {
             std::cout << "Image: t = " << std::fixed << image.getTimestamp() << ", frame = " << image.getFrameId() << std::endl;
