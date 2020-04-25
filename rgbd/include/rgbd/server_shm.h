@@ -21,14 +21,14 @@ public:
     /**
      * @brief Constructor
      *
-     * buffer_header pointer is initialized to nullptr
+     * buffer_header_ and image_data_ pointers are initialized to nullptr
      */
     ServerSHM();
 
     /**
      * @brief Destructor
      *
-     * Shared memory object is deleted
+     * Shared memory object is deleted, buffer_header_ and image_data_ are also deleted
      */
     ~ServerSHM();
 
@@ -54,8 +54,11 @@ private:
     boost::interprocess::mapped_region mem_image_;
 
     BufferHeader* buffer_header_;
-
     unsigned char* image_data_;
+
+    uint64_t rgb_data_size_;
+    uint64_t depth_data_size_;
+    uint64_t image_data_size_;
 
 };
 

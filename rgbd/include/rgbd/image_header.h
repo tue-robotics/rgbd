@@ -22,10 +22,10 @@ struct BufferHeader
     //Condition to wait when the queue is full
     boost::interprocess::interprocess_condition  cond_full;
 
-    uint32_t rgb_width;         // width of rgb image
-    uint32_t rgb_height;        // height of rgb image
-    uint32_t depth_width;       // width of depth image
-    uint32_t depth_height;      // height of depth image
+    int rgb_width;         // width of rgb image
+    int rgb_height;        // height of rgb image
+    int depth_width;       // width of depth image
+    int depth_height;      // height of depth image
 
     // CameraInfo
     // CameraInfo/header

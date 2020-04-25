@@ -45,10 +45,6 @@ void ServerSHM::send(const Image& image)
     const cv::Mat& rgb = image.getRGBImage();
     const cv::Mat& depth = image.getDepthImage();
 
-    uint64_t rgb_data_size = rgb.cols * rgb.rows * 3;
-    uint64_t depth_data_size = depth.cols * depth.rows * 4;
-    uint64_t image_data_size = rgb_data_size + depth_data_size;
-
     if (!buffer_header_)
     {
         // First time
@@ -58,8 +54,13 @@ void ServerSHM::send(const Image& image)
         //Create a shared memory object.
         shm_ = ipc::shared_memory_object(ipc::create_only, shared_mem_name_.c_str(), ipc::read_write);
 
+        // Store size
+        rgb_data_size_ = static_cast<uint64_t>(rgb.cols * rgb.rows * 3);
+        depth_data_size_ = static_cast<uint64_t>(depth.cols * depth.rows * 4);
+        image_data_size_ = rgb_data_size_ + depth_data_size_;
+
         //Set size
-        shm_.truncate(sizeof(BufferHeader) + image_data_size);
+        shm_.truncate(static_cast<ipc::offset_t>(sizeof(BufferHeader) + image_data_size_));
 
         // Map buffer region
         mem_buffer_header_ = ipc::mapped_region(shm_, ipc::read_write, 0, sizeof(BufferHeader));
@@ -68,7 +69,7 @@ void ServerSHM::send(const Image& image)
         buffer_header_ = new (mem_buffer_header_.get_address()) BufferHeader;
         buffer_header_->sequence_nr = 0;
 
-        image_data_ = new (mem_image_.get_address()) uchar[image_data_size];
+        image_data_ = new (mem_image_.get_address()) uchar[image_data_size_];
 
         buffer_header_->rgb_width = rgb.cols;
         buffer_header_->rgb_height = rgb.rows;
@@ -102,8 +103,8 @@ void ServerSHM::send(const Image& image)
 
         buffer_header_->timestamp = image.getTimestamp();
 
-        memcpy(image_data_, rgb.data, rgb_data_size);
-        memcpy(image_data_ + rgb_data_size, depth.data, depth_data_size);
+        memcpy(image_data_, rgb.data, rgb_data_size_);
+        memcpy(image_data_ + rgb_data_size_, depth.data, depth_data_size_);
 
         buffer_header_->cond_empty.notify_one();
         ++buffer_header_->sequence_nr;

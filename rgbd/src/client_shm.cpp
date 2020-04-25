@@ -16,7 +16,7 @@ namespace rgbd
 
 // ----------------------------------------------------------------------------------------------------
 
-ClientSHM::ClientSHM() : buffer_header_(nullptr)
+ClientSHM::ClientSHM() : buffer_header_(nullptr), image_data_(nullptr)
 {
 }
 
@@ -47,6 +47,10 @@ bool ClientSHM::intialize(const std::string& server_name, float timeout)
             mem_image_ = ipc::mapped_region(shm_, ipc::read_only, sizeof(BufferHeader));
 
             buffer_header_ = static_cast<BufferHeader*>(mem_buffer_header_.get_address());
+            image_data_ = static_cast<uchar*>(mem_image_.get_address());
+
+            rgb_data_size_ = static_cast<uint64_t>(buffer_header_->rgb_width * buffer_header_->rgb_height * 3);
+            depth_data_size_ = static_cast<uint64_t>(buffer_header_->depth_width * buffer_header_->depth_height * 4);
 
             sequence_nr_ = 0;
             return true;
@@ -58,7 +62,7 @@ bool ClientSHM::intialize(const std::string& server_name, float timeout)
         d.sleep();
         now = ros::Time::now();
      }
-     while (ros::ok() && (now - start).toSec() < timeout);
+     while (ros::ok() && (now - start).toSec() < static_cast<double>(timeout));
 
     return false;
 }
@@ -85,19 +89,11 @@ bool ClientSHM::nextImage(Image& image)
     cv::Mat* rgb = &(image.rgb_image_);
     cv::Mat* depth = &(image.depth_image_);
 
-    //    if (buffer_header_.sequence_nr_ == sequence_nr_)
-    //        buffer_header_.cond_empty.wait(lock);
-
-    uchar* image_data = static_cast<uchar*>(mem_image_.get_address());
-
-    uint64_t rgb_data_size = buffer_header_->rgb_width * buffer_header_->rgb_height * 3;
-    uint64_t depth_data_size = buffer_header_->depth_width * buffer_header_->depth_height * 4;
-
     *rgb = cv::Mat(buffer_header_->rgb_height, buffer_header_->rgb_width, CV_8UC3);
     *depth = cv::Mat(buffer_header_->depth_height, buffer_header_->depth_width, CV_32FC1);
 
-    memcpy(rgb->data, image_data, rgb_data_size);
-    memcpy(depth->data, image_data + rgb_data_size, depth_data_size);
+    memcpy(rgb->data, image_data_, rgb_data_size_);
+    memcpy(depth->data, image_data_ + rgb_data_size_, depth_data_size_);
 
 
     if (!image.cam_model_.initialized())

@@ -21,14 +21,14 @@ public:
     /**
      * @brief Constructor
      *
-     * buffer_header pointer is initialized to nullptr
+     * buffer_header_ and image_data_ pointers are initialized to nullptr
      */
     ClientSHM();
 
     /**
      * @brief Destructor
      *
-     * buffer_header is not deleted as the client doesn't close the shared memory
+     * buffer_header_ and image_data_ are not deleted as the client doesn't close the shared memory
      */
     ~ClientSHM();
 
@@ -61,12 +61,16 @@ private:
     boost::interprocess::mapped_region mem_buffer_header_;
     boost::interprocess::mapped_region mem_image_;
 
+    BufferHeader* buffer_header_;
+    unsigned char* image_data_;
+
+    uint64_t rgb_data_size_;
+    uint64_t depth_data_size_;
+
     /**
      * @brief sequence_nr Contains the sequence nummer of the last NextImage call
      */
     uint64_t sequence_nr_;
-
-    BufferHeader* buffer_header_;
 
 };
 

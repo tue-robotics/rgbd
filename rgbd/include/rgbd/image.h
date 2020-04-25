@@ -42,7 +42,6 @@ enum DepthStorageType
 class Image {
 
     friend class ServerRGBD;
-    friend class ServerSHM;
     friend class ClientROS;
     friend class ClientSHM;
 
