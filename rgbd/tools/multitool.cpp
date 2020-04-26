@@ -132,7 +132,7 @@ int main(int argc, char **argv)
                         float d = depth.at<float>(y, x);
                         if (d > 0 && d == d)
                         {
-                            unsigned char v = std::min<float>(max_view_distance, d / max_view_distance) * 255;
+                            unsigned char v = static_cast<unsigned char>(std::min<float>(max_view_distance, d / max_view_distance) * 255);
                             depth_canvas.at<cv::Vec3b>(y, x) = cv::Vec3b(v, v, v);
                         }
                     }

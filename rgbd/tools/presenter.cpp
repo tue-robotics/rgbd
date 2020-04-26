@@ -55,10 +55,10 @@ int main(int argc, char **argv)
                 continue;
 
             // Show rgb image
-            int x = view.rx * canvas.cols;
-            int y = view.ry * canvas.cols; // .cols is NOT A TYPO!
-            int width = view.rwidth * canvas.cols;
-            int height = ((double)rgb.rows / rgb.cols) * width;
+            int x = static_cast<int>(view.rx * canvas.cols);
+            int y = static_cast<int>(view.ry * canvas.cols); // .cols is NOT A TYPO!
+            int width = static_cast<int>(view.rwidth * canvas.cols);
+            int height = static_cast<int>((static_cast<double>(rgb.rows) / rgb.cols) * width);
 
             cv::Mat rgb_resized;
             cv::resize(rgb, rgb_resized, cv::Size(width, height));
@@ -67,8 +67,8 @@ int main(int argc, char **argv)
         }
 
         cv::imshow("Presenter", canvas);
-        char key = cv::waitKey(10);
-        if (key == 'q' || (int)key == 27) // q or escape
+        char key = static_cast<char>(cv::waitKey(10));
+        if (key == 'q' || static_cast<int>(key) == 27) // q or escape
             return 0;
 
     }

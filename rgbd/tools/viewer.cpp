@@ -48,7 +48,7 @@ int main(int argc, char **argv)
                         if (d == d)
                         {
                             cv::Vec3b hsv = image_hsv.at<cv::Vec3b>(y, x);
-                            hsv[2] = 255 - (d / 8 * 255);
+                            hsv[2] = 255 - static_cast<unsigned char>(d / 8 * 255);
                             canvas_hsv.at<cv::Vec3b>(y, x) = hsv;
                         }
                     }
