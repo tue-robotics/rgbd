@@ -19,7 +19,6 @@
 
 #include <sensor_msgs/RegionOfInterest.h>
 
-
 #include <memory>
 
 #include <boost/circular_buffer.hpp>
