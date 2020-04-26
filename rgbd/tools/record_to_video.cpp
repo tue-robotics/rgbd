@@ -1,5 +1,7 @@
 // ROS
 #include <ros/init.h>
+#include <ros/console.h>
+#include <ros/master.h>
 #include <ros/node_handle.h>
 #include <ros/subscriber.h>
 
@@ -73,7 +75,7 @@ int main(int argc, char **argv) {
 
     // Start loop at given frequency
     ros::Rate r(video_frame_rate);
-    while (ros::ok())
+    while (ros::ok() && ros::master::check())
     {
         ros::spinOnce();
 

@@ -1,5 +1,11 @@
+#include <ros/init.h>
+#include <ros/master.h>
+#include <ros/names.h>
+#include <ros/rate.h>
+
 #include "rgbd/client.h"
 #include "rgbd/view.h"
+
 #include <opencv2/highgui/highgui.hpp>
 
 int main(int argc, char **argv)
@@ -13,10 +19,10 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "rgbd_viewer");
 
     rgbd::Client client;
-    client.intialize(argv[1]);
+    client.intialize(ros::names::resolve(argv[1]));
 
     ros::Rate r(30);
-    while (ros::ok())
+    while (ros::ok() && ros::master::check())
     {
         rgbd::Image image;
         if (!client.nextImage(image))

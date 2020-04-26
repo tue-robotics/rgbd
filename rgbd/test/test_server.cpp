@@ -1,6 +1,7 @@
 #include "rgbd/server.h"
 
 #include <ros/init.h>
+#include <ros/master.h>
 #include <ros/names.h>
 #include <ros/node_handle.h>
 #include <ros/rate.h>
@@ -39,7 +40,7 @@ int main(int argc, char **argv)
     rgbd::Image image(rgb_image, depth_image, cam_model, "test_frame_id", ros::Time::now().toSec());
 
     int x = 0;
-    while (ros::ok())
+    while (ros::ok() && ros::master::check())
     {
         cv::line(rgb_image, cv::Point(x, 0), cv::Point(x, rgb_image.rows - 1), cv::Scalar(0,0,255));
         cv::line(depth_image, cv::Point(x, 0), cv::Point(x, depth_image.rows - 1), 5.0);

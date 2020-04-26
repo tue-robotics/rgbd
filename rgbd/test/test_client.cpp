@@ -1,6 +1,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include <ros/init.h>
+#include <ros/master.h>
 #include <ros/names.h>
 #include <ros/node_handle.h>
 #include <ros/rate.h>
@@ -21,7 +22,7 @@ int main(int argc, char **argv) {
     rgbd::Image image;
 
     ros::Rate r(rate);
-    while (ros::ok())
+    while (ros::ok() && ros::master::check())
     {
         if (client.nextImage(image))
         {

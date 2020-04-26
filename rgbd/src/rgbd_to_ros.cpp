@@ -1,16 +1,19 @@
+#include <pcl/point_types.h>
+#include <pcl/point_cloud.h>
+#include <pcl_ros/point_cloud.h>
+
+#include <ros/init.h>
+#include <ros/console.h>
+#include <ros/master.h>
+#include <ros/node_handle.h>
+#include <ros/rate.h>
+
 #include "rgbd/client.h"
 #include "rgbd/view.h"
-//#include <opencv2/highgui/highgui.hpp>
+#include <rgbd/ros/conversions.h>
 
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
-
-#include <rgbd/ros/conversions.h>
-
-// Point cloud
-#include <pcl_ros/point_cloud.h>
-#include <pcl/point_types.h>
-#include <pcl/point_cloud.h>
 
 int main(int argc, char **argv)
 {
@@ -107,7 +110,7 @@ int main(int argc, char **argv)
     ros::Time last_image_stamp;
 
     ros::Rate r(30);
-    while (ros::ok())
+    while (ros::ok() && ros::master::check())
     {
         if (!last_image_stamp.isZero() && ros::Time::now() - last_image_stamp > ros::Duration(5.0))
         {

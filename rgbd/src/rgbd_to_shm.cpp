@@ -1,4 +1,5 @@
 #include <ros/init.h>
+#include <ros/master.h>
 #include <ros/names.h>
 #include <ros/node_handle.h>
 #include <ros/rate.h>
@@ -31,7 +32,7 @@ int main(int argc, char **argv) {
     rgbd::ImagePtr image_ptr;
 
     ros::Rate r(max_fps);
-    while (ros::ok())
+    while (ros::ok() && ros::master::check())
     {
         image_ptr = client.nextImage();
         if (image_ptr)

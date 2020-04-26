@@ -1,21 +1,24 @@
-#include <rgbd/view.h>
-#include <rgbd/client.h>
-
 #include <geolib/datatypes.h>
 #include <geolib/ros/msg_conversions.h>
 
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/types.hpp>
 
+#include <rgbd/view.h>
+#include <rgbd/client.h>
+
+#include <rgbd_msgs/Project2DTo3D.h>
+
 #include <ros/init.h>
-#include <ros/names.h>
-#include <ros/service_client.h>
-#include <ros/node_handle.h>
 #include <ros/console.h>
+#include <ros/master.h>
+#include <ros/names.h>
+#include <ros/node_handle.h>
 #include <ros/time.h>
+#include <ros/service_client.h>
 
 #include <sensor_msgs/RegionOfInterest.h>
-#include <rgbd_msgs/Project2DTo3D.h>
+
 
 #include <memory>
 
@@ -130,7 +133,7 @@ int main(int argc, char **argv)
     ros::Time last_image_stamp;
 
     ros::Rate r(max_fps);
-    while (ros::ok())
+    while (ros::ok() && ros::master::check())
     {
         rgbd::Image image;
         if (client.nextImage(image))

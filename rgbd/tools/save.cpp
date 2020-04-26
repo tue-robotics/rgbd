@@ -1,4 +1,5 @@
 #include <ros/init.h>
+#include <ros/master.h>
 #include <ros/names.h>
 #include <ros/rate.h>
 
@@ -19,7 +20,7 @@ int main(int argc, char **argv) {
     rgbd::Image image;
 
     ros::Rate r(30);
-    while (ros::ok())
+    while (ros::ok() && ros::master::check())
     {
         if (client.nextImage(image))
         {

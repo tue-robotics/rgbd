@@ -1,6 +1,10 @@
+#include <opencv2/highgui/highgui.hpp>
+
+#include <ros/init.h>
+#include <ros/master.h>
+
 #include "rgbd/client.h"
 #include "rgbd/view.h"
-#include <opencv2/highgui/highgui.hpp>
 
 // ----------------------------------------------------------------------------------------------------
 
@@ -36,7 +40,7 @@ int main(int argc, char **argv)
 
     cv::Mat canvas(600, 1024, CV_8UC3, cv::Scalar(0, 0, 0));
 
-    while (ros::ok())
+    while (ros::ok() && ros::master::check())
     {
         for(std::vector<ChannelView>::iterator it = views.begin(); it != views.end(); ++it)
         {

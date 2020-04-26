@@ -1,4 +1,5 @@
 #include <ros/init.h>
+#include <ros/master.h>
 #include <ros/names.h>
 
 #include "rgbd/client.h"
@@ -22,7 +23,7 @@ int main(int argc, char **argv)
     cv::Mat canvas;
 
     ros::Rate r(30);
-    while (ros::ok())
+    while (ros::ok() && ros::master::check())
     {
         rgbd::Image image;
         if (!PAUSE && client.nextImage(image))
