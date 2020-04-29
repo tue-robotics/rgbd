@@ -5,15 +5,9 @@
 #ifndef RGBD_CLIENT_H_
 #define RGBD_CLIENT_H_
 
-#include <ros/node_handle.h>
-#include <ros/subscriber.h>
-#include <ros/callback_queue.h>
-
 #include "rgbd/types.h"
 #include "rgbd/client_rgbd.h"
 #include "rgbd/client_shm.h"
-
-#include "rgbd_msgs/RGBD.h"
 
 
 namespace rgbd {
