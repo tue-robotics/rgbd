@@ -31,7 +31,7 @@ public:
     /**
      * @brief Destructor
      *
-     * image_ptr_ is not delete as the client never owns the image pointer
+     * image_ptr_ is not deleted as the client never owns the image pointer
      */
     virtual ~ClientRGBD();
 
