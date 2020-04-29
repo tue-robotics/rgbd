@@ -72,7 +72,7 @@ protected:
     boost::thread send_thread_;
 
     /**
-     * @brief sendImpl Implementaiton of send
+     * @brief sendImpl Implementation of send
      * @param image Image to be written
      */
     void sendImpl(const Image& image);
