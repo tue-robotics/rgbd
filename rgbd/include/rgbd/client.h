@@ -1,5 +1,5 @@
 /**
- * This client listens to RGBD messages on a single topic or via shared memory, directy rgbd::Image.
+ * This client listens to RGBD messages on a single topic or via shared memory, provides rgbd::Image.
  */
 
 #ifndef RGBD_CLIENT_H_
@@ -19,7 +19,7 @@
 namespace rgbd {
 
 /**
- * @brief Client which provides the interfaces of ClientRGBD and ClientSHM
+ * @brief Client which uses the interfaces of ClientRGBD and ClientSHM
  */
 class Client {
 
