@@ -31,8 +31,9 @@ public:
      * @param name Fully resolved server name
      * @param rgb_type rgb storage type
      * @param depth_type depth storage type
+     * @param service_freq frequency of the thread processing service requests in ServerRGBD
      */
-    void initialize(const std::string& name, RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS, DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS);
+    void initialize(const std::string& name, RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS, DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS, const float service_freq = 10);
 
     /**
      * @brief send Write a new image to all interfaces

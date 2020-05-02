@@ -16,9 +16,9 @@ Server::~Server()
 
 // ----------------------------------------------------------------------------------------
 
-void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type)
+void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type, const float service_freq)
 {
-    server_rgbd_.initialize(name, rgb_type, depth_type);
+    server_rgbd_.initialize(name, rgb_type, depth_type, service_freq);
     server_shm_.initialize(name);
 }
 
