@@ -59,9 +59,9 @@ bool srvGet3dPointFromROI(rgbd_msgs::Project2DTo3D::Request& req, rgbd_msgs::Pro
         cv::Point roi_depth_center = 0.5 * (roi_depth.tl() + roi_depth.br());
 
         cv::Rect roi_depth_capped(cv::Point(std::max(0, roi_depth.x),
-        std::max(0, roi_depth.y)),
-        cv::Point(std::min(depth.cols - 1, roi_depth.br().x),
-        std::min(depth.rows - 1, roi_depth.br().y)));
+                                            std::max(0, roi_depth.y)),
+                                  cv::Point(std::min(depth.cols - 1, roi_depth.br().x),
+                                            std::min(depth.rows - 1, roi_depth.br().y)));
 
         cv::Mat depth_roi_capped = depth(roi_depth_capped);
 
