@@ -128,11 +128,11 @@ void ClientROS::imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_msg, c
         // in this case, the pointer will always be wrapped in a shared ptr, so no mem leaks (see nextImage() )
         image_ptr_ = new Image();
 
-    image_ptr_->rgb_image_ = rgb_img_ptr->image;
-    image_ptr_->depth_image_ = depth_img_ptr->image;
-    image_ptr_->cam_model_ = cam_model_;
-    image_ptr_->frame_id_ = rgb_image_msg->header.frame_id;
-    image_ptr_->timestamp_ = rgb_image_msg->header.stamp.toSec();
+    image_ptr_->setRGBImage(rgb_img_ptr->image);
+    image_ptr_->setDepthImage(depth_img_ptr->image);
+    image_ptr_->setCameraModel(cam_model_);
+    image_ptr_->setFrameId(rgb_image_msg->header.frame_id);
+    image_ptr_->setTimestamp(rgb_image_msg->header.stamp.toSec());
     new_image_ = true;
 }
 

@@ -41,8 +41,6 @@ enum DepthStorageType
 
 class Image {
 
-    friend class ServerRGBD;
-    friend class ClientROS;
     friend class ClientSHM;
 
 public:
@@ -84,6 +82,7 @@ public:
 
     inline void setDepthImage(const cv::Mat& depth_image) { depth_image_ = depth_image; }
     inline void setRGBImage(const cv::Mat& rgb_image) { rgb_image_ = rgb_image; }
+    inline void setCameraModel(const image_geometry::PinholeCameraModel& cam_model) { cam_model_ = cam_model; }
     inline void setFrameId(const std::string frame_id) { frame_id_ = frame_id; }
     inline void setTimestamp(const double timestamp) { timestamp_ = timestamp; }
 

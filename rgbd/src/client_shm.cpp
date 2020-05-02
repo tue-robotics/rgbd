@@ -96,7 +96,7 @@ bool ClientSHM::nextImage(Image& image)
     memcpy(depth->data, image_data_ + rgb_data_size_, depth_data_size_);
 
 
-    if (!image.cam_model_.initialized())
+    if (!image.getCameraModel().initialized())
     {
         sensor_msgs::CameraInfo cam_info_msg;
         cam_info_msg.header.frame_id = buffer_header_->frame_id;
@@ -122,8 +122,8 @@ bool ClientSHM::nextImage(Image& image)
         image.cam_model_.fromCameraInfo(cam_info_msg);
     }
 
-    image.frame_id_ = buffer_header_->frame_id;
-    image.timestamp_ = buffer_header_->timestamp;
+    image.setFrameId(buffer_header_->frame_id);
+    image.setTimestamp(buffer_header_->timestamp);
 
     sequence_nr_ = buffer_header_->sequence_nr;
 
