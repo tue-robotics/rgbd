@@ -27,7 +27,6 @@ ServerRGBD::ServerRGBD()
 ServerRGBD::~ServerRGBD()
 {
     nh_.shutdown();
-    send_thread_.join();
     service_thread_.join();
 }
 
@@ -46,21 +45,7 @@ void ServerRGBD::initialize(const std::string& name, RGBStorageType rgb_type, De
 
 // ----------------------------------------------------------------------------------------
 
-void ServerRGBD::send(const Image& image, bool threaded)
-{
-    threaded = false; // Running threaded causes a memory leak.
-    if (!threaded)
-    {
-        sendImpl(image);
-        return;
-    }
-
-    send_thread_ = boost::thread(&ServerRGBD::sendImpl, this, image);
-}
-
-// ----------------------------------------------------------------------------------------
-
-void ServerRGBD::sendImpl(const Image& image)
+void ServerRGBD::send(const Image& image)
 {
     {
         boost::unique_lock<boost::mutex> ul(image_mutex_);

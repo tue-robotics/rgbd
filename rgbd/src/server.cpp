@@ -24,9 +24,9 @@ void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthS
 
 // ----------------------------------------------------------------------------------------
 
-void Server::send(const Image& image, bool threaded)
+void Server::send(const Image& image, bool)
 {
-    server_rgbd_.send(image, threaded);
+    server_rgbd_.send(image);
     server_shm_.send(image);
 
 }

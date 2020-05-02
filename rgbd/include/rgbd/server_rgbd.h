@@ -43,9 +43,8 @@ public:
     /**
      * @brief send Write a new image to all interfaces
      * @param image Image to be written
-     * @param threaded Use any threaded version of send of the interfaces
      */
-    void send(const Image& image, bool threaded = false);
+    void send(const Image& image);
 
     /**
      * @brief MESSAGE_VERSION version of the RGBD message being used
@@ -67,15 +66,6 @@ protected:
 
     // Service thread
     boost::thread service_thread_;
-
-    // Send thread
-    boost::thread send_thread_;
-
-    /**
-     * @brief sendImpl Implementation of send
-     * @param image Image to be written
-     */
-    void sendImpl(const Image& image);
 
     /**
      * @brief serviceCallback
