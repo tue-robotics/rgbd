@@ -47,7 +47,7 @@ public:
     void send(const Image& image);
 
     /**
-     * @brief MESSAGE_VERSION version of the RGBD message being used
+     * @brief version of the RGBD message being used
      */
     const static int MESSAGE_VERSION;
 
