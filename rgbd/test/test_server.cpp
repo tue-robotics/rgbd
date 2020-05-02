@@ -2,6 +2,7 @@
 
 #include <ros/init.h>
 #include <ros/names.h>
+#include <ros/node_handle.h>
 #include <ros/rate.h>
 
 #include <image_geometry/pinhole_camera_model.h>
@@ -11,11 +12,15 @@
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rgbd_transport_test_server");
+    ros::NodeHandle nh_private("~");
+
+    float rate = 30;
+    nh_private.getParam("rate", rate);
 
     rgbd::Server server;
     server.initialize(ros::names::resolve("test"), rgbd::RGB_STORAGE_LOSSLESS, rgbd::DEPTH_STORAGE_LOSSLESS);
 
-    ros::Rate r(30);
+    ros::Rate r(rate);
     cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0,0,255));
     cv::Mat depth_image(480, 640, CV_32FC1, 5.0);
     sensor_msgs::CameraInfo cam_info;
