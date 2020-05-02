@@ -6,6 +6,7 @@
 #include <message_filters/synchronizer.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/sync_policies/approximate_time.h>
+#include <sensor_msgs/Image.h>
 #include <sensor_msgs/image_encodings.h>
 #include <image_geometry/pinhole_camera_model.h>
 
@@ -80,7 +81,7 @@ void ClientROS::camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_
 
 // ----------------------------------------------------------------------------------------
 
-void ClientROS::imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageConstPtr depth_image_msg)
+void ClientROS::imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_msg, const sensor_msgs::ImageConstPtr& depth_image_msg)
 {
     cv_bridge::CvImagePtr rgb_img_ptr, depth_img_ptr;
 

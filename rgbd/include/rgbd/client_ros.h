@@ -106,7 +106,7 @@ protected:
      * @param rgb_image_msg rgb image message
      * @param depth_image_msg depth image message
      */
-    void imageCallback(sensor_msgs::ImageConstPtr rgb_image_msg, sensor_msgs::ImageConstPtr depth_image_msg);
+    void imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_msg, const sensor_msgs::ImageConstPtr& depth_image_msg);
 
 };
 
