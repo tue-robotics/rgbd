@@ -19,13 +19,15 @@ ClientRGBD::~ClientRGBD()
 
 // ----------------------------------------------------------------------------------------
 
-void ClientRGBD::intialize(const std::string& server_name)
+bool ClientRGBD::intialize(const std::string& server_name)
 {
     ros::SubscribeOptions sub_options =
             ros::SubscribeOptions::create<rgbd_msgs::RGBD>(
                 server_name, 1, boost::bind(&ClientRGBD::rgbdImageCallback, this, _1), ros::VoidPtr(), &cb_queue_);
 
     sub_image_ = nh_.subscribe(sub_options);
+
+    return true;
 }
 
 // ----------------------------------------------------------------------------------------

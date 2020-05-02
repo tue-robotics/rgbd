@@ -49,8 +49,9 @@ public:
      * @param rgb_image_topic topic name of the rgb image; topic will still be resolved.
      * @param depth_image_topic topic name of the depth image; topic will still be resolved.
      * @param cam_info_topic topic name of the camera info; topic will still be resolved.
+     * @return indicates success
      */
-    void intialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic);
+    bool intialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic);
 
     /**
      * @brief Check if the client is initialized. nextImage will not return an image if client is not initialized.

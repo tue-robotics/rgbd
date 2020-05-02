@@ -21,12 +21,12 @@ Client::~Client()
 
 // ----------------------------------------------------------------------------------------
 
-void Client::intialize(const std::string& server_name, float timeout)
+bool Client::intialize(const std::string& server_name, float timeout)
 {
     if (client_shm_.intialize(server_name, timeout))
-        return;
+        return true;
 
-    client_rgbd_.intialize(server_name);
+    return client_rgbd_.intialize(server_name);
 }
 
 // ----------------------------------------------------------------------------------------

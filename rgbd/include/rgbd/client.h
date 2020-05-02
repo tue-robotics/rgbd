@@ -33,8 +33,9 @@ public:
      * @brief intialize Initialize the client
      * @param server_name Fully resolved server name
      * @param timeout Timeout used to initialize each interface, currently only the ClientSHM interface requires a timeout
+     * @return indicates success
      */
-    void intialize(const std::string& server_name, float timeout = 5.0);
+    bool intialize(const std::string& server_name, float timeout = 5.0);
 
     /**
      * @brief Check if the client is initialized. First checks if ClientSHM is initialized, otherwise ClientRGBD.

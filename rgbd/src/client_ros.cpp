@@ -29,7 +29,7 @@ ClientROS::~ClientROS()
 
 // ----------------------------------------------------------------------------------------
 
-void ClientROS::intialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic)
+bool ClientROS::intialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic)
 {
     nh_.setCallbackQueue(&cb_queue_);
 
@@ -40,6 +40,8 @@ void ClientROS::intialize(const std::string& rgb_image_topic, const std::string&
 
     sync_ = new message_filters::Synchronizer<RGBDApproxPolicy>(RGBDApproxPolicy(10), *sub_rgb_sync_, *sub_depth_sync_);
     sync_->registerCallback(boost::bind(&ClientROS::imageCallback, this, _1, _2));
+
+    return true;
 }
 
 // ----------------------------------------------------------------------------------------

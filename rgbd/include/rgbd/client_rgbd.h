@@ -38,8 +38,9 @@ public:
     /**
      * @brief intialize Initialize the client
      * @param server_name Fully resolved server name
+     * @return indicates success
      */
-    void intialize(const std::string& server_name);
+    bool intialize(const std::string& server_name);
 
     /**
      * @brief Check if the client is initialized. nextImage will not return an image if client is not initialized.
