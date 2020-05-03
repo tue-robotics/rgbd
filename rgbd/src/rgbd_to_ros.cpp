@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 {
     if (argc <= 1)
     {
-        std::cout << "Please specify rgbd topic / name" << std::endl;
+        ROS_ERROR("Please specify rgbd topic / name");
         return 1;
     }
 

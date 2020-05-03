@@ -7,6 +7,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 
+#include <ros/console.h>
+
 #include <sensor_msgs/distortion_models.h>
 
 #include <tue/serialization/conversions.h>
@@ -137,7 +139,7 @@ bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image* image)
 {
     if (msg->version == 0)
     {
-        std::cout << "convert: version 0 not supported" << std::endl;
+        ROS_ERROR("convert: version 0 not supported");
         return false;
     }
 

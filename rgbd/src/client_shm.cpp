@@ -3,6 +3,7 @@
 #include "rgbd/image.h"
 
 #include <ros/init.h>
+#include <ros/console.h>
 #include <ros/time.h>
 
 #include <sensor_msgs/CameraInfo.h>
@@ -57,7 +58,7 @@ bool ClientSHM::intialize(const std::string& server_name, float timeout)
         }
         catch(ipc::interprocess_exception &ex)
         {
-//            std::cout << ex.what() << std::endl;
+            ROS_DEBUG_STREAM("Could not open shared memory: " << ex.what());
         }
         d.sleep();
         now = ros::Time::now();

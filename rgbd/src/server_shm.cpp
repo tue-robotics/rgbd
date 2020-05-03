@@ -5,6 +5,8 @@
 
 #include <boost/interprocess/sync/scoped_lock.hpp>
 
+#include <ros/console.h>
+
 namespace ipc = boost::interprocess;
 
 namespace rgbd
@@ -38,7 +40,7 @@ void ServerSHM::send(const Image& image)
 {
     if (shared_mem_name_.empty())
     {
-        std::cout << "rgbd::SharedMemServer is not initialized" << std::endl;
+        ROS_ERROR("rgbd::SharedMemServer is not initialized");
         return;
     }
 
