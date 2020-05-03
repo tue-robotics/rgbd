@@ -62,8 +62,8 @@ bool ClientSHM::intialize(const std::string& server_name, float timeout)
         }
         d.sleep();
         now = ros::Time::now();
-     }
-     while (ros::ok() && (now - start).toSec() < static_cast<double>(timeout));
+    }
+    while (ros::ok() && (now - start).toSec() < static_cast<double>(timeout));
 
     return false;
 }
