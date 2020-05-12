@@ -22,6 +22,7 @@ struct BufferHeader
     //Condition to wait when the queue is full
     boost::interprocess::interprocess_condition  cond_full;
 
+    // cv uses int, using the same variable types
     int rgb_width;         // width of rgb image
     int rgb_height;        // height of rgb image
     int depth_width;       // width of depth image
