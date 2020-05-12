@@ -146,11 +146,6 @@ int main(int argc, char **argv)
             }
         }
         ros::spinOnce(); // Process service request after getting a new image
-        if (!last_image_stamp.isZero() && ros::Time::now() - last_image_stamp > ros::Duration(5.0))
-        {
-            ROS_ERROR("No new images received images for 5 seconds, ...restarting");
-            exit(1);
-        }
         r.sleep();
     }
 }
