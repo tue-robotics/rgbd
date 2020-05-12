@@ -31,6 +31,9 @@ ClientSHM::~ClientSHM()
 
 bool ClientSHM::intialize(const std::string& server_name, float timeout)
 {
+    std::string server_name_cp = server_name;
+    std::replace(server_name_cp.begin(), server_name_cp.end(), '/', '-');
+
     ros::Time start = ros::Time::now();
     ros::Time now;
     ros::Duration d(0.1);
@@ -38,9 +41,6 @@ bool ClientSHM::intialize(const std::string& server_name, float timeout)
     {
         try
         {
-            std::string server_name_cp = server_name;
-            std::replace(server_name_cp.begin(), server_name_cp.end(), '/', '-');
-
             // Open already created shared memory object.
             shm_ = ipc::shared_memory_object(ipc::open_only, server_name_cp.c_str(), ipc::read_write);
 
@@ -64,6 +64,8 @@ bool ClientSHM::intialize(const std::string& server_name, float timeout)
         now = ros::Time::now();
     }
     while (ros::ok() && (now - start).toSec() < static_cast<double>(timeout));
+
+    ROS_DEBUG_STREAM("Opening shared memory on: '" << server_name_cp << "' failed on timeout(" << timeout << ").");
 
     return false;
 }
