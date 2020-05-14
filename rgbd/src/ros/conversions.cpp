@@ -40,7 +40,7 @@ bool convert(const cv::Mat& image, sensor_msgs::Image& image_msg)
 
 // ----------------------------------------------------------------------------------------------------
 
-void convert(const geo::DepthCamera& cam_model, sensor_msgs::CameraInfo& cam_model_msg)
+bool convert(const geo::DepthCamera& cam_model, sensor_msgs::CameraInfo& cam_model_msg)
 {
     // Distortion model and parameters
     cam_model_msg.distortion_model = "plumb_bob";
@@ -94,6 +94,7 @@ void convert(const geo::DepthCamera& cam_model, sensor_msgs::CameraInfo& cam_mod
 
     cam_model_msg.binning_x = 0;
     cam_model_msg.binning_y = 0;
+    return true;
 }
 
 // ----------------------------------------------------------------------------------------------------
