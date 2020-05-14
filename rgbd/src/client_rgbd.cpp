@@ -7,7 +7,7 @@ namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
 
-ClientRGBD::ClientRGBD()
+ClientRGBD::ClientRGBD() : image_ptr_(nullptr)
 {
 }
 
