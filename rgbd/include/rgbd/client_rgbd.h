@@ -71,9 +71,13 @@ protected:
     ros::CallbackQueue cb_queue_;
 
     /**
-     * @brief new_image_ Track if image is updated in a callback.
+     * @brief Track if image is updated in a callback.
      */
     bool new_image_;
+    /**
+     * @brief Pointer to the Image being written in the NextImage calls. Either set to the address of the provided reference.
+     * Or being wrapped into a shared pointer. image_ptr_ should only be accessed inside a NextImage call.
+     */
     Image* image_ptr_;
 
     void rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg);
