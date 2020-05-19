@@ -76,7 +76,9 @@ protected:
     bool new_image_;
     /**
      * @brief Pointer to the Image being written in the NextImage calls. Either set to the address of the provided reference.
-     * Or being wrapped into a shared pointer. image_ptr_ should only be accessed inside a NextImage call.
+     * Or being wrapped into a shared pointer. Ownership therefore belongs to the caller of nextImage, which provides the references or receives the SharedPtr.
+     * image_ptr_ should only be accessed inside a NextImage call. Outside it, the image_ptr_ might be invalid/
+     * This is used since you can not pass additional arguments to the callback. A raw pointer is prefered to avoid unnecessary copy operations.
      */
     Image* image_ptr_;
 
