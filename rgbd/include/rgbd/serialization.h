@@ -4,7 +4,7 @@
 #include <tue/serialization/input_archive.h>
 #include <tue/serialization/output_archive.h>
 
-#include "rgbd/Image.h"
+#include "rgbd/image.h"
 
 namespace rgbd
 {
@@ -23,4 +23,4 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image);
 
 }
 
-#endif
+#endif // RGBD_SERIALIZATION_H_

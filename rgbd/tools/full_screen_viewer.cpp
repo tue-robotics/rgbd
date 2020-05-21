@@ -1,5 +1,8 @@
-#include "rgbd/Client.h"
-#include "rgbd/View.h"
+#include <ros/init.h>
+#include <ros/names.h>
+
+#include "rgbd/client.h"
+#include "rgbd/view.h"
 #include <opencv2/highgui/highgui.hpp>
 
 int main(int argc, char **argv)
@@ -10,8 +13,9 @@ int main(int argc, char **argv)
     rgbd::Client client;
     client.intialize(ros::names::resolve("rgbd"));
 
-    cv::namedWindow("RGBD VIEW", cv::WINDOW_NORMAL);
-    cv::setWindowProperty("RGBD VIEW", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
+    const std::string  window_name = "RGBD_VIEW";
+    cv::namedWindow(window_name, cv::WINDOW_NORMAL);
+    cv::setWindowProperty(window_name, cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
 
     bool PAUSE = false;
 
@@ -31,7 +35,7 @@ int main(int argc, char **argv)
         if (PAUSE)
             cv::putText(canvas, "PAUSED", cv::Point(10, canvas.rows - 25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
 
-        cv::imshow("RGBD VIEW", canvas);
+        cv::imshow(window_name, canvas);
 
         int i_key = cv::waitKey(3);
         if (i_key >= 0)
@@ -46,6 +50,8 @@ int main(int argc, char **argv)
 
         r.sleep();
     }
+
+    usleep(500000);
 
     return 0;
 }

@@ -1,43 +1,37 @@
-#include <rgbd/serialization.h>
-#include <rgbd/Image.h>
-#include <rgbd/View.h>
+#include "rgbd/view.h"
 
-#include <fstream>
+#include <image_geometry/pinhole_camera_model.h>
+#include <opencv2/core/mat.hpp>
 
-#include <opencv2/highgui/highgui.hpp>
+namespace rgbd {
 
-int main(int argc, char **argv) {
+// ----------------------------------------------------------------------------------------
 
-    if (argc != 2)
-    {
-        std::cout << "Usage:\n\n   view FILENAME\n\n";
-        return 1;
-    }
+View::View(const Image& image, int width) :
+    image_(image), width_(width)
+{
+    const cv::Mat& rgb_image = image.getRGBImage();
+    const cv::Mat& depth_image = image.getDepthImage();
+    // Determine scaling between rgb and depth
+    float aspect_ratio = static_cast<float>(depth_image.cols) / static_cast<float>(depth_image.rows); // 640 / 480
+    height_ = static_cast<int>(width_ / aspect_ratio);
 
-    // read
-    std::ifstream f_in;
-    f_in.open(argv[1], std::ifstream::binary);
+    // Factors
+    rgb_factor_ = static_cast<float>(rgb_image.cols) / static_cast<float>(width_);
+    depth_factor_ = static_cast<float>(depth_image.cols) / static_cast<float>(width_);
 
-    if (!f_in.is_open())
-    {
-        std::cout << "Could not open '" << argv[1] << "'." << std::endl;
-        return 1;
-    }
+    // ASSUMPTION: here we assume that the camera model given in the image is based
+    // on the depth image, not the rgb image
+    float w_depth = depth_image.cols;
+    float h_depth = depth_image.rows;
 
-    tue::serialization::InputArchive a_in(f_in);
+    const image_geometry::PinholeCameraModel& cam_model = image.getCameraModel();
 
-    rgbd::Image image;
-    rgbd::deserialize(a_in, image);
+    rasterizer_.setFocalLengths(cam_model.fx() / static_cast<double>(w_depth) * width_,
+                                cam_model.fy() / static_cast<double>(h_depth) * height_);
+    rasterizer_.setOpticalCenter(cam_model.cx() / static_cast<double>(w_depth) * width_,
+                                 cam_model.cy() / static_cast<double>(h_depth) * height_);
+    rasterizer_.setOpticalTranslation(0, 0);
+}
 
-    std::cout << "Image loaded from disk." << std::endl;
-    std::cout << "    name:  " << argv[1] << std::endl;
-//    std::cout << "    size:  " << image.getWidth() << " x " << image.getHeight() << std::endl;
-    std::cout << "    frame: " << image.getFrameId() << std::endl;
-    std::cout << "    time:  " << ros::Time(image.getTimestamp()) << std::endl;
-
-    cv::imshow("rgb", image.getRGBImage());
-    cv::imshow("depth", image.getDepthImage() / 8);
-    cv::waitKey();
-
-    return 0;
 }

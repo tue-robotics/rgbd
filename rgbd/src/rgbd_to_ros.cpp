@@ -1,5 +1,5 @@
-#include "rgbd/Client.h"
-#include "rgbd/View.h"
+#include "rgbd/client.h"
+#include "rgbd/view.h"
 //#include <opencv2/highgui/highgui.hpp>
 
 #include <sensor_msgs/Image.h>
@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 {
     if (argc <= 1)
     {
-        std::cout << "Please specify rgbd topic / name" << std::endl;
+        ROS_ERROR("Please specify rgbd topic / name");
         return 1;
     }
 

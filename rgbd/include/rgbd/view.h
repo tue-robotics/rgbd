@@ -1,7 +1,7 @@
-#ifndef RGBD_TRANSPORT_VIEW_H_
-#define RGBD_TRANSPORT_VIEW_H_
+#ifndef RGBD_VIEW_H_
+#define RGBD_VIEW_H_
 
-#include <rgbd/Image.h>
+#include <rgbd/image.h>
 
 namespace rgbd {
 
@@ -23,12 +23,12 @@ public:
 
     inline const cv::Vec3b& getColor(int x, int y) const
     {
-        return image_.rgb_image_.at<cv::Vec3b>(y * rgb_factor_, x * rgb_factor_);
+        return image_.getRGBImage().at<cv::Vec3b>(y * rgb_factor_, x * rgb_factor_);
     }
 
     inline const float& getDepth(int x, int y) const
     {
-        return image_.depth_image_.at<float>(y * depth_factor_, x * depth_factor_);
+        return image_.getDepthImage().at<float>(y * depth_factor_, x * depth_factor_);
     }
 
     inline bool getPoint3D(int x, int y, geo::Vector3& p) const
@@ -64,4 +64,4 @@ protected:
 
 }
 
-#endif
+#endif // RGBD_VIEW_H_

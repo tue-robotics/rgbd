@@ -1,13 +1,17 @@
-#include "rgbd/Client.h"
-#include "rgbd/View.h"
+#include <ros/init.h>
+#include <ros/names.h>
+
+#include "rgbd/client.h"
+#include "rgbd/view.h"
 #include <opencv2/highgui/highgui.hpp>
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rgbd_viewer");
+    ros::start();
 
     rgbd::Client client;
-    client.intialize("rgbd");
+    client.intialize(ros::names::resolve("rgbd"));
 
     ros::Rate r(30);
     while (ros::ok())
@@ -57,8 +61,6 @@ int main(int argc, char **argv)
 
         r.sleep();
     }
-
-    ros::spin();
 
     return 0;
 }

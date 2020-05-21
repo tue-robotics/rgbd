@@ -1,18 +1,28 @@
-#include "rgbd/Client.h"
-#include "rgbd/View.h"
 #include <opencv2/highgui/highgui.hpp>
+
+#include <ros/init.h>
+#include <ros/names.h>
+#include <ros/node_handle.h>
+#include <ros/rate.h>
+
+#include "rgbd/client.h"
+#include "rgbd/image.h"
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "rgbd_transport_test_client");
-    ros::NodeHandle nh;
+    ros::NodeHandle nh_private("~");
+
+    float rate = 30;
+    nh_private.getParam("rate", rate);
 
     rgbd::Client client;
-    client.intialize("test");
+    client.intialize(ros::names::resolve("test"));
 
-    ros::Rate r(30);
+    rgbd::Image image;
+
+    ros::Rate r(rate);
     while (ros::ok())
     {
-        rgbd::Image image;
         if (client.nextImage(image))
         {
             std::cout << "Image: t = " << std::fixed << image.getTimestamp() << ", frame = " << image.getFrameId() << std::endl;
@@ -23,8 +33,6 @@ int main(int argc, char **argv) {
         }
         r.sleep();
     }
-
-    ros::spin();
 
     return 0;
 }

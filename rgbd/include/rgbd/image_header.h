@@ -22,16 +22,26 @@ struct BufferHeader
     //Condition to wait when the queue is full
     boost::interprocess::interprocess_condition  cond_full;
 
-    uint32_t rgb_width;         // width of rgb image
-    uint32_t rgb_height;        // height of rgb image
-    uint32_t depth_width;       // width of depth image
-    uint32_t depth_height;      // height of depth image
+    // cv uses int, using the same variable types
+    int rgb_width;         // width of rgb image
+    int rgb_height;        // height of rgb image
+    int depth_width;       // width of depth image
+    int depth_height;      // height of depth image
 
+    // CameraInfo
+    // CameraInfo/header
     double timestamp;
-    double fx, fy, cx, cy, tx, ty; // intrinsic cam parameters
-    char frame_id[1000]; // TODO
+    char frame_id[1000];
+    // CameraInfo main
+    uint32_t height, width, binning_x, binning_y;
+    char distortion_model[1000];
+    size_t size_D; // Max 5
+    double D[5], K[9], R[9], P[12]; // D limited to 5, https://www.ros.org/reps/rep-0104.html#alternate-distortion-models
+    // CameraInfo/roi
+    uint32_t roi_x_offset, roi_y_offset, roi_height, roi_width;
+    bool roi_do_rectify;
 };
 
 } // end namespace rgbd
 
-#endif
+#endif // RGBD_IMAGE_HEADER_H_
