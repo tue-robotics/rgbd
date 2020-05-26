@@ -23,4 +23,4 @@ This package contains a number of nodes and tools. The most important ones are:
 * `rgbd_to_ros`: converts `rgbd_msgs::RGBD` messages to the 'standard' ROS format (`sensor_msgs::Image` (color image and depth image) and `sensor_msgs::CameraInfo`). Hereto, it uses an instance of the `Client` class as well as publishers for the RGB image, RGB camera info, depth image, depth camera info and pointcloud.
 
 ## Notes
-In case you are developing camera drivers, it is advised to stick to the 'standard' ROS interfaces to minimize dependencies to enhance compatibility with other ROS users. Use the `ros_to_rgbd` node and, if applicable, the `rgbd_to_shm` server to interface with your software if that's using the `Client` class.
+In case you are developing camera drivers, it is advised to stick to the 'standard' ROS interfaces to minimize dependencies which enhances compatibility with other ROS users. Use the `ros_to_rgbd` node and, if applicable, the `rgbd_to_shm` server to interface with your software if that's using the `Client` class.
