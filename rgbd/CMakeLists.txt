@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rgbd)
 
-find_package(Boost REQUIRED COMPONENTS thread)
+find_package(Boost REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   geolib2
@@ -53,7 +53,7 @@ add_library(rgbd    src/client.cpp
                     src/ros/conversions.cpp
 
                     ${HEADER_FILES})
-target_link_libraries(rgbd ${catkin_LIBRARIES} ${BOOST_LIBRARIES} rt)
+target_link_libraries(rgbd ${catkin_LIBRARIES} rt)
 add_dependencies(rgbd ${catkin_EXPORTED_TARGETS})
 
 # - - - - - - - - - - - - - - - - - NODES - - - - - - - - - - - - - - - - -

@@ -9,7 +9,7 @@
 #include <ros/publisher.h>
 #include <ros/service_server.h>
 
-#include <boost/thread.hpp>
+#include <thread>
 
 namespace rgbd {
 
@@ -66,7 +66,7 @@ protected:
     boost::mutex image_mutex_;
 
     // Service thread
-    boost::thread service_thread_;
+    std::thread service_thread_;
 
     /**
      * @brief serviceCallback

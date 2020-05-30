@@ -40,7 +40,7 @@ void ServerRGBD::initialize(const std::string& name, RGBStorageType rgb_type, De
 
     nh_.setCallbackQueue(&cb_queue_);
     service_server_ = nh_.advertiseService(name, &ServerRGBD::serviceCallback, this);
-    service_thread_ = boost::thread(&ServerRGBD::serviceThreadFunc, this, service_freq);
+    service_thread_ = std::thread(&ServerRGBD::serviceThreadFunc, this, service_freq);
 }
 
 // ----------------------------------------------------------------------------------------
