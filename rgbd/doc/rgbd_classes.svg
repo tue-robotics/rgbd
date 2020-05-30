@@ -193,5 +193,35 @@
         <text x="307.5" y="805.5">ServerRGBD</text>
       </a>
     </g>
+
+    <!--ServerROS-->
+    <!--Input arrow-->
+    <path d="M 158 950 L 249.76 950" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 255.76 950 L 247.76 954 L 249.76 950 L 247.76 946 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
+      <text x="202.84" y="934">rgbd::Image</text>
+    </g>
+    <!--Output arrow-->
+    <path d="M 358 950 L 449.76 950" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 455.76 950 L 447.76 954 L 449.76 950 L 447.76 946 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <rect x="358" y="900" width="230" height="20" fill="none" stroke="none" pointer-events="all" />
+    <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
+      <text x="472.5" y="914">sensor_msgs::Image color_image</text>
+    </g>
+    <rect x="358" y="910" width="230" height="20" fill="none" stroke="none" pointer-events="all" />
+    <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
+      <text x="472.5" y="924">sensor_msgs::Image depth_image</text>
+    </g>
+    <rect x="358" y="920" width="230" height="20" fill="none" stroke="none" pointer-events="all" />
+    <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
+      <text x="472.5" y="934">sensor_msgs::CameraInfo camera_info</text>
+    </g>
+    <!--Body-->
+    <rect x="258" y="900" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
+    <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
+      <a xlink:href="classrgbd_1_1ServerROS.html" target="_top">
+        <text x="307.5" y="955.5">ServerROS</text>
+      </a>
+    </g>
   </g>
 </svg>
