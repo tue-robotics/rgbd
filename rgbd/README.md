@@ -8,6 +8,10 @@ It provides a unified format for depthmaps combined with RGB data, which is more
 All **bold names** are classes. The main interface types are shown to understand the differences between all classes.
 ![core classes](doc/rgbd_classes.svg)
 
+## Core nodes
+Shown the most important nodes and their structure
+![core nodes](doc/rgbd_nodes.svg)
+
 ## Typical usage
 ### Classes
 For client applications, i.e., applications consuming RGBD data, it is advised to use the `Client` class. If possible, this will obtain its images from shared memory using the `ClientSHM` class, which minimizes network and CPU usage. Otherwise it relies on data received as `rgbd_msgs::RGBD` messages through the `ClientRGBD` class. Data is typically obtained as instance of the `rgbd::Image` class using the `nextImage` functions (see docstrings for more info).
