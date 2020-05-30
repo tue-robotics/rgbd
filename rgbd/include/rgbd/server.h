@@ -5,6 +5,11 @@
 #include "rgbd/server_rgbd.h"
 #include "rgbd/server_shm.h"
 
+#include <ros/node_handle.h>
+#include <ros/publisher.h>
+
+#include <thread>
+
 namespace rgbd {
 
 class Image;
@@ -47,6 +52,20 @@ protected:
     ServerRGBD server_rgbd_;
 
     ServerSHM server_shm_;
+
+    ros::NodeHandle nh_;
+    ros::Publisher pub_shm_hostname_;
+
+    std::string hostname_;
+
+    // Publisher thread
+    std::thread pub_hostname_thread_;
+
+    /**
+     * @brief Function to publish hostname on string topic
+     * @param frequency frequency for checking service requests
+     */
+    void pubHostnameThreadFunc(const float frequency);
 
 };
 
