@@ -72,7 +72,7 @@ protected:
      * @brief serviceCallback
      * @param req Service Request
      * @param resp Service Response
-     * @return succes
+     * @return success
      */
     bool serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetRGBDResponse& resp);
 
