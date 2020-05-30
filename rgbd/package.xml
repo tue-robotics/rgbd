@@ -11,6 +11,9 @@
 
   <license>TODO</license>
 
+  <url type="bugtracker">https://github.com/tue-robotics/rgbd/issues</url>
+  <url type="repository">https://github.com/tue-robotics/rgbd</url>
+
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>cv_bridge</depend>
