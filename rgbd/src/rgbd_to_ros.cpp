@@ -1,19 +1,13 @@
-#include <pcl/point_types.h>
-#include <pcl/point_cloud.h>
-#include <pcl_ros/point_cloud.h>
-
 #include <ros/init.h>
 #include <ros/console.h>
 #include <ros/master.h>
+#include <ros/names.h>
 #include <ros/node_handle.h>
 #include <ros/rate.h>
 
 #include "rgbd/client.h"
-#include "rgbd/view.h"
-#include <rgbd/ros/conversions.h>
-
-#include <sensor_msgs/Image.h>
-#include <sensor_msgs/CameraInfo.h>
+#include "rgbd/image.h"
+#include "rgbd/server_ros.h"
 
 int main(int argc, char **argv)
 {
@@ -84,130 +78,21 @@ int main(int argc, char **argv)
     client.intialize(ros::names::resolve("rgbd"));
 
     // Publishers
-    ros::NodeHandle nh;
-    ros::Publisher pub_rgb_img, pub_rgb_info, pub_depth_img, pub_depth_info, pub_depth_pc;
-    if (publish_rgb)
-    {
-        pub_rgb_img = nh.advertise<sensor_msgs::Image>("rgb/image", 1);
-        pub_rgb_info = nh.advertise<sensor_msgs::CameraInfo>("rgb/camera_info", 1);
-    }
-    if (publish_depth)
-    {
-        pub_depth_img = nh.advertise<sensor_msgs::Image>("depth/image", 1);
-        pub_depth_info = nh.advertise<sensor_msgs::CameraInfo>("depth/camera_info", 1);
-    }
-    if (publish_pc)
-    {
-        pub_depth_pc = nh.advertise<pcl::PointCloud<pcl::PointXYZ> >("depth/points", 1);
-    }
+    rgbd::ServerROS server;
+    server.initialize("", publish_rgb, publish_depth, publish_pc);
 
-    ROS_DEBUG_STREAM("rgb image topic: " << pub_rgb_img.getTopic());
-    ROS_DEBUG_STREAM("rgb camera info topic: " << pub_rgb_info.getTopic());
-    ROS_DEBUG_STREAM("depth image topic: " << pub_depth_img.getTopic());
-    ROS_DEBUG_STREAM("depth camera info topic: " << pub_depth_info.getTopic());
-    ROS_DEBUG_STREAM("pointcloud topic: " << pub_depth_pc.getTopic());
+    ros::NodeHandle nh_private("~");
+    float rate = 30;
+    nh_private.getParam("rate", rate);
+    ros::Rate r(rate);
 
-    ros::Time last_image_stamp;
+    rgbd::Image image;
 
-    ros::Rate r(30);
     while (ros::ok() && ros::master::check())
     {
-        if (!last_image_stamp.isZero() && ros::Time::now() - last_image_stamp > ros::Duration(5.0))
-        {
-          ROS_ERROR("rgbd to ros did not receive images for 5 seconds ... restarting ...");
-          exit(1);
-        }
-
-        rgbd::Image image;
         if (client.nextImage(image))
         {
-            if ((publish_depth || publish_pc) && image.getDepthImage().data)
-            {
-                last_image_stamp = ros::Time(image.getTimestamp());
-
-                // Convert camera info to message
-                rgbd::View view(image, image.getDepthImage().cols);
-
-
-                if (publish_depth)
-                {
-                    // Convert to image messages
-                    sensor_msgs::Image msg;
-                    sensor_msgs::CameraInfo info_msg;
-
-                    rgbd::convert(image.getDepthImage(), view.getRasterizer(), msg, info_msg);
-
-                    msg.header.stamp = ros::Time(image.getTimestamp());
-                    msg.header.frame_id = image.getFrameId();
-                    info_msg.header = msg.header;
-
-                    // Publish
-                    pub_depth_img.publish(msg);
-                    pub_depth_info.publish(info_msg);
-                }
-                if (publish_pc)
-                {
-                     // Create point cloud
-                     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pc_msg(new pcl::PointCloud<pcl::PointXYZRGB>());
-
-                     pc_msg->header.stamp = static_cast<uint64_t>(image.getTimestamp() * 1e6);
-                     pc_msg->header.frame_id = image.getFrameId();
-                     pc_msg->width  = 0;
-                     pc_msg->height  = 1;
-                     pc_msg->is_dense = true;
-
-                     // Fill point cloud
-                     for(int y = 0; y < view.getHeight(); ++y)
-                     {
-                         for(int x = 0; x < view.getWidth(); ++x)
-                         {
-                             geo::Vector3 p;
-                             if (view.getPoint3D(x, y, p))
-                             {
-                                 const cv::Vec3b& c = view.getColor(x, y);
-
-                                 // Push back and correct for geolib frame
-                                 pc_msg->points.push_back(pcl::PointXYZRGB());
-                                 pcl::PointXYZRGB& p_pcl = pc_msg->points.back();
-                                 p_pcl.x = static_cast<float>(p.x);
-                                 p_pcl.y = static_cast<float>(-p.y);
-                                 p_pcl.z = static_cast<float>(-p.z);
-                                 p_pcl.r = c[2];
-                                 p_pcl.g = c[1];
-                                 p_pcl.b = c[0];
-                                 pc_msg->width++;
-                             }
-                             else
-                             {
-                                 pc_msg->is_dense = false;
-                             }
-                         }
-                     }
-
-                     // Publish
-                     pub_depth_pc.publish(pc_msg);
-                }
-            }
-
-            if (publish_rgb && image.getRGBImage().data)
-            {
-                // Convert camera info to message
-                rgbd::View view(image, image.getRGBImage().cols);
-
-                // Convert to image messages
-                sensor_msgs::Image msg;
-                sensor_msgs::CameraInfo info_msg;
-                
-                rgbd::convert(image.getRGBImage(), view.getRasterizer(), msg, info_msg);
-
-                msg.header.stamp = ros::Time(image.getTimestamp());
-                msg.header.frame_id = image.getFrameId();
-                info_msg.header = msg.header;               
-
-                // Publish
-                pub_rgb_img.publish(msg);
-                pub_rgb_info.publish(info_msg);
-            }
+            server.send(image);
         }
 
         r.sleep();

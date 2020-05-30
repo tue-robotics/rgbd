@@ -33,7 +33,7 @@ public:
     virtual ~ServerRGBD();
 
     /**
-     * @brief initialize initialize server
+     * @brief Initialize server
      * @param name Fully resolved server name
      * @param rgb_type rgb storage type
      * @param depth_type depth storage type
@@ -42,7 +42,7 @@ public:
     void initialize(const std::string& name, RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS, DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS, const float service_freq = 10);
 
     /**
-     * @brief send Write a new image to all interfaces
+     * @brief Write a new image to all interfaces
      * @param image Image to be written
      */
     void send(const Image& image);
