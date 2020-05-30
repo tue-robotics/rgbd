@@ -49,6 +49,7 @@ add_library(rgbd    src/client.cpp
                     src/server_rgbd.cpp
                     src/server_ros.cpp
                     src/server_shm.cpp
+                    src/tools.cpp
                     src/view.cpp
                     src/ros/conversions.cpp
 
