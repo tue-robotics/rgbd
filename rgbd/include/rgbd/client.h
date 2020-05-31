@@ -9,6 +9,14 @@
 #include "rgbd/client_rgbd.h"
 #include "rgbd/client_shm.h"
 
+#include <ros/callback_queue.h>
+#include <ros/node_handle.h>
+#include <ros/subscriber.h>
+
+#include <std_msgs/String.h>
+
+#include <thread>
+
 
 namespace rgbd {
 
@@ -64,6 +72,18 @@ protected:
     ClientRGBD client_rgbd_;
 
     ClientSHM client_shm_;
+
+    ros::NodeHandle nh_;
+    ros::CallbackQueue cb_queue_;
+    ros::Subscriber sub_shm_hosts_;
+
+    std::string hostname_;
+
+    std::thread sub_hosts_thread_;
+
+    void hostsCallback(const std_msgs::StringConstPtr& msg);
+
+    void subHostsThreadFunc(const float frequency);
 
 };
 
