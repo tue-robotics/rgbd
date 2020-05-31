@@ -37,7 +37,7 @@ void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthS
     server_rgbd_.initialize(name, rgb_type, depth_type, service_freq);
     server_shm_.initialize(name);
 
-    pub_shm_hostname_ = nh_.advertise<std_msgs::String>(name + "/shm", 1);
+    pub_shm_hostname_ = nh_.advertise<std_msgs::String>(name + "/hosts", 1);
 
     pub_hostname_thread_ = std::thread(&Server::pubHostnameThreadFunc, this, 10);
 }
