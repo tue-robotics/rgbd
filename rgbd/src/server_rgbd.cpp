@@ -101,7 +101,7 @@ bool ServerRGBD::serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetR
 
 void ServerRGBD::serviceThreadFunc(const float freq)
 {
-    ros::Rate r(static_cast<double>(freq));
+    ros::Rate r(freq);
     while(nh_.ok())
     {
         cb_queue_.callAvailable();
