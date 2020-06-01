@@ -12,6 +12,7 @@
 #include <ros/callback_queue.h>
 #include <ros/node_handle.h>
 #include <ros/subscriber.h>
+#include <ros/time.h>
 
 #include <std_msgs/String.h>
 
@@ -78,6 +79,9 @@ protected:
     ros::Subscriber sub_shm_hosts_;
 
     std::string hostname_;
+    std::string server_name_;
+
+    ros::WallTime last_time_shm_server_online_;
 
     std::thread sub_hosts_thread_;
 
