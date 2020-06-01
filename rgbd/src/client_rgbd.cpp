@@ -32,6 +32,14 @@ bool ClientRGBD::intialize(const std::string& server_name)
 
 // ----------------------------------------------------------------------------------------
 
+bool ClientRGBD::deintialize()
+{
+    sub_image_ = ros::Subscriber();
+    return true;
+}
+
+// ----------------------------------------------------------------------------------------
+
 bool ClientRGBD::nextImage(Image& image)
 {
     new_image_ = false;
