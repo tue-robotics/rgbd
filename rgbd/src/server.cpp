@@ -1,11 +1,7 @@
 #include "rgbd/server.h"
 #include "rgbd/tools.h"
 
-#include <ros/console.h>
-
 #include <std_msgs/String.h>
-
-#include <exception>
 
 namespace rgbd {
 
@@ -14,11 +10,6 @@ namespace rgbd {
 Server::Server()
 {
     const std::string& hostname = get_hostname();
-    if (hostname.empty())
-    {
-        ROS_FATAL("Can't determine hostname");
-        throw std::runtime_error("Can't determine hostname");
-    }
     hostname_ = hostname;
 }
 

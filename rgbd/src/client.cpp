@@ -18,11 +18,6 @@ namespace rgbd {
 Client::Client()
 {
     const std::string& hostname = get_hostname();
-    if (hostname.empty())
-    {
-        ROS_FATAL("Can't determine hostname");
-        throw std::runtime_error("Can't determine hostname");
-    }
     hostname_ = hostname;
 }
 
