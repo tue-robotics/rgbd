@@ -73,6 +73,18 @@ bool ClientSHM::intialize(const std::string& server_name, float timeout)
 
 // ----------------------------------------------------------------------------------------------------
 
+bool ClientSHM::deintialize()
+{
+    buffer_header_ = nullptr;
+    image_data_ = nullptr;
+    mem_image_ = ipc::mapped_region();
+    mem_buffer_header_ = ipc::mapped_region();
+    shm_= ipc::shared_memory_object();
+    return true;
+}
+
+// ----------------------------------------------------------------------------------------------------
+
 bool ClientSHM::nextImage(Image& image)
 {
     if (!initialized())

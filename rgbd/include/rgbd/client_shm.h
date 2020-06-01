@@ -41,6 +41,12 @@ public:
     bool intialize(const std::string& server_name, float timeout = 5.0);
 
     /**
+     * @brief Clears all the shared memory classes to nullptrs or empty classes. #initialized will now return false.
+     * @return indicates success
+     */
+    bool deintialize();
+
+    /**
      * @brief Check if the client is initialized. nextImage shouldn't be called if client is not initialized.
      * @return initialized or not
      */
