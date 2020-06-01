@@ -44,7 +44,7 @@ public:
      * @brief Check if the client is initialized. nextImage shouldn't be called if client is not initialized.
      * @return initialized or not
      */
-    bool initialized();
+    bool initialized() { return (buffer_header_ != nullptr); }
 
     /**
      * @brief Get a new Image. If no new image has been received, the sequence nummer is still the same as the previous call,

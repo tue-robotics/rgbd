@@ -73,13 +73,6 @@ bool ClientSHM::intialize(const std::string& server_name, float timeout)
 
 // ----------------------------------------------------------------------------------------------------
 
-bool ClientSHM::initialized()
-{
-    return (buffer_header_ != nullptr);
-}
-
-// ----------------------------------------------------------------------------------------------------
-
 bool ClientSHM::nextImage(Image& image)
 {
     if (!initialized())
