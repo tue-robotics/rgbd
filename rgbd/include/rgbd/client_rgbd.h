@@ -43,6 +43,12 @@ public:
     bool intialize(const std::string& server_name);
 
     /**
+     * @brief Clears the subscriber. #initialized will now return false.
+     * @return indicates success
+     */
+    bool deintialize();
+
+    /**
      * @brief Check if the client is initialized. nextImage will not return an image if client is not initialized.
      * @return initialized or not
      */
