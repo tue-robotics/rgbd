@@ -46,7 +46,7 @@ bool convert(const cv::Mat& image, const geo::DepthCamera& cam_model, sensor_msg
  * @param image raw pointer to an Image. In case it is a nullptr, a new instance will be created.
  * @return success
  */
-bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image* image);
+bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image);
 
 }
 
