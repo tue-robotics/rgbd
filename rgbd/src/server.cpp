@@ -28,9 +28,7 @@ void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthS
     server_rgbd_.initialize(name, rgb_type, depth_type, service_freq);
     server_shm_.initialize(name);
 
-    pub_shm_hostname_ = nh_.advertise<std_msgs::String>(name + "/hosts", 1);
-
-    pub_hostname_thread_ = std::thread(&Server::pubHostnameThreadFunc, this, 10);
+    pub_hostname_thread_ = std::thread(rgbd::pubHostnameThreadFunc, std::ref(nh_), name, hostname_, 10);
 }
 
 // ----------------------------------------------------------------------------------------
@@ -39,20 +37,6 @@ void Server::send(const Image& image, bool)
 {
     server_rgbd_.send(image);
     server_shm_.send(image);
-}
-
-// ----------------------------------------------------------------------------------------
-
-void Server::pubHostnameThreadFunc(const float frequency)
-{
-    ros::Rate r(frequency);
-    std_msgs::String msg;
-    msg.data = hostname_;
-    while(nh_.ok())
-    {
-        pub_shm_hostname_.publish(msg);
-        r.sleep();
-    }
 }
 
 }
