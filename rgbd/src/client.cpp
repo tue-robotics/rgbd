@@ -82,8 +82,8 @@ void Client::hostsCallback(const std_msgs::StringConstPtr& msg)
 
 void Client::subHostsThreadFunc(const float frequency)
 {
-    ros::Rate r(frequency);
-    ros::WallDuration d(r);
+    ros::WallRate r(frequency);
+    ros::WallDuration d(2*r.expectedCycleTime().toSec()); // To prevent any issues by a very small delay
     while(nh_.ok())
     {
         cb_queue_.callAvailable();
