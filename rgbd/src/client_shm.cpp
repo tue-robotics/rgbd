@@ -2,6 +2,7 @@
 
 #include "rgbd/image.h"
 
+#include <ros/duration.h>
 #include <ros/init.h>
 #include <ros/console.h>
 #include <ros/time.h>
@@ -36,7 +37,7 @@ bool ClientSHM::intialize(const std::string& server_name, float timeout)
 
     ros::Time start = ros::Time::now();
     ros::Time now;
-    ros::Duration d(0.1);
+    ros::WallDuration d(0.1);
     do
     {
         try
