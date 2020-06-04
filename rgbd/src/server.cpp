@@ -3,6 +3,8 @@
 
 #include <std_msgs/String.h>
 
+#include <functional>
+
 namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
