@@ -105,7 +105,10 @@ void Client::subHostsThreadFunc(const float frequency)
             if (!client_shm_.initialized())
             {
                 ROS_DEBUG("Switching from ClientRGBD to ClientSHM");
-                client_rgbd_.deintialize();
+                // It might take multiple iterations before ClientSHM is initialized,
+                // no need to keep calling deintialize on ClientRGBD.
+                if (client_rgbd_.initialized())
+                    client_rgbd_.deintialize();
                 client_shm_.intialize(server_name_, 0);
             }
         }
