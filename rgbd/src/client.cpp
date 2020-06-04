@@ -106,7 +106,7 @@ void Client::subHostsThreadFunc(const float frequency)
             {
                 ROS_DEBUG("Switching from ClientRGBD to ClientSHM");
                 client_rgbd_.deintialize();
-                client_shm_.intialize(server_name_, d.toSec());
+                client_shm_.intialize(server_name_, 0);
             }
         }
         r.sleep();

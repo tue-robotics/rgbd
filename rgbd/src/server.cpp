@@ -9,7 +9,7 @@ namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
 
-Server::Server()
+Server::Server() : pub_hostname_thread_ptr_(nullptr)
 {
     const std::string& hostname = get_hostname();
     hostname_ = hostname;
@@ -19,24 +19,27 @@ Server::Server()
 
 Server::~Server()
 {
+    ROS_WARN("Server::~Server()");
     nh_.shutdown();
-    pub_hostname_thread_.join();
+    if (pub_hostname_thread_ptr_)
+        pub_hostname_thread_ptr_->join();
 }
 
 // ----------------------------------------------------------------------------------------
 
 void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type, const float service_freq)
 {
-    server_rgbd_.initialize(name, rgb_type, depth_type, service_freq);
-    server_shm_.initialize(name);
-
-    pub_hostname_thread_ = std::thread(rgbd::pubHostnameThreadFunc, std::ref(nh_), name, hostname_, 10);
+    name_= name;
+    server_rgbd_.initialize(name_, rgb_type, depth_type, service_freq);
+    server_shm_.initialize(name_);
 }
 
 // ----------------------------------------------------------------------------------------
 
 void Server::send(const Image& image, bool)
 {
+    if (!pub_hostname_thread_ptr_)
+        pub_hostname_thread_ptr_ = std::unique_ptr<std::thread>(new std::thread(rgbd::pubHostnameThreadFunc, std::ref(nh_), name_, hostname_, 10));
     server_rgbd_.send(image);
     server_shm_.send(image);
 }

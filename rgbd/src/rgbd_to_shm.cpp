@@ -14,6 +14,7 @@
 #include <std_msgs/String.h>
 
 #include <functional>
+#include <memory>
 #include <thread>
 
 
@@ -40,7 +41,7 @@ int main(int argc, char **argv)
     server.initialize(server_name);
 
     ros::NodeHandle nh;
-    std::thread pub_hostname_thread(rgbd::pubHostnameThreadFunc, std::ref(nh), server_name, host_name, 10);
+    std::unique_ptr<std::thread> pub_hostname_thread_ptr(nullptr);
 
     rgbd::ImagePtr image_ptr;
 
@@ -54,12 +55,17 @@ int main(int argc, char **argv)
         }
         image_ptr = client.nextImage();
         if (image_ptr)
+        {
+            if (!pub_hostname_thread_ptr)
+                pub_hostname_thread_ptr = std::unique_ptr<std::thread>(new std::thread(rgbd::pubHostnameThreadFunc, std::ref(nh), server_name, host_name, 10));
             server.send(*image_ptr);
+        }
         r.sleep();
     }
 
     nh.shutdown();
-    pub_hostname_thread.join();
+    if(pub_hostname_thread_ptr)
+        pub_hostname_thread_ptr->join();
 
     return 0;
 }

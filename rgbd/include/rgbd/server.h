@@ -8,6 +8,7 @@
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 
+#include <memory>
 #include <thread>
 
 namespace rgbd {
@@ -55,10 +56,11 @@ protected:
 
     ros::NodeHandle nh_;
 
+    std::string name_;
     std::string hostname_;
 
     // Publisher thread
-    std::thread pub_hostname_thread_;
+    std::unique_ptr<std::thread> pub_hostname_thread_ptr_;
 
 };
 
