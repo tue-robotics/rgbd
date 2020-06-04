@@ -54,18 +54,11 @@ protected:
     ServerSHM server_shm_;
 
     ros::NodeHandle nh_;
-    ros::Publisher pub_shm_hostname_;
 
     std::string hostname_;
 
     // Publisher thread
     std::thread pub_hostname_thread_;
-
-    /**
-     * @brief Function to publish hostname on string topic
-     * @param frequency frequency for checking service requests
-     */
-    void pubHostnameThreadFunc(const float frequency);
 
 };
 

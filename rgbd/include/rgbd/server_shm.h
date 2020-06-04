@@ -7,6 +7,10 @@
 #include "rgbd/image_header.h"
 #include "rgbd/types.h"
 
+namespace ros {
+class NodeHandle;
+}
+
 namespace rgbd
 {
 
@@ -61,6 +65,8 @@ private:
     uint64_t image_data_size_;
 
 };
+
+void pubHostnameThreadFunc(ros::NodeHandle& nh, const std::string server_name, const std::string hostname, const float frequency);
 
 } // end namespace rgbd
 
