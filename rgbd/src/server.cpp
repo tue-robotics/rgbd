@@ -39,7 +39,7 @@ void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthS
 void Server::send(const Image& image, bool)
 {
     if (!pub_hostname_thread_ptr_)
-        pub_hostname_thread_ptr_ = std::unique_ptr<std::thread>(new std::thread(rgbd::pubHostnameThreadFunc, std::ref(nh_), name_, hostname_, 10));
+        pub_hostname_thread_ptr_ = std::unique_ptr<std::thread>(new std::thread(rgbd::pubHostnameThreadFunc, std::ref(nh_), name_, hostname_, 20));
     server_rgbd_.send(image);
     server_shm_.send(image);
 }
