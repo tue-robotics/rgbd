@@ -35,7 +35,7 @@ bool Client::intialize(const std::string& server_name, float timeout)
     nh_.setCallbackQueue(&cb_queue_);
     sub_shm_hosts_ = nh_.subscribe<std_msgs::String>(server_name + "/hosts", 1, &Client::hostsCallback, this);
 
-    sub_hosts_thread_ = std::thread(&Client::subHostsThreadFunc, this, 10);
+    sub_hosts_thread_ = std::thread(&Client::subHostsThreadFunc, this, 20);
 
     server_name_ = server_name;
     return true;
@@ -83,7 +83,7 @@ void Client::hostsCallback(const std_msgs::StringConstPtr& msg)
 void Client::subHostsThreadFunc(const float frequency)
 {
     ros::WallRate r(frequency);
-    ros::WallDuration d(2*r.expectedCycleTime().toSec()); // To prevent any issues by a very small delay
+    ros::WallDuration d(5*r.expectedCycleTime().toSec()); // To prevent any issues by a very small delay
     while(nh_.ok())
     {
         cb_queue_.callAvailable();
