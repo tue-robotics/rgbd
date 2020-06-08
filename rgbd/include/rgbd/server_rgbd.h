@@ -9,6 +9,7 @@
 #include <ros/publisher.h>
 #include <ros/service_server.h>
 
+#include <mutex>
 #include <thread>
 
 namespace rgbd {
@@ -63,7 +64,7 @@ protected:
     DepthStorageType depth_type_;
 
     rgbd::Image image_;
-    boost::mutex image_mutex_;
+    std::mutex image_mutex_;
 
     // Service thread
     std::thread service_thread_;
