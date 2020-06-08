@@ -6,6 +6,8 @@
 #include "rgbd/client.h"
 #include "rgbd/view.h"
 
+#include <memory>
+
 // ----------------------------------------------------------------------------------------------------
 
 struct ChannelView
@@ -17,7 +19,7 @@ struct ChannelView
         client->intialize(topic);
     }
 
-    boost::shared_ptr<rgbd::Client> client;
+    std::shared_ptr<rgbd::Client> client;
     double rx;
     double ry;
     double rwidth;
