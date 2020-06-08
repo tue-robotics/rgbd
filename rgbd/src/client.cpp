@@ -92,25 +92,24 @@ void Client::subHostsThreadFunc(const float frequency)
         if (ros::WallTime::now() - d > last_time_shm_server_online_)
         {
             // No message received for more than one cycle time, so RGBD topic should be used
-            ROS_ERROR_STREAM("Disable ClientSHM");
+            if(client_shm_.initialized())
+                client_shm_.deintialize();
             if(!client_rgbd_.initialized())
             {
                 ROS_DEBUG("Switching from ClientSHM to ClientRGBD");
-                client_shm_.deintialize();
                 client_rgbd_.intialize(server_name_);
             }
         }
         else
         {
             // Message received less than one cycle time ago, so shared memory should be used
-            ROS_ERROR_STREAM("Enable ClientSHM");
+            if (client_rgbd_.initialized())
+                client_rgbd_.deintialize();
             if (!client_shm_.initialized())
             {
                 ROS_DEBUG("Switching from ClientRGBD to ClientSHM");
                 // It might take multiple iterations before ClientSHM is initialized,
                 // no need to keep calling deintialize on ClientRGBD.
-                if (client_rgbd_.initialized())
-                    client_rgbd_.deintialize();
                 client_shm_.intialize(server_name_, 0);
             }
         }
