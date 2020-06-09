@@ -97,7 +97,7 @@ void ClientROS::imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_msg, c
     }
     catch (cv_bridge::Exception& e)
     {
-        ROS_ERROR("Could not deserialize rgb image: %s", e.what());
+        ROS_ERROR("ClientROS: Could not deserialize rgb image: %s", e.what());
         return;
     }
 
@@ -125,7 +125,7 @@ void ClientROS::imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_msg, c
     }
     catch (cv_bridge::Exception& e)
     {
-        ROS_ERROR("Could not deserialize depth image: %s", e.what());
+        ROS_ERROR("ClientROS: Could not deserialize depth image: %s", e.what());
         return;
     }
 
