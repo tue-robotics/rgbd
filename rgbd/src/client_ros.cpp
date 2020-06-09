@@ -83,6 +83,11 @@ void ClientROS::camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_
 
 void ClientROS::imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_msg, const sensor_msgs::ImageConstPtr& depth_image_msg)
 {
+    if (!cam_model_.initialized())
+    {
+        ROS_ERROR("ClientROS: cam_model not yet initialized");
+        return;
+    }
     cv_bridge::CvImagePtr rgb_img_ptr, depth_img_ptr;
 
     // Convert RGB image
