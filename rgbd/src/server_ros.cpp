@@ -78,7 +78,6 @@ void ServerROS::send(const Image& image)
         // Convert camera info to message
         rgbd::View view(image, image.getDepthImage().cols);
 
-
         if (pub_depth_img_ && (pub_depth_img_->getNumSubscribers() || pub_depth_img_->getNumSubscribers()))
         {
             // Convert to image messages
