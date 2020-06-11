@@ -66,12 +66,12 @@ int main(int argc, char **argv)
         }
     }
 
+    ros::init(argc, argv, "rgbd_to_ros");
+    ros::start(); // Required to use ros::names::resolve, without creating a nodehandle
+    
     ROS_DEBUG_STREAM("publish_rgb: " << publish_rgb);
     ROS_DEBUG_STREAM("publish_depth: " << publish_depth);
     ROS_DEBUG_STREAM("publish_pc: " << publish_pc);
-
-    ros::init(argc, argv, "rgbd_to_ros");
-    ros::start(); // Required to use ros::names::resolve, without creating a nodehandle
 
     // Listener
     rgbd::Client client;
