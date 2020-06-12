@@ -19,7 +19,6 @@ Server::Server() : pub_hostname_thread_ptr_(nullptr)
 
 Server::~Server()
 {
-    ROS_WARN("Server::~Server()");
     nh_.shutdown();
     if (pub_hostname_thread_ptr_)
         pub_hostname_thread_ptr_->join();
