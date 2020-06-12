@@ -117,8 +117,8 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
     ros::NodeHandle nh_private("~");
 
-    double max_fps = 30;
-    nh_private.getParam("max_fps", max_fps);
+    float rate = 30;
+    nh_private.getParam("rate", rate);
 
     // Listener
     rgbd::Client client;
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
     ros::ServiceServer srv_project_2d_to_3d = nh.advertiseService("project_2d_to_3d", srvGet3dPointFromROI);
     ros::Time last_image_stamp;
 
-    ros::Rate r(max_fps);
+    ros::Rate r(rate);
     while (ros::ok())
     {
         if (!ros::master::check())

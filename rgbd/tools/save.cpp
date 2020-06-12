@@ -2,6 +2,7 @@
 #include <ros/init.h>
 #include <ros/master.h>
 #include <ros/names.h>
+#include <ros/node_handle.h>
 #include <ros/rate.h>
 
 #include "rgbd/client.h"
@@ -10,9 +11,14 @@
 #include <rgbd/serialization.h>
 #include <fstream>
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     ros::init(argc, argv, "rgbd_saver");
-    ros::start();
+
+    ros::NodeHandle nh_private("~");
+
+    float rate = 30;
+    nh_private.getParam("rate", rate);
 
     std::string file_name = "rgbd_image";
 
@@ -20,7 +26,7 @@ int main(int argc, char **argv) {
     client.intialize(ros::names::resolve("rgbd"));
     rgbd::Image image;
 
-    ros::Rate r(30);
+    ros::Rate r(rate);
     while (ros::ok())
     {
         if (!ros::master::check())

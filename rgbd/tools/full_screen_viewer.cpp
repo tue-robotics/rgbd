@@ -2,6 +2,8 @@
 #include <ros/init.h>
 #include <ros/master.h>
 #include <ros/names.h>
+#include <ros/node_handle.h>
+#include <ros/rate.h>
 
 #include "rgbd/client.h"
 #include "rgbd/view.h"
@@ -10,7 +12,10 @@
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rgbd_viewer");
-    ros::start();
+    ros::NodeHandle nh_private("~");
+
+    float rate = 30;
+    nh_private.getParam("rate", rate);
 
     rgbd::Client client;
     client.intialize(ros::names::resolve("rgbd"));

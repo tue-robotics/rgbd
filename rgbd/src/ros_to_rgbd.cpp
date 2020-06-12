@@ -17,8 +17,8 @@ int main(int argc, char **argv) {
 
     ros::NodeHandle nh_private("~");
 
-    double max_fps = 30;
-    nh_private.getParam("max_fps", max_fps);
+    float rate = 30;
+    nh_private.getParam("rate", rate);
 
     // ----- READ RGB STORAGE TYPE
 
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 
     rgbd::ImagePtr image_ptr;
 
-    ros::Rate r(max_fps);
+    ros::Rate r(rate);
     while (ros::ok())
     {
         if (!ros::master::check())

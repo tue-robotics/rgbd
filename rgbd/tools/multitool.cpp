@@ -2,6 +2,7 @@
 #include <ros/init.h>
 #include <ros/master.h>
 #include <ros/names.h>
+#include <ros/node_handle.h>
 #include <ros/rate.h>
 
 #include "rgbd/client.h"
@@ -106,6 +107,10 @@ int main(int argc, char **argv)
     float max_view_distance = 10;
 
     rgbd::ImagePtr image;
+    ros::NodeHandle nh_private("~");
+
+    float rate = 30;
+    nh_private.getParam("rate", rate);
 
     ros::Rate r(30);
     while (ros::ok())

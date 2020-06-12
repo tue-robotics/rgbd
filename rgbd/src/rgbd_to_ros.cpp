@@ -84,10 +84,10 @@ int main(int argc, char **argv)
     ros::NodeHandle nh_private("~");
     float rate = 30;
     nh_private.getParam("rate", rate);
-    ros::Rate r(rate);
 
     rgbd::Image image;
 
+    ros::Rate r(rate);
     while (ros::ok())
     {
         if (!ros::master::check())
