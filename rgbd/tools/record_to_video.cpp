@@ -75,8 +75,13 @@ int main(int argc, char **argv) {
 
     // Start loop at given frequency
     ros::Rate r(video_frame_rate);
-    while (ros::ok() && ros::master::check())
+    while (ros::ok())
     {
+        if (!ros::master::check())
+        {
+            ROS_ERROR("Lost connection to master");
+            return 1;
+        }
         ros::spinOnce();
 
         // Check if we already received an image

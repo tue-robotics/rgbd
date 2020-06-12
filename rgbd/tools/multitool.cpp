@@ -1,3 +1,4 @@
+#include <ros/console.h>
 #include <ros/init.h>
 #include <ros/master.h>
 #include <ros/names.h>
@@ -5,7 +6,10 @@
 
 #include "rgbd/client.h"
 #include "rgbd/view.h"
+
 #include <opencv2/highgui/highgui.hpp>
+
+#include <memory>
 
 bool PAUSE = false;
 std::string MODE;
@@ -47,7 +51,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "rgbd_multitool", ros::init_options::AnonymousName);
     ros::start();
 
-    rgbd::Client* client = nullptr;
+    std::unique_ptr<rgbd::Client> client(nullptr);
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -69,7 +73,7 @@ int main(int argc, char **argv)
 
         if (opt == "--rgbd")
         {
-            client = new rgbd::Client;
+            client = std::unique_ptr<rgbd::Client>(new rgbd::Client);
             client->intialize(ros::names::resolve(arg));
         }
         else
@@ -104,8 +108,13 @@ int main(int argc, char **argv)
     rgbd::ImagePtr image;
 
     ros::Rate r(30);
-    while (ros::ok() && ros::master::check())
+    while (ros::ok())
     {
+        if (!ros::master::check())
+        {
+            ROS_ERROR("Lost connection to master");
+            return 1;
+        }
         if (!PAUSE && client)
         {
             rgbd::ImagePtr image_tmp = client->nextImage();
@@ -247,9 +256,6 @@ int main(int argc, char **argv)
 
         r.sleep();
     }
-
-    delete client;
-    usleep(500000); // To prevent segfaults on closing the the window
 
     return 0;
 }

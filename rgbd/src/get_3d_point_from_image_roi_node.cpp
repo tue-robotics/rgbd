@@ -132,8 +132,13 @@ int main(int argc, char **argv)
     ros::Time last_image_stamp;
 
     ros::Rate r(max_fps);
-    while (ros::ok() && ros::master::check())
+    while (ros::ok())
     {
+        if (!ros::master::check())
+        {
+            ROS_ERROR("Lost connection to master");
+            return 1;
+        }
         rgbd::Image image;
         if (client.nextImage(image))
         {

@@ -1,3 +1,4 @@
+#include <ros/console.h>
 #include <ros/init.h>
 #include <ros/master.h>
 #include <ros/names.h>
@@ -23,8 +24,13 @@ int main(int argc, char **argv)
     cv::Mat canvas;
 
     ros::Rate r(30);
-    while (ros::ok() && ros::master::check())
+    while (ros::ok())
     {
+        if (!ros::master::check())
+        {
+            ROS_ERROR("Lost connection to master");
+            return 1;
+        }
         rgbd::Image image;
         if (!PAUSE && client.nextImage(image))
         {
@@ -51,8 +57,6 @@ int main(int argc, char **argv)
 
         r.sleep();
     }
-
-    usleep(500000);
 
     return 0;
 }
