@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    for (unsigned int i = 1; i < argc; ++i)
+    for (int i = 1; i < argc; ++i)
     {
         std::string name = std::string(argv[i]);
 

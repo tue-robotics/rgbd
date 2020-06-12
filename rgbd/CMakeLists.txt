@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rgbd)
 
-find_package(Boost REQUIRED COMPONENTS thread)
+find_package(Boost REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   geolib2
@@ -47,12 +47,13 @@ add_library(rgbd    src/client.cpp
                     src/serialization.cpp
                     src/server.cpp
                     src/server_rgbd.cpp
+                    src/server_ros.cpp
                     src/server_shm.cpp
                     src/view.cpp
                     src/ros/conversions.cpp
 
                     ${HEADER_FILES})
-target_link_libraries(rgbd ${catkin_LIBRARIES} ${BOOST_LIBRARIES} rt)
+target_link_libraries(rgbd ${catkin_LIBRARIES} rt)
 add_dependencies(rgbd ${catkin_EXPORTED_TARGETS})
 
 # - - - - - - - - - - - - - - - - - NODES - - - - - - - - - - - - - - - - -
@@ -79,9 +80,6 @@ target_link_libraries(full_screen_viewer rgbd)
 
 add_executable(multitool tools/multitool.cpp)
 target_link_libraries(multitool rgbd)
-
-add_executable(presenter tools/presenter.cpp)
-target_link_libraries(presenter rgbd)
 
 add_executable(record_to_video tools/record_to_video.cpp)
 target_link_libraries(record_to_video rgbd)

@@ -9,7 +9,8 @@
 #include <ros/publisher.h>
 #include <ros/service_server.h>
 
-#include <boost/thread.hpp>
+#include <mutex>
+#include <thread>
 
 namespace rgbd {
 
@@ -33,7 +34,7 @@ public:
     virtual ~ServerRGBD();
 
     /**
-     * @brief initialize initialize server
+     * @brief Initialize server
      * @param name Fully resolved server name
      * @param rgb_type rgb storage type
      * @param depth_type depth storage type
@@ -42,7 +43,7 @@ public:
     void initialize(const std::string& name, RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS, DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS, const float service_freq = 10);
 
     /**
-     * @brief send Write a new image to all interfaces
+     * @brief Write a new image to all interfaces
      * @param image Image to be written
      */
     void send(const Image& image);
@@ -63,16 +64,16 @@ protected:
     DepthStorageType depth_type_;
 
     rgbd::Image image_;
-    boost::mutex image_mutex_;
+    std::mutex image_mutex_;
 
     // Service thread
-    boost::thread service_thread_;
+    std::thread service_thread_;
 
     /**
      * @brief serviceCallback
      * @param req Service Request
      * @param resp Service Response
-     * @return succes
+     * @return success
      */
     bool serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetRGBDResponse& resp);
 

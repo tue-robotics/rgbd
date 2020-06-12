@@ -1,6 +1,8 @@
 #include <opencv2/highgui/highgui.hpp>
 
+#include <ros/console.h>
 #include <ros/init.h>
+#include <ros/master.h>
 #include <ros/names.h>
 #include <ros/node_handle.h>
 #include <ros/rate.h>
@@ -23,6 +25,11 @@ int main(int argc, char **argv) {
     ros::Rate r(rate);
     while (ros::ok())
     {
+        if (!ros::master::check())
+        {
+            ROS_ERROR("Lost connection to master");
+            return 1;
+        }
         if (client.nextImage(image))
         {
             std::cout << "Image: t = " << std::fixed << image.getTimestamp() << ", frame = " << image.getFrameId() << std::endl;

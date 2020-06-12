@@ -1,6 +1,12 @@
+#include <ros/console.h>
+#include <ros/init.h>
+#include <ros/master.h>
+#include <ros/names.h>
+#include <ros/node_handle.h>
+#include <ros/rate.h>
+
 #include "rgbd/client.h"
 #include "rgbd/view.h"
-#include <opencv2/highgui/highgui.hpp>
 
 int main(int argc, char **argv)
 {
@@ -11,13 +17,22 @@ int main(int argc, char **argv)
     }
 
     ros::init(argc, argv, "rgbd_viewer");
+    ros::NodeHandle nh_private("~");
+
+    float rate = 30;
+    nh_private.getParam("rate", rate);
 
     rgbd::Client client;
-    client.intialize(argv[1]);
+    client.intialize(ros::names::resolve(argv[1]));
 
-    ros::Rate r(30);
+    ros::Rate r(rate);
     while (ros::ok())
     {
+        if (!ros::master::check())
+        {
+            ROS_ERROR("Lost connection to master");
+            return 1;
+        }
         rgbd::Image image;
         if (!client.nextImage(image))
         {

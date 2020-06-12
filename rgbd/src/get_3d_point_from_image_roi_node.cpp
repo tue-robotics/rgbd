@@ -1,21 +1,23 @@
-#include <rgbd/view.h>
-#include <rgbd/client.h>
-
 #include <geolib/datatypes.h>
 #include <geolib/ros/msg_conversions.h>
 
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/types.hpp>
 
-#include <ros/init.h>
-#include <ros/names.h>
-#include <ros/service_client.h>
-#include <ros/node_handle.h>
+#include <rgbd/view.h>
+#include <rgbd/client.h>
+
+#include <rgbd_msgs/Project2DTo3D.h>
+
 #include <ros/console.h>
+#include <ros/init.h>
+#include <ros/master.h>
+#include <ros/names.h>
+#include <ros/node_handle.h>
+#include <ros/service_client.h>
 #include <ros/time.h>
 
 #include <sensor_msgs/RegionOfInterest.h>
-#include <rgbd_msgs/Project2DTo3D.h>
 
 #include <memory>
 
@@ -115,8 +117,8 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
     ros::NodeHandle nh_private("~");
 
-    double max_fps = 30;
-    nh_private.getParam("max_fps", max_fps);
+    float rate = 30;
+    nh_private.getParam("rate", rate);
 
     // Listener
     rgbd::Client client;
@@ -129,9 +131,14 @@ int main(int argc, char **argv)
     ros::ServiceServer srv_project_2d_to_3d = nh.advertiseService("project_2d_to_3d", srvGet3dPointFromROI);
     ros::Time last_image_stamp;
 
-    ros::Rate r(max_fps);
+    ros::Rate r(rate);
     while (ros::ok())
     {
+        if (!ros::master::check())
+        {
+            ROS_ERROR("Lost connection to master");
+            return 1;
+        }
         rgbd::Image image;
         if (client.nextImage(image))
         {
@@ -144,11 +151,6 @@ int main(int argc, char **argv)
             }
         }
         ros::spinOnce(); // Process service request after getting a new image
-        if (!last_image_stamp.isZero() && ros::Time::now() - last_image_stamp > ros::Duration(5.0))
-        {
-            ROS_ERROR("No new images received images for 5 seconds, ...restarting");
-            exit(1);
-        }
         r.sleep();
     }
 }

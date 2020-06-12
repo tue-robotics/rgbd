@@ -1,10 +1,16 @@
+#include <ros/console.h>
 #include <ros/init.h>
+#include <ros/master.h>
 #include <ros/names.h>
+#include <ros/node_handle.h>
 #include <ros/rate.h>
 
 #include "rgbd/client.h"
 #include "rgbd/view.h"
+
 #include <opencv2/highgui/highgui.hpp>
+
+#include <memory>
 
 bool PAUSE = false;
 std::string MODE;
@@ -16,7 +22,7 @@ cv::Vec2i mouse_pos;
 
 // ----------------------------------------------------------------------------------------------------
 
-void CallBackFunc(int event, int x, int y, int flags, void* userdata)
+void CallBackFunc(int event, int x, int y, int /*flags*/, void* /*userdata*/)
 {
     x = x % IMAGE_WIDTH;
     mouse_pos = cv::Vec2i(x, y);
@@ -46,7 +52,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "rgbd_multitool", ros::init_options::AnonymousName);
     ros::start();
 
-    rgbd::Client* client = nullptr;
+    std::unique_ptr<rgbd::Client> client(nullptr);
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -61,14 +67,14 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    for(unsigned int i = 1; i < argc; i += 2)
+    for(int i = 1; i < argc; i += 2)
     {
         std::string opt = argv[i];
         std::string arg = argv[i + 1];
 
         if (opt == "--rgbd")
         {
-            client = new rgbd::Client;
+            client = std::unique_ptr<rgbd::Client>(new rgbd::Client);
             client->intialize(ros::names::resolve(arg));
         }
         else
@@ -101,10 +107,19 @@ int main(int argc, char **argv)
     float max_view_distance = 10;
 
     rgbd::ImagePtr image;
+    ros::NodeHandle nh_private("~");
+
+    float rate = 30;
+    nh_private.getParam("rate", rate);
 
     ros::Rate r(30);
     while (ros::ok())
     {
+        if (!ros::master::check())
+        {
+            ROS_ERROR("Lost connection to master");
+            return 1;
+        }
         if (!PAUSE && client)
         {
             rgbd::ImagePtr image_tmp = client->nextImage();
@@ -131,7 +146,7 @@ int main(int argc, char **argv)
                         float d = depth.at<float>(y, x);
                         if (d > 0 && d == d)
                         {
-                            unsigned char v = std::min<float>(max_view_distance, d / max_view_distance) * 255;
+                            unsigned char v = static_cast<unsigned char>(std::min<float>(max_view_distance, d / max_view_distance) * 255);
                             depth_canvas.at<cv::Vec3b>(y, x) = cv::Vec3b(v, v, v);
                         }
                     }
@@ -246,9 +261,6 @@ int main(int argc, char **argv)
 
         r.sleep();
     }
-
-    delete client;
-    usleep(500000); // To prevent segfaults on closing the the window
 
     return 0;
 }

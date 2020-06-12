@@ -1,6 +1,8 @@
 #include "rgbd/server.h"
 
+#include <ros/console.h>
 #include <ros/init.h>
+#include <ros/master.h>
 #include <ros/names.h>
 #include <ros/node_handle.h>
 #include <ros/rate.h>
@@ -20,7 +22,6 @@ int main(int argc, char **argv)
     rgbd::Server server;
     server.initialize(ros::names::resolve("test"), rgbd::RGB_STORAGE_LOSSLESS, rgbd::DEPTH_STORAGE_LOSSLESS);
 
-    ros::Rate r(rate);
     cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0,0,255));
     cv::Mat depth_image(480, 640, CV_32FC1, 5.0);
     sensor_msgs::CameraInfo cam_info;
@@ -39,8 +40,14 @@ int main(int argc, char **argv)
     rgbd::Image image(rgb_image, depth_image, cam_model, "test_frame_id", ros::Time::now().toSec());
 
     int x = 0;
+    ros::Rate r(rate);
     while (ros::ok())
     {
+        if (!ros::master::check())
+        {
+            ROS_ERROR("Lost connection to master");
+            return 1;
+        }
         cv::line(rgb_image, cv::Point(x, 0), cv::Point(x, rgb_image.rows - 1), cv::Scalar(0,0,255));
         cv::line(depth_image, cv::Point(x, 0), cv::Point(x, depth_image.rows - 1), 5.0);
         x = (x + 10) % rgb_image.cols;

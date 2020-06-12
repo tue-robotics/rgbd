@@ -1,6 +1,9 @@
 // ROS
+#include <ros/console.h>
 #include <ros/init.h>
+#include <ros/master.h>
 #include <ros/node_handle.h>
+#include <ros/rate.h>
 #include <ros/subscriber.h>
 
 // ROS image message
@@ -43,8 +46,8 @@ int main(int argc, char **argv) {
     // Read parameters
     ros::NodeHandle nh_private("~");
 
-    double video_frame_rate = 30;
-    nh_private.getParam("fps", video_frame_rate);
+    float rate = 30;
+    nh_private.getParam("rate", rate);
 
     std::string filename;
     nh_private.getParam("filename", filename);
@@ -72,9 +75,14 @@ int main(int argc, char **argv) {
     cv::Size2i video_size;
 
     // Start loop at given frequency
-    ros::Rate r(video_frame_rate);
+    ros::Rate r(rate);
     while (ros::ok())
     {
+        if (!ros::master::check())
+        {
+            ROS_ERROR("Lost connection to master");
+            return 1;
+        }
         ros::spinOnce();
 
         // Check if we already received an image
@@ -84,8 +92,9 @@ int main(int argc, char **argv) {
             if (!initialized)
             {
                 // If not, do so
-                video_size = cv::Size2i(size * rgb_image.cols, size * rgb_image.rows);
-                video_writer.open(filename.c_str(), cv::VideoWriter::fourcc(format[0], format[1], format[2], format[3]), video_frame_rate, video_size);
+                video_size = cv::Size2i(static_cast<int>(size * rgb_image.cols),
+                                        static_cast<int>(size * rgb_image.rows));
+                video_writer.open(filename.c_str(), cv::VideoWriter::fourcc(format[0], format[1], format[2], format[3]), rate, video_size);
 
                 if (!video_writer.isOpened())
                 {

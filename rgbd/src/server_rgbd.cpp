@@ -40,7 +40,7 @@ void ServerRGBD::initialize(const std::string& name, RGBStorageType rgb_type, De
 
     nh_.setCallbackQueue(&cb_queue_);
     service_server_ = nh_.advertiseService(name, &ServerRGBD::serviceCallback, this);
-    service_thread_ = boost::thread(&ServerRGBD::serviceThreadFunc, this, service_freq);
+    service_thread_ = std::thread(&ServerRGBD::serviceThreadFunc, this, service_freq);
 }
 
 // ----------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ void ServerRGBD::initialize(const std::string& name, RGBStorageType rgb_type, De
 void ServerRGBD::send(const Image& image)
 {
     {
-        boost::unique_lock<boost::mutex> ul(image_mutex_);
+        std::unique_lock<std::mutex> ul(image_mutex_);
         image_ = image.clone();
     }
 
@@ -70,7 +70,7 @@ bool ServerRGBD::serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetR
 {
     rgbd::Image image;
     {
-        boost::unique_lock<boost::mutex> ul(image_mutex_);
+        std::unique_lock<std::mutex> ul(image_mutex_);
         image = image_.clone();
     }
     // Check for valid input

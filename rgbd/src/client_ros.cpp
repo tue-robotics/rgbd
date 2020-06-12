@@ -23,9 +23,9 @@ ClientROS::ClientROS() : sync_(nullptr), sub_rgb_sync_(nullptr), sub_depth_sync_
 ClientROS::~ClientROS()
 {
     nh_.shutdown();
-    delete sub_rgb_sync_;
-    delete sub_depth_sync_;
-    delete sync_;
+    sync_.reset();
+    sub_rgb_sync_.reset();
+    sub_depth_sync_.reset();
 }
 
 // ----------------------------------------------------------------------------------------
@@ -36,10 +36,10 @@ bool ClientROS::intialize(const std::string& rgb_image_topic, const std::string&
 
     sub_cam_info_ = nh_.subscribe(cam_info_topic, 1, &ClientROS::camInfoCallback, this);
 
-    sub_rgb_sync_ = new message_filters::Subscriber<sensor_msgs::Image>(nh_, rgb_image_topic, 1);
-    sub_depth_sync_ = new message_filters::Subscriber<sensor_msgs::Image>(nh_, depth_image_topic, 1);
+    sub_rgb_sync_ = std::unique_ptr<message_filters::Subscriber<sensor_msgs::Image> >(new message_filters::Subscriber<sensor_msgs::Image>(nh_, rgb_image_topic, 1));
+    sub_depth_sync_ = std::unique_ptr<message_filters::Subscriber<sensor_msgs::Image> >(new message_filters::Subscriber<sensor_msgs::Image>(nh_, depth_image_topic, 1));
 
-    sync_ = new message_filters::Synchronizer<RGBDApproxPolicy>(RGBDApproxPolicy(10), *sub_rgb_sync_, *sub_depth_sync_);
+    sync_ = std::unique_ptr<message_filters::Synchronizer<RGBDApproxPolicy> >(new message_filters::Synchronizer<RGBDApproxPolicy>(RGBDApproxPolicy(10), *sub_rgb_sync_, *sub_depth_sync_));
     sync_->registerCallback(boost::bind(&ClientROS::imageCallback, this, _1, _2));
 
     return true;
@@ -83,6 +83,11 @@ void ClientROS::camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_
 
 void ClientROS::imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_msg, const sensor_msgs::ImageConstPtr& depth_image_msg)
 {
+    if (!cam_model_.initialized())
+    {
+        ROS_ERROR("ClientROS: cam_model not yet initialized");
+        return;
+    }
     cv_bridge::CvImagePtr rgb_img_ptr, depth_img_ptr;
 
     // Convert RGB image
@@ -92,7 +97,7 @@ void ClientROS::imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_msg, c
     }
     catch (cv_bridge::Exception& e)
     {
-        ROS_ERROR("Could not deserialize rgb image: %s", e.what());
+        ROS_ERROR("ClientROS: Could not deserialize rgb image: %s", e.what());
         return;
     }
 
@@ -120,7 +125,7 @@ void ClientROS::imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_msg, c
     }
     catch (cv_bridge::Exception& e)
     {
-        ROS_ERROR("Could not deserialize depth image: %s", e.what());
+        ROS_ERROR("ClientROS: Could not deserialize depth image: %s", e.what());
         return;
     }
 

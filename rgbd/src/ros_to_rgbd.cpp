@@ -1,4 +1,6 @@
+#include <ros/console.h>
 #include <ros/init.h>
+#include <ros/master.h>
 #include <ros/names.h>
 #include <ros/node_handle.h>
 #include <ros/rate.h>
@@ -15,8 +17,8 @@ int main(int argc, char **argv) {
 
     ros::NodeHandle nh_private("~");
 
-    double max_fps = 30;
-    nh_private.getParam("max_fps", max_fps);
+    float rate = 30;
+    nh_private.getParam("rate", rate);
 
     // ----- READ RGB STORAGE TYPE
 
@@ -64,9 +66,14 @@ int main(int argc, char **argv) {
 
     rgbd::ImagePtr image_ptr;
 
-    ros::Rate r(max_fps);
+    ros::Rate r(rate);
     while (ros::ok())
     {
+        if (!ros::master::check())
+        {
+            ROS_ERROR("Lost connection to master");
+            return 1;
+        }
         image_ptr = client.nextImage();
         if (image_ptr)
             server.send(*image_ptr);
