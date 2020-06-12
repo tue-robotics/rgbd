@@ -81,9 +81,6 @@ target_link_libraries(full_screen_viewer rgbd)
 add_executable(multitool tools/multitool.cpp)
 target_link_libraries(multitool rgbd)
 
-add_executable(presenter tools/presenter.cpp)
-target_link_libraries(presenter rgbd)
-
 add_executable(record_to_video tools/record_to_video.cpp)
 target_link_libraries(record_to_video rgbd)
 
