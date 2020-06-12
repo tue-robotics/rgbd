@@ -23,9 +23,6 @@ ClientROS::ClientROS() : sync_(nullptr), sub_rgb_sync_(nullptr), sub_depth_sync_
 ClientROS::~ClientROS()
 {
     nh_.shutdown();
-    delete sub_rgb_sync_;
-    delete sub_depth_sync_;
-    delete sync_;
 }
 
 // ----------------------------------------------------------------------------------------
@@ -36,10 +33,10 @@ bool ClientROS::intialize(const std::string& rgb_image_topic, const std::string&
 
     sub_cam_info_ = nh_.subscribe(cam_info_topic, 1, &ClientROS::camInfoCallback, this);
 
-    sub_rgb_sync_ = new message_filters::Subscriber<sensor_msgs::Image>(nh_, rgb_image_topic, 1);
-    sub_depth_sync_ = new message_filters::Subscriber<sensor_msgs::Image>(nh_, depth_image_topic, 1);
+    sub_rgb_sync_ = std::unique_ptr<message_filters::Subscriber<sensor_msgs::Image> >(new message_filters::Subscriber<sensor_msgs::Image>(nh_, rgb_image_topic, 1));
+    sub_depth_sync_ = std::unique_ptr<message_filters::Subscriber<sensor_msgs::Image> >(new message_filters::Subscriber<sensor_msgs::Image>(nh_, depth_image_topic, 1));
 
-    sync_ = new message_filters::Synchronizer<RGBDApproxPolicy>(RGBDApproxPolicy(10), *sub_rgb_sync_, *sub_depth_sync_);
+    sync_ = std::unique_ptr<message_filters::Synchronizer<RGBDApproxPolicy> >(new message_filters::Synchronizer<RGBDApproxPolicy>(RGBDApproxPolicy(10), *sub_rgb_sync_, *sub_depth_sync_));
     sync_->registerCallback(boost::bind(&ClientROS::imageCallback, this, _1, _2));
 
     return true;

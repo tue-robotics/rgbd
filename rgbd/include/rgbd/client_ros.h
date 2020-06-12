@@ -18,6 +18,8 @@
 
 #include "rgbd/types.h"
 
+#include <memory>
+
 
 namespace rgbd {
 
@@ -57,7 +59,7 @@ public:
      * @brief Check if the client is initialized. nextImage will not return an image if client is not initialized.
      * @return initialized or not
      */
-    bool initialized() { return (sync_); }
+    bool initialized() { return sync_.operator bool(); }
 
     /**
      * @brief Get a new Image. If no new image has been received since the last call,
@@ -79,9 +81,9 @@ protected:
     ros::NodeHandle nh_;
     ros::CallbackQueue cb_queue_;
 
-    message_filters::Synchronizer<RGBDApproxPolicy>* sync_;
-    message_filters::Subscriber<sensor_msgs::Image>* sub_rgb_sync_;
-    message_filters::Subscriber<sensor_msgs::Image>* sub_depth_sync_;
+    std::unique_ptr<message_filters::Synchronizer<RGBDApproxPolicy> > sync_;
+    std::unique_ptr<message_filters::Subscriber<sensor_msgs::Image> > sub_rgb_sync_;
+    std::unique_ptr<message_filters::Subscriber<sensor_msgs::Image> > sub_depth_sync_;
     ros::Subscriber sub_cam_info_;
     image_geometry::PinholeCameraModel cam_model_;
 
