@@ -43,14 +43,14 @@ int main(int argc, char **argv)
             rgbd::serialize(image, a_out);
             f_out.close();
 
-            std::cout << "Image stored to disk." << std::endl;
+            ROS_INFO("Image stored to disk.");
             return 0;
         }
 
         r.sleep();
     }
 
-    std::cout << "No image stored." << std::endl;
+    ROS_INFO("No image stored.");
 
     return 0;
 }
