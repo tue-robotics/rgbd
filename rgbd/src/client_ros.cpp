@@ -23,6 +23,9 @@ ClientROS::ClientROS() : sync_(nullptr), sub_rgb_sync_(nullptr), sub_depth_sync_
 ClientROS::~ClientROS()
 {
     nh_.shutdown();
+    sync_.reset();
+    sub_rgb_sync_.reset();
+    sub_depth_sync_.reset();
 }
 
 // ----------------------------------------------------------------------------------------
