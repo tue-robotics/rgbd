@@ -1,5 +1,5 @@
-#include <ros/init.h>
 #include <ros/console.h>
+#include <ros/init.h>
 #include <ros/master.h>
 #include <ros/names.h>
 #include <ros/node_handle.h>

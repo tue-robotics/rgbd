@@ -9,8 +9,8 @@
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/distortion_models.h>
 
-int main(int argc, char **argv) {
-
+int main(int /*argc*/, char **/*argv*/)
+{
     std::string test_filename = "/tmp/rgbd_test_image";
 
     {

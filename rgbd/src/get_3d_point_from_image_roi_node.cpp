@@ -9,13 +9,13 @@
 
 #include <rgbd_msgs/Project2DTo3D.h>
 
-#include <ros/init.h>
 #include <ros/console.h>
+#include <ros/init.h>
 #include <ros/master.h>
 #include <ros/names.h>
 #include <ros/node_handle.h>
-#include <ros/time.h>
 #include <ros/service_client.h>
+#include <ros/time.h>
 
 #include <sensor_msgs/RegionOfInterest.h>
 

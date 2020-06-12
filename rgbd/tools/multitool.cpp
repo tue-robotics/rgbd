@@ -22,7 +22,7 @@ cv::Vec2i mouse_pos;
 
 // ----------------------------------------------------------------------------------------------------
 
-void CallBackFunc(int event, int x, int y, int flags, void* userdata)
+void CallBackFunc(int event, int x, int y, int /*flags*/, void* /*userdata*/)
 {
     x = x % IMAGE_WIDTH;
     mouse_pos = cv::Vec2i(x, y);
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    for(unsigned int i = 1; i < argc; i += 2)
+    for(int i = 1; i < argc; i += 2)
     {
         std::string opt = argv[i];
         std::string arg = argv[i + 1];

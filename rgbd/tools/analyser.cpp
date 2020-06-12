@@ -8,8 +8,6 @@
 #include "rgbd/client.h"
 #include "rgbd/view.h"
 
-#include <opencv2/highgui/highgui.hpp>
-
 int main(int argc, char **argv)
 {
     if (argc <= 1)

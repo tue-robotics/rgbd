@@ -1,8 +1,9 @@
 // ROS
-#include <ros/init.h>
 #include <ros/console.h>
+#include <ros/init.h>
 #include <ros/master.h>
 #include <ros/node_handle.h>
+#include <ros/rate.h>
 #include <ros/subscriber.h>
 
 // ROS image message
