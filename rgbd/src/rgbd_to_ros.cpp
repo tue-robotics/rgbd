@@ -58,6 +58,15 @@ int main(int argc, char **argv)
                 publish_pc = true;
                 valid_arg_provided = true;
             }
+            else if (!opt.compare(0, 2, "--"))
+            {
+                std::cout << "[rgbd_to_ros] Unknown option: '" << opt << "'." << std::endl;
+                return 1;
+            }
+            else
+            {
+                std::cout << "[rgbd_to_ros] Ignoring option: '" << opt << "'." << std::endl;
+            }
         }
         if (!valid_arg_provided)
         {
