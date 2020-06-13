@@ -6,6 +6,7 @@
 #include "rgbd/ros/conversions.h"
 #include "rgbd/tools.h"
 
+#include <ros/console.h>
 #include <ros/duration.h>
 #include <ros/rate.h>
 
