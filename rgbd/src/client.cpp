@@ -63,32 +63,22 @@ bool Client::deinitialize()
 
 bool Client::nextImage(Image& image)
 {
+    std::lock_guard<std::mutex> lg(switch_impl_mutex_);
     if (client_impl_mode_ == ClientImplMode::shm)
-    {
-        std::lock_guard<std::mutex> lg(switch_impl_mutex_);
         return client_shm_.nextImage(image);
-    }
     else // client_impl_mode == ClientImplMode::rgbd
-    {
-        std::lock_guard<std::mutex> lg(switch_impl_mutex_);
         return client_rgbd_.nextImage(image);
-    }
 }
 
 // ----------------------------------------------------------------------------------------
 
 ImagePtr Client::nextImage()
 {
+    std::lock_guard<std::mutex> lg(switch_impl_mutex_);
     if (client_impl_mode_ == ClientImplMode::shm)
-    {
-        std::lock_guard<std::mutex> lg(switch_impl_mutex_);
         return client_shm_.nextImage();
-    }
     else // client_impl_mode == ClientImplMode::rgbd
-    {
-        std::lock_guard<std::mutex> lg(switch_impl_mutex_);
         return client_rgbd_.nextImage();
-    }
 }
 
 // ----------------------------------------------------------------------------------------
