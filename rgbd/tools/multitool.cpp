@@ -75,7 +75,7 @@ int main(int argc, char **argv)
         if (opt == "--rgbd")
         {
             client = std::unique_ptr<rgbd::Client>(new rgbd::Client);
-            client->intialize(ros::names::resolve(arg));
+            client->initialize(ros::names::resolve(arg));
         }
         else
         {

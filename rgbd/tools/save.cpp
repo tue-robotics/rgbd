@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     std::string file_name = "rgbd_image";
 
     rgbd::Client client;
-    client.intialize(ros::names::resolve("rgbd"));
+    client.initialize(ros::names::resolve("rgbd"));
     rgbd::Image image;
 
     ros::Rate r(rate);

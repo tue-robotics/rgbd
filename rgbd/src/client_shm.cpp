@@ -30,7 +30,7 @@ ClientSHM::~ClientSHM()
 
 // ----------------------------------------------------------------------------------------------------
 
-bool ClientSHM::intialize(const std::string& server_name, float timeout)
+bool ClientSHM::initialize(const std::string& server_name, float timeout)
 {
     std::string server_name_cp = server_name;
     std::replace(server_name_cp.begin(), server_name_cp.end(), '/', '-');
@@ -74,7 +74,7 @@ bool ClientSHM::intialize(const std::string& server_name, float timeout)
 
 // ----------------------------------------------------------------------------------------------------
 
-bool ClientSHM::deintialize()
+bool ClientSHM::deinitialize()
 {
     buffer_header_ = nullptr;
     image_data_ = nullptr;

@@ -123,7 +123,7 @@ int main(int argc, char **argv)
     // Listener
     rgbd::Client client;
 
-    client.intialize(ros::names::resolve("rgbd"));
+    client.initialize(ros::names::resolve("rgbd"));
 
     g_last_images_.set_capacity(100);
 

@@ -33,7 +33,7 @@ Client::~Client()
 
 // ----------------------------------------------------------------------------------------
 
-bool Client::intialize(const std::string& server_name, float timeout)
+bool Client::initialize(const std::string& server_name, float /*timeout*/)
 {
     nh_.setCallbackQueue(&cb_queue_);
     sub_shm_hosts_ = nh_.subscribe<std_msgs::String>(server_name + "/hosts", 1, &Client::hostsCallback, this);
@@ -107,11 +107,11 @@ void Client::subHostsThreadFunc(const float frequency)
             // Lock the entire switching procedure, but not the decision;
             std::lock_guard<std::mutex> lg(switch_impl_mutex_);
             if(client_shm_.initialized())
-                client_shm_.deintialize();
+                client_shm_.deinitialize();
             if(!client_rgbd_.initialized())
             {
                 ROS_DEBUG("Switching to ClientRGBD");
-                client_rgbd_.intialize(server_name_);
+                client_rgbd_.initialize(server_name_);
             }
             client_impl_mode_ = ClientImplMode::rgbd;
         }
@@ -120,12 +120,12 @@ void Client::subHostsThreadFunc(const float frequency)
             // Last message is recent enough to use shm
             std::lock_guard<std::mutex> lg(switch_impl_mutex_);
             if (client_rgbd_.initialized())
-                client_rgbd_.deintialize();
+                client_rgbd_.deinitialize();
             if (!client_shm_.initialized())
             {
                 ROS_DEBUG("Switching to ClientSHM");
                 // It might take multiple iterations before ClientSHM is initialized.
-                client_shm_.intialize(server_name_, 0);
+                client_shm_.initialize(server_name_, 0);
             }
             client_impl_mode_ = ClientImplMode::shm;
         }

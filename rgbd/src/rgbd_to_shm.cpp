@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     const std::string server_name = ros::names::resolve("rgbd");
     const std::string host_name = rgbd::get_hostname();
 
-    client.intialize(server_name);
+    client.initialize(server_name);
     server.initialize(server_name);
 
     ros::NodeHandle nh;

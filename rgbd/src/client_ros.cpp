@@ -30,7 +30,7 @@ ClientROS::~ClientROS()
 
 // ----------------------------------------------------------------------------------------
 
-bool ClientROS::intialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic)
+bool ClientROS::initialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic)
 {
     nh_.setCallbackQueue(&cb_queue_);
 
