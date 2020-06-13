@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     nh_private.getParam("rate", rate);
 
     rgbd::Client client;
-    client.intialize(ros::names::resolve("rgbd"));
+    client.initialize(ros::names::resolve("rgbd"));
 
     ros::Rate r(rate);
     while (ros::ok())

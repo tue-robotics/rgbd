@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     nh_private.getParam("rate", rate);
 
     rgbd::Client client;
-    client.intialize(ros::names::resolve("rgbd"));
+    client.initialize(ros::names::resolve("rgbd"));
 
     const std::string  window_name = "RGBD_VIEW";
     cv::namedWindow(window_name, cv::WINDOW_NORMAL);

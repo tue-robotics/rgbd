@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 
     // Listener
     rgbd::Client client;
-    client.intialize(ros::names::resolve("rgbd"));
+    client.initialize(ros::names::resolve("rgbd"));
 
     // Publishers
     rgbd::ServerROS server;

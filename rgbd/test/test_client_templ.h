@@ -22,7 +22,7 @@ int main_templ(int argc, char **argv)
     nh_private.getParam("rate", rate);
 
     T client;
-    client.intialize(ros::names::resolve("test"));
+    client.initialize(ros::names::resolve("test"));
 
     rgbd::Image image;
 

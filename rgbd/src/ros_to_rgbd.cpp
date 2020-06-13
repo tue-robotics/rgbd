@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
     rgbd::ClientROS client;
     rgbd::Server server;
 
-    client.intialize("rgb_image", "depth_image", "cam_info");
+    client.initialize("rgb_image", "depth_image", "cam_info");
     server.initialize(ros::names::resolve("rgbd"), rgb_type, depth_type);
 
     rgbd::ImagePtr image_ptr;
