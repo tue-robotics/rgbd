@@ -71,6 +71,11 @@ public:
 
 protected:
 
+    enum class ClientImplMode {
+        shm,
+        rgbd
+    };
+
     ClientRGBD client_rgbd_;
 
     ClientSHM client_shm_;
@@ -86,6 +91,7 @@ protected:
 
     std::thread sub_hosts_thread_;
 
+    ClientImplMode client_impl_mode_;
     std::mutex switch_impl_mutex_;
 
     void hostsCallback(const std_msgs::StringConstPtr& msg);

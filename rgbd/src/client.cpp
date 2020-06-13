@@ -17,7 +17,7 @@ namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
 
-Client::Client()
+Client::Client() : client_impl_mode_(ClientImplMode::rgbd)
 {
     const std::string& hostname = get_hostname();
     hostname_ = hostname;
@@ -48,28 +48,36 @@ bool Client::intialize(const std::string& server_name, float timeout)
 
 bool Client::nextImage(Image& image)
 {
-    std::lock_guard<std::mutex> lg(switch_impl_mutex_);
-    if (client_shm_.initialized())
+    if (client_impl_mode_ == ClientImplMode::shm)
+    {
+        std::lock_guard<std::mutex> lg(switch_impl_mutex_);
         return client_shm_.nextImage(image);
-
-    return client_rgbd_.nextImage(image);
+    }
+    else // client_impl_mode == ClientImplMode::rgbd
+    {
+        std::lock_guard<std::mutex> lg(switch_impl_mutex_);
+        return client_rgbd_.nextImage(image);
+    }
 }
 
 // ----------------------------------------------------------------------------------------
 
 ImagePtr Client::nextImage()
 {
-    std::lock_guard<std::mutex> lg(switch_impl_mutex_);
-    if (client_shm_.initialized())
+    if (client_impl_mode_ == ClientImplMode::shm)
     {
+        std::lock_guard<std::mutex> lg(switch_impl_mutex_);
         ImagePtr img(new Image);
         if (client_shm_.nextImage(*img))
             return img;
         else
             return ImagePtr();
     }
-
-    return client_rgbd_.nextImage();
+    else // client_impl_mode == ClientImplMode::rgbd
+    {
+        std::lock_guard<std::mutex> lg(switch_impl_mutex_);
+        return client_rgbd_.nextImage();
+    }
 }
 
 // ----------------------------------------------------------------------------------------
@@ -92,32 +100,34 @@ void Client::subHostsThreadFunc(const float frequency)
     while(nh_.ok())
     {
         cb_queue_.callAvailable();
+        // Decide on implementation mode
         if (ros::WallTime::now() - d > last_time_shm_server_online_)
         {
-            // Lock the entire switching procedure, but not the decision
+            // Too much time has elapsed since last message, use rgbd
+            // Lock the entire switching procedure, but not the decision;
             std::lock_guard<std::mutex> lg(switch_impl_mutex_);
-            // No message received for more than one cycle time, so RGBD topic should be used
             if(client_shm_.initialized())
                 client_shm_.deintialize();
             if(!client_rgbd_.initialized())
             {
-                ROS_DEBUG("Switching from ClientSHM to ClientRGBD");
+                ROS_DEBUG("Switching to ClientRGBD");
                 client_rgbd_.intialize(server_name_);
             }
+            client_impl_mode_ = ClientImplMode::rgbd;
         }
         else
         {
+            // Last message is recent enough to use shm
             std::lock_guard<std::mutex> lg(switch_impl_mutex_);
-            // Message received less than one cycle time ago, so shared memory should be used
             if (client_rgbd_.initialized())
                 client_rgbd_.deintialize();
             if (!client_shm_.initialized())
             {
-                ROS_DEBUG("Switching from ClientRGBD to ClientSHM");
-                // It might take multiple iterations before ClientSHM is initialized,
-                // no need to keep calling deintialize on ClientRGBD.
+                ROS_DEBUG("Switching to ClientSHM");
+                // It might take multiple iterations before ClientSHM is initialized.
                 client_shm_.intialize(server_name_, 0);
             }
+            client_impl_mode_ = ClientImplMode::shm;
         }
         r.sleep();
     }
