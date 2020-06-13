@@ -47,6 +47,7 @@ bool Client::intialize(const std::string& server_name, float timeout)
 
 bool Client::nextImage(Image& image)
 {
+    std::lock_guard<std::mutex> lg(switch_impl_mutex_);
     if (client_shm_.initialized())
         return client_shm_.nextImage(image);
 
@@ -57,6 +58,7 @@ bool Client::nextImage(Image& image)
 
 ImagePtr Client::nextImage()
 {
+    std::lock_guard<std::mutex> lg(switch_impl_mutex_);
     if (client_shm_.initialized())
     {
         ImagePtr img(new Image);
@@ -91,6 +93,8 @@ void Client::subHostsThreadFunc(const float frequency)
         cb_queue_.callAvailable();
         if (ros::WallTime::now() - d > last_time_shm_server_online_)
         {
+            // Lock the entire switching procedure, but not the decision
+            std::lock_guard<std::mutex> lg(switch_impl_mutex_);
             // No message received for more than one cycle time, so RGBD topic should be used
             if(client_shm_.initialized())
                 client_shm_.deintialize();
@@ -102,6 +106,7 @@ void Client::subHostsThreadFunc(const float frequency)
         }
         else
         {
+            std::lock_guard<std::mutex> lg(switch_impl_mutex_);
             // Message received less than one cycle time ago, so shared memory should be used
             if (client_rgbd_.initialized())
                 client_rgbd_.deintialize();

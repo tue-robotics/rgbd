@@ -16,6 +16,7 @@
 
 #include <std_msgs/String.h>
 
+#include <mutex>
 #include <thread>
 
 
@@ -84,6 +85,8 @@ protected:
     ros::WallTime last_time_shm_server_online_;
 
     std::thread sub_hosts_thread_;
+
+    std::mutex switch_impl_mutex_;
 
     void hostsCallback(const std_msgs::StringConstPtr& msg);
 
