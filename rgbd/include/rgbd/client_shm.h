@@ -60,6 +60,13 @@ public:
      */
     bool nextImage(Image& image);
 
+    /**
+     * @brief Get a new Image. If no new image has been received, the sequence nummer is still the same as the previous call,
+     * The ImagePtr will be a nullptr
+     * @return ImagePtr to an Image or a nullptr
+     */
+    ImagePtr nextImage();
+
 private:
 
     boost::interprocess::shared_memory_object shm_;

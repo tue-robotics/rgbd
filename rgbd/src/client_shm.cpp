@@ -140,5 +140,16 @@ bool ClientSHM::nextImage(Image& image)
     return true;
 }
 
+// ----------------------------------------------------------------------------------------------------
+
+ImagePtr ClientSHM::nextImage()
+{
+    ImagePtr img(new Image);
+    if (nextImage(*img))
+        return img;
+    else
+        return ImagePtr();
+}
+
 } // end namespace rgbd
 
