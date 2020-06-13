@@ -114,7 +114,6 @@ target_link_libraries(rgbd_test_client rgbd)
 add_executable(rgbd_test_client_rgbd test/test_client_rgbd.cpp test/test_client_templ.h)
 target_link_libraries(rgbd_test_client_rgbd rgbd)
 
-
 add_executable(rgbd_test_client_shm test/test_client_shm.cpp test/test_client_templ.h)
 target_link_libraries(rgbd_test_client_shm rgbd)
 
