@@ -82,11 +82,7 @@ ImagePtr Client::nextImage()
     if (client_impl_mode_ == ClientImplMode::shm)
     {
         std::lock_guard<std::mutex> lg(switch_impl_mutex_);
-        ImagePtr img(new Image);
-        if (client_shm_.nextImage(*img))
-            return img;
-        else
-            return ImagePtr();
+        return client_shm_.nextImage();
     }
     else // client_impl_mode == ClientImplMode::rgbd
     {
