@@ -108,6 +108,9 @@ target_link_libraries(rgbd_test_server_rgbd rgbd)
 add_executable(rgbd_test_server_shm test/test_server_shm.cpp test/test_server_templ.h)
 target_link_libraries(rgbd_test_server_shm rgbd)
 
+add_executable(rgbd_test_server_ros test/test_server_ros.cpp test/test_server_templ.h)
+target_link_libraries(rgbd_test_server_ros rgbd)
+
 add_executable(rgbd_test_client test/test_client.cpp test/test_client_templ.h)
 target_link_libraries(rgbd_test_client rgbd)
 
