@@ -48,11 +48,11 @@ public:
     bool intialize(const std::string& server_name, float timeout = 5.0);
 
     /**
-     * @brief Check if the client is initialized. First checks if ClientSHM is initialized, otherwise ClientRGBD.
+     * @brief Check if the client is initialized. Checks if #server_name_ is set.
      * nextImage will not return an image if client is not initialized.
      * @return initialized or not
      */
-    bool initialized() { return (client_shm_.initialized() || client_rgbd_.initialized()); }
+    bool initialized() { return !server_name_.empty(); }
 
     /**
      * @brief Get a new Image. If no new image has been received since the last call,
