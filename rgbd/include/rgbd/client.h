@@ -48,6 +48,12 @@ public:
     bool initialize(const std::string& server_name, float timeout = 5.0);
 
     /**
+     * @brief Calls deinitialize on implementaiton clients. Clears the #server_name_. #initialized will now return false.
+     * @return indicates success
+     */
+    bool deinitialize();
+
+    /**
      * @brief Check if the client is initialized. Checks if #server_name_ is set.
      * nextImage will not return an image if client is not initialized.
      * @return initialized or not

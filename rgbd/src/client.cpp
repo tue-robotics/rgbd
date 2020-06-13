@@ -46,6 +46,21 @@ bool Client::initialize(const std::string& server_name, float /*timeout*/)
 
 // ----------------------------------------------------------------------------------------
 
+bool Client::deinitialize()
+{
+    server_name_ = "";
+    nh_.shutdown();
+    if (client_shm_.initialized())
+        client_shm_.deinitialize();
+    if (client_rgbd_.initialized())
+        client_rgbd_.deinitialize();
+    last_time_shm_server_online_ = ros::WallTime();
+    sub_hosts_thread_.join();
+    return true;
+}
+
+// ----------------------------------------------------------------------------------------
+
 bool Client::nextImage(Image& image)
 {
     if (client_impl_mode_ == ClientImplMode::shm)
