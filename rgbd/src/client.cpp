@@ -19,8 +19,7 @@ namespace rgbd {
 
 Client::Client() : client_impl_mode_(ClientImplMode::rgbd)
 {
-    const std::string& hostname = get_hostname();
-    hostname_ = hostname;
+    hostname_ = get_hostname();
 }
 
 // ----------------------------------------------------------------------------------------
