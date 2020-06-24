@@ -48,7 +48,7 @@ public:
     bool initialize(const std::string& server_name, float timeout = 5.0);
 
     /**
-     * @brief Calls deinitialize on implementaiton clients. Clears the #server_name_. #initialized will now return false.
+     * @brief Calls deinitialize on implementation clients. Clears the #server_name_. #initialized will now return false.
      * @return indicates success
      */
     bool deinitialize();
