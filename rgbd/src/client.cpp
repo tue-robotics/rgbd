@@ -35,7 +35,7 @@ Client::~Client()
 bool Client::initialize(const std::string& server_name, float /*timeout*/)
 {
     nh_.setCallbackQueue(&cb_queue_);
-    sub_shm_hosts_ = nh_.subscribe<std_msgs::String>(server_name + "/hosts", 1, &Client::hostsCallback, this);
+    sub_shm_hosts_ = nh_.subscribe<std_msgs::String>(server_name + "/hosts", 10, &Client::hostsCallback, this);
 
     sub_hosts_thread_ = std::thread(&Client::subHostsThreadFunc, this, 20);
 
