@@ -8,8 +8,8 @@
 #include "rgbd/client_rgbd.h"
 #include "rgbd/image.h"
 #include "rgbd/server_shm.h"
-#include "rgbd/tools.h"
 #include "rgbd/types.h"
+#include "rgbd/utility.h"
 
 #include <std_msgs/String.h>
 
