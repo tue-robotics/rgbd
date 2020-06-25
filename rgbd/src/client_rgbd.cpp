@@ -34,7 +34,7 @@ bool ClientRGBD::initialize(const std::string& server_name)
 
 bool ClientRGBD::deinitialize()
 {
-    sub_image_ = ros::Subscriber();
+    sub_image_ = ros::Subscriber(); // Old subscriber is deleted, so it unsubscribes. New subsriber is not subscribed to anything.
     return true;
 }
 
