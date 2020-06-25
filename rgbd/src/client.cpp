@@ -4,7 +4,7 @@
 
 #include "rgbd/image.h"
 #include "rgbd/ros/conversions.h"
-#include "rgbd/tools.h"
+#include "rgbd/utility.h"
 
 #include <ros/console.h>
 #include <ros/duration.h>

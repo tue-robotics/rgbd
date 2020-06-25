@@ -1,5 +1,5 @@
-#ifndef RGBD_TOOLS_H_
-#define RGBD_TOOLS_H_
+#ifndef RGBD_UTILITY_H_
+#define RGBD_UTILITY_H_
 
 #include <string>
 
@@ -13,4 +13,4 @@ std::string get_hostname();
 
 }
 
-#endif // RGBD_TOOLS_H_
+#endif // RGBD_UTILITY_H_
