@@ -13,6 +13,7 @@ before_install:
   - source packages.sh --commit-range=$TRAVIS_COMMIT_RANGE
 
 env:
+  - PACKAGE=python_rgbd
   - PACKAGE=rgbd
   - PACKAGE=rgbd_msgs
 
