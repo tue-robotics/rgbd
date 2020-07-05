@@ -45,7 +45,7 @@ class Image {
 
 public:
 
-    Image()
+    Image() : timestamp_(0)
     {
     }
 
