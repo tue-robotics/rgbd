@@ -19,7 +19,7 @@ PYBIND11_MODULE(PyRGBD, m)
     // --------------------
     // Image
     // --------------------
-    py::class_<rgbd::Image, rgbd::ImagePtr> image(m, "Image");
+    py::class_<rgbd::Image> image(m, "Image");
     image.def(py::init<>());
     image.def("getDepthImage", &rgbd::Image::getDepthImage);
     image.def("getRGBImage", &rgbd::Image::getRGBImage);
