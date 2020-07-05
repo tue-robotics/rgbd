@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>python_rgbd</name>
+  <version>0.1.0</version>
+  <description>The python_rgbd package</description>
+
+  <maintainer email="MatthijsBurgh@outlook.com">Matthijs van der Burgh</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>cmake</buildtool_depend>
+
+  <build_depend>rgbd</build_depend>
+
+  <exec_depend>catkin</exec_depend>
+  <exec_depend>rgbd</exec_depend>
+
+  <doc_depend condition="$ROS_PYTHON_VERSION == 2">python-sphinx</doc_depend>
+  <doc_depend condition="$ROS_PYTHON_VERSION == 3">python3-sphinx</doc_depend>
+
+  <export>
+    <build_type>cmake</build_type>
+    <rosdoc config="rosdoc.yaml"/>
+  </export>
+
+</package>
