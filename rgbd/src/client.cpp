@@ -26,8 +26,7 @@ Client::Client() : client_impl_mode_(ClientImplMode::rgbd)
 
 Client::~Client()
 {
-    nh_.shutdown();
-    sub_hosts_thread_.join();
+    deinitialize();
 }
 
 // ----------------------------------------------------------------------------------------
