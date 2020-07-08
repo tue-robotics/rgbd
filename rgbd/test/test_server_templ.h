@@ -15,6 +15,19 @@
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/distortion_models.h>
 
+/**
+ * Template function to test the communication provide by a server.
+ * It generates artificial images and sends these by the provide server.
+ * The server should have a
+ * @code
+ * bool initialize(std::string servername)
+ * @endcode
+ * and a
+ * @code
+ * void send(const rgbd::Image& image)
+ * @endcode
+ * function.
+ */
 template<class T>
 int main_templ(int argc, char **argv)
 {

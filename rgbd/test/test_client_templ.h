@@ -12,6 +12,19 @@
 
 #include "rgbd/image.h"
 
+/**
+ * Template function to test the communication of a client class.
+ * The client should have a
+ * @code
+ * bool initialize(std::string servername)
+ * @endcode
+ * and a
+ * @code
+ * bool nextImage(rgbd::Image& image)
+ * @endcode
+ * function.
+ * Both the RGB and depth image are shown in seperate windows.
+ */
 template<class T>
 int main_templ(int argc, char **argv)
 {
