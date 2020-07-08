@@ -34,3 +34,7 @@ This package contains a number of nodes and tools. The most important ones are:
 ## Notes
 
 In case you are developing camera drivers, it is advised to stick to the 'standard' ROS interfaces to minimize dependencies which enhances compatibility with other ROS users. Use the `ros_to_rgbd` node and, if applicable, the `rgbd_to_shm` server to interface with your software if that's using the `Client` class.
+
+## Testing
+
+For details on the test nodes and good test procedures, see [test/README.md](test/README.md)
