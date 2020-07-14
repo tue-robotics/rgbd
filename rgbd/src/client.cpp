@@ -17,7 +17,7 @@ namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
 
-Client::Client() : client_impl_mode_(ClientImplMode::rgbd)
+Client::Client() : nh_(nullptr), client_impl_mode_(ClientImplMode::rgbd)
 {
     hostname_ = get_hostname();
 }
@@ -33,8 +33,15 @@ Client::~Client()
 
 bool Client::initialize(const std::string& server_name, float /*timeout*/)
 {
-    nh_.setCallbackQueue(&cb_queue_);
-    sub_shm_hosts_ = nh_.subscribe<std_msgs::String>(server_name + "/hosts", 10, &Client::hostsCallback, this);
+    if (initialized() && server_name_ == server_name)
+        return true;
+    else if (initialized())
+        deinitialize();
+
+    nh_.reset(new ros::NodeHandle);
+    nh_->setCallbackQueue(&cb_queue_);
+
+    sub_shm_hosts_ = nh_->subscribe<std_msgs::String>(server_name + "/hosts", 10, &Client::hostsCallback, this);
 
     sub_hosts_thread_ = std::thread(&Client::subHostsThreadFunc, this, 20);
 
@@ -46,14 +53,20 @@ bool Client::initialize(const std::string& server_name, float /*timeout*/)
 
 bool Client::deinitialize()
 {
-    server_name_ = "";
-    nh_.shutdown();
+    if (!initialized())
+        return true;
+
+    nh_->shutdown();
+    sub_hosts_thread_.join();
+
     if (client_shm_.initialized())
         client_shm_.deinitialize();
     if (client_rgbd_.initialized())
         client_rgbd_.deinitialize();
+
     last_time_shm_server_online_ = ros::WallTime();
-    sub_hosts_thread_.join();
+    nh_.reset();
+
     return true;
 }
 
@@ -96,7 +109,7 @@ void Client::subHostsThreadFunc(const float frequency)
 {
     ros::WallRate r(frequency);
     ros::WallDuration d(5*r.expectedCycleTime().toSec()); // To prevent any issues by a very small delay
-    while(nh_.ok())
+    while(nh_->ok())
     {
         cb_queue_.callAvailable();
         // Decide on implementation mode

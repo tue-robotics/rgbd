@@ -16,6 +16,7 @@
 
 #include <std_msgs/String.h>
 
+#include <memory>
 #include <mutex>
 #include <thread>
 
@@ -48,17 +49,17 @@ public:
     bool initialize(const std::string& server_name, float timeout = 5.0);
 
     /**
-     * @brief Calls deinitialize on implementation clients. Clears the #server_name_. #initialized will now return false.
+     * @brief Calls deinitialize on implementation clients. Shutsdown both implementations and deletes #nh_. #initialized will now return false.
      * @return indicates success
      */
     bool deinitialize();
 
     /**
-     * @brief Check if the client is initialized. Checks if #server_name_ is set.
+     * @brief Check if the client is initialized. Checks if #nh_ is exists.
      * nextImage will not return an image if client is not initialized.
      * @return initialized or not
      */
-    bool initialized() { return !server_name_.empty(); }
+    bool initialized() { return static_cast<bool>(nh_); }
 
     /**
      * @brief Get a new Image. If no new image has been received since the last call,
@@ -86,7 +87,7 @@ protected:
 
     ClientSHM client_shm_;
 
-    ros::NodeHandle nh_;
+    std::unique_ptr<ros::NodeHandle> nh_;
     ros::CallbackQueue cb_queue_;
     ros::Subscriber sub_shm_hosts_;
 
