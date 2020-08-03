@@ -1,9 +1,11 @@
 #include <ros/console.h>
+#include <ros/duration.h>
 #include <ros/init.h>
 #include <ros/master.h>
 #include <ros/names.h>
 #include <ros/node_handle.h>
 #include <ros/rate.h>
+#include <ros/time.h>
 
 #include "rgbd/client.h"
 #include "rgbd/image.h"
@@ -96,13 +98,19 @@ int main(int argc, char **argv)
 
     rgbd::Image image;
 
+    ros::WallTime last_master_check = ros::WallTime::now();
+
     ros::Rate r(rate);
     while (ros::ok())
     {
-        if (!ros::master::check())
+        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
         {
-            ROS_ERROR("Lost connection to master");
-            return 1;
+            last_master_check = ros::WallTime::now();
+            if (!ros::master::check())
+            {
+                ROS_ERROR("Lost connection to master");
+                return 1;
+            }
         }
         if (client.nextImage(image))
         {

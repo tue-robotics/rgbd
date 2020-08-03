@@ -10,6 +10,7 @@
 #include <rgbd_msgs/Project2DTo3D.h>
 
 #include <ros/console.h>
+#include <ros/duration.h>
 #include <ros/init.h>
 #include <ros/master.h>
 #include <ros/names.h>
@@ -131,15 +132,22 @@ int main(int argc, char **argv)
     ros::ServiceServer srv_project_2d_to_3d = nh.advertiseService("project_2d_to_3d", srvGet3dPointFromROI);
     ros::Time last_image_stamp;
 
+    rgbd::Image image;
+
+    ros::WallTime last_master_check = ros::WallTime::now();
+
     ros::Rate r(rate);
     while (ros::ok())
     {
-        if (!ros::master::check())
+        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
         {
-            ROS_ERROR("Lost connection to master");
-            return 1;
+            last_master_check = ros::WallTime::now();
+            if (!ros::master::check())
+            {
+                ROS_ERROR("Lost connection to master");
+                return 1;
+            }
         }
-        rgbd::Image image;
         if (client.nextImage(image))
         {
             if (image.getDepthImage().data)

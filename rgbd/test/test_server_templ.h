@@ -6,11 +6,13 @@
 #include "rgbd/image.h"
 
 #include <ros/console.h>
+#include <ros/duration.h>
 #include <ros/init.h>
 #include <ros/master.h>
 #include <ros/names.h>
 #include <ros/node_handle.h>
 #include <ros/rate.h>
+#include <ros/time.h>
 
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/distortion_models.h>
@@ -58,13 +60,19 @@ int main_templ(int argc, char **argv)
 
     rgbd::Image image(rgb_image, depth_image, cam_model, "test_frame_id", ros::Time::now().toSec());
 
+    ros::WallTime last_master_check = ros::WallTime::now();
+
     int x = 0;
     while (ros::ok())
     {
-        if (!ros::master::check())
+        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
         {
-            ROS_ERROR("Lost connection to master");
-            return 1;
+            last_master_check = ros::WallTime::now();
+            if (!ros::master::check())
+            {
+                ROS_ERROR("Lost connection to master");
+                return 1;
+            }
         }
         cv::line(rgb_image, cv::Point(x, 0), cv::Point(x, rgb_image.rows - 1), cv::Scalar(0,0,255));
         cv::line(depth_image, cv::Point(x, 0), cv::Point(x, depth_image.rows - 1), 5.0);
