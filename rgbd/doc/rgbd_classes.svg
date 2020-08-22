@@ -34,7 +34,7 @@
     <!--Body-->
     <rect x="128" y="60" width="360" height="300" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1Client.html" target="_top">
+      <a xlink:href="classrgbd_1_1Client.html" target="_parent">
         <text x="307.5" y="85.5">Client</text>
       </a>
     </g>
@@ -55,7 +55,7 @@
     <!--Body-->
     <rect x="258" y="100" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1ClientSHM.html" target="_top">
+      <a xlink:href="classrgbd_1_1ClientSHM.html" target="_parent">
         <text x="307.5" y="155.5">ClientSHM</text>
       </a>
     </g>
@@ -76,7 +76,7 @@
     <!--Body-->
     <rect x="258" y="230" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1ClientRGBD.html" target="_top">
+      <a xlink:href="classrgbd_1_1ClientRGBD.html" target="_parent">
         <text x="307.5" y="285.5">ClientRGBD</text>
       </a>
     </g>
@@ -106,7 +106,7 @@
     <!--Body-->
     <rect x="258" y="380" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1ClientROS.html" target="_top">
+      <a xlink:href="classrgbd_1_1ClientROS.html" target="_parent">
         <text x="307.5" y="435.5">ClientROS</text>
       </a>
     </g>
@@ -142,7 +142,7 @@
     <!--Body-->
     <rect x="128" y="580" width="360" height="300" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1Server.html" target="_top">
+      <a xlink:href="classrgbd_1_1Server.html" target="_parent">
         <text x="307.5" y="605.5">Server</text>
       </a>
     </g>
@@ -163,7 +163,7 @@
     <!--Body-->
     <rect x="258" y="620" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1ServerSHM.html" target="_top">
+      <a xlink:href="classrgbd_1_1ServerSHM.html" target="_parent">
         <text x="307.5" y="675.5">ServerSHM</text>
       </a>
     </g>
@@ -189,7 +189,7 @@
     <!--Body-->
     <rect x="258" y="750" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1ServerRGBD.html" target="_top">
+      <a xlink:href="classrgbd_1_1ServerRGBD.html" target="_parent">
         <text x="307.5" y="805.5">ServerRGBD</text>
       </a>
     </g>
@@ -219,7 +219,7 @@
     <!--Body-->
     <rect x="258" y="900" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1ServerROS.html" target="_top">
+      <a xlink:href="classrgbd_1_1ServerROS.html" target="_parent">
         <text x="307.5" y="955.5">ServerROS</text>
       </a>
     </g>
