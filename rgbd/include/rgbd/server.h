@@ -5,6 +5,12 @@
 #include "rgbd/server_rgbd.h"
 #include "rgbd/server_shm.h"
 
+#include <ros/node_handle.h>
+#include <ros/publisher.h>
+
+#include <memory>
+#include <thread>
+
 namespace rgbd {
 
 class Image;
@@ -47,6 +53,14 @@ protected:
     ServerRGBD server_rgbd_;
 
     ServerSHM server_shm_;
+
+    ros::NodeHandle nh_;
+
+    std::string name_;
+    std::string hostname_;
+
+    // Publisher thread
+    std::unique_ptr<std::thread> pub_hostname_thread_ptr_;
 
 };
 

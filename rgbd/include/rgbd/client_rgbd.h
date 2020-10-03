@@ -36,11 +36,17 @@ public:
     virtual ~ClientRGBD();
 
     /**
-     * @brief intialize Initialize the client
+     * @brief Initialize the client
      * @param server_name Fully resolved server name
      * @return indicates success
      */
-    bool intialize(const std::string& server_name);
+    bool initialize(const std::string& server_name);
+
+    /**
+     * @brief Clears the subscriber. #initialized will now return false.
+     * @return indicates success
+     */
+    bool deinitialize();
 
     /**
      * @brief Check if the client is initialized. nextImage will not return an image if client is not initialized.

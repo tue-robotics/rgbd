@@ -37,7 +37,7 @@
     <!--Body-->
     <rect x="230" y="0" width="440" height="200" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="rgbd__to__ros_8cpp.html" target="_top">
+      <a xlink:href="rgbd__to__ros_8cpp.html" target="_parent">
         <text x="449.5" y="25.5">rgbd_to_ros</text>
       </a>
     </g>
@@ -47,7 +47,7 @@
     <!--Client body-->
     <rect x="290" y="50" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1Client.html" target="_top">
+      <a xlink:href="classrgbd_1_1Client.html" target="_parent">
         <text x="339.5" y="105.5">Client</text>
       </a>
     </g>
@@ -60,7 +60,7 @@
     <!--Server body-->
     <rect x="510" y="50" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1ServerROS.html" target="_top">
+      <a xlink:href="classrgbd_1_1ServerROS.html" target="_parent">
         <text x="559.5" y="105.5">ServerROS</text>
       </a>
     </g>
@@ -84,7 +84,7 @@
     <!--Body-->
     <rect x="230" y="240" width="440" height="200" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="rgbd__to__shm_8cpp.html" target="_top">
+      <a xlink:href="rgbd__to__shm_8cpp.html" target="_parent">
         <text x="449.5" y="265.5">rgbd_to_shm</text>
       </a>
     </g>
@@ -94,7 +94,7 @@
     <!--Client body-->
     <rect x="290" y="290" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1ClientRGBD.html" target="_top">
+      <a xlink:href="classrgbd_1_1ClientRGBD.html" target="_parent">
         <text x="339.5" y="345.5">ClientRGBD</text>
       </a>
     </g>
@@ -107,7 +107,7 @@
     <!--Server body-->
     <rect x="510" y="290" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1ServerSHM.html" target="_top">
+      <a xlink:href="classrgbd_1_1ServerSHM.html" target="_parent">
         <text x="559.5" y="345.5">ServerSHM</text>
       </a>
     </g>
@@ -149,7 +149,7 @@
     <!--Body-->
     <rect x="230" y="480" width="440" height="200" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="ros__to__rgbd_8cpp.html" target="_top">
+      <a xlink:href="ros__to__rgbd_8cpp.html" target="_parent">
         <text x="449.5" y="505.5">ros_to_rgbd</text>
       </a>
     </g>
@@ -159,7 +159,7 @@
     <!--Client body-->
     <rect x="290" y="530" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1ClientROS.html" target="_top">
+      <a xlink:href="classrgbd_1_1ClientROS.html" target="_parent">
         <text x="339.5" y="585.5">ClientROS</text>
       </a>
     </g>
@@ -172,7 +172,7 @@
     <!--Server body-->
     <rect x="510" y="530" width="100" height="100" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
-      <a xlink:href="classrgbd_1_1Server.html" target="_top">
+      <a xlink:href="classrgbd_1_1Server.html" target="_parent">
         <text x="559.5" y="585.5">Server</text>
       </a>
     </g>

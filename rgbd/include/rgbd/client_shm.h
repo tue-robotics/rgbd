@@ -33,18 +33,24 @@ public:
     ~ClientSHM();
 
     /**
-     * @brief intialize Initialize shared memory client
+     * @brief Initialize shared memory client
      * @param server_name Fully resolved server name
      * @param timeout Timeout to wait for shared memory server
      * @return indicates success
      */
-    bool intialize(const std::string& server_name, float timeout = 5.0);
+    bool initialize(const std::string& server_name, float timeout = 5.0);
+
+    /**
+     * @brief Clears all the shared memory classes to nullptrs or empty classes. #initialized will now return false.
+     * @return indicates success
+     */
+    bool deinitialize();
 
     /**
      * @brief Check if the client is initialized. nextImage shouldn't be called if client is not initialized.
      * @return initialized or not
      */
-    bool initialized();
+    bool initialized() { return (buffer_header_ != nullptr); }
 
     /**
      * @brief Get a new Image. If no new image has been received, the sequence nummer is still the same as the previous call,
@@ -53,6 +59,13 @@ public:
      * @return valid image written
      */
     bool nextImage(Image& image);
+
+    /**
+     * @brief Get a new Image. If no new image has been received, the sequence nummer is still the same as the previous call,
+     * The ImagePtr will be a nullptr
+     * @return ImagePtr to an Image or a nullptr
+     */
+    ImagePtr nextImage();
 
 private:
 

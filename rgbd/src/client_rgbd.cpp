@@ -19,7 +19,7 @@ ClientRGBD::~ClientRGBD()
 
 // ----------------------------------------------------------------------------------------
 
-bool ClientRGBD::intialize(const std::string& server_name)
+bool ClientRGBD::initialize(const std::string& server_name)
 {
     ros::SubscribeOptions sub_options =
             ros::SubscribeOptions::create<rgbd_msgs::RGBD>(
@@ -27,6 +27,14 @@ bool ClientRGBD::intialize(const std::string& server_name)
 
     sub_image_ = nh_.subscribe(sub_options);
 
+    return true;
+}
+
+// ----------------------------------------------------------------------------------------
+
+bool ClientRGBD::deinitialize()
+{
+    sub_image_ = ros::Subscriber(); // Old subscriber is deleted, so it unsubscribes. New subsriber is not subscribed to anything.
     return true;
 }
 

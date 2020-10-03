@@ -2,6 +2,7 @@
 
 #include "rgbd/image.h"
 
+#include <ros/duration.h>
 #include <ros/init.h>
 #include <ros/console.h>
 #include <ros/time.h>
@@ -29,14 +30,14 @@ ClientSHM::~ClientSHM()
 
 // ----------------------------------------------------------------------------------------------------
 
-bool ClientSHM::intialize(const std::string& server_name, float timeout)
+bool ClientSHM::initialize(const std::string& server_name, float timeout)
 {
     std::string server_name_cp = server_name;
     std::replace(server_name_cp.begin(), server_name_cp.end(), '/', '-');
 
     ros::Time start = ros::Time::now();
     ros::Time now;
-    ros::Duration d(0.1);
+    ros::WallDuration d(0.1);
     do
     {
         try
@@ -73,9 +74,14 @@ bool ClientSHM::intialize(const std::string& server_name, float timeout)
 
 // ----------------------------------------------------------------------------------------------------
 
-bool ClientSHM::initialized()
+bool ClientSHM::deinitialize()
 {
-    return (buffer_header_ != nullptr);
+    buffer_header_ = nullptr;
+    image_data_ = nullptr;
+    mem_image_ = ipc::mapped_region();
+    mem_buffer_header_ = ipc::mapped_region();
+    shm_= ipc::shared_memory_object();
+    return true;
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -132,6 +138,17 @@ bool ClientSHM::nextImage(Image& image)
     sequence_nr_ = buffer_header_->sequence_nr;
 
     return true;
+}
+
+// ----------------------------------------------------------------------------------------------------
+
+ImagePtr ClientSHM::nextImage()
+{
+    ImagePtr img(new Image);
+    if (nextImage(*img))
+        return img;
+    else
+        return ImagePtr();
 }
 
 } // end namespace rgbd

@@ -49,6 +49,7 @@ add_library(rgbd    src/client.cpp
                     src/server_rgbd.cpp
                     src/server_ros.cpp
                     src/server_shm.cpp
+                    src/utility.cpp
                     src/view.cpp
                     src/ros/conversions.cpp
 
@@ -98,11 +99,29 @@ target_link_libraries(viewer rgbd)
 
 # - - - - - - - - - - - - - - - - - TESTS - - - - - - - - - - - - - - - - -
 
-add_executable(rgbd_test_server test/test_server.cpp)
+add_executable(rgbd_test_server test/test_server.cpp test/test_server_templ.h)
 target_link_libraries(rgbd_test_server rgbd)
 
-add_executable(rgbd_test_client test/test_client.cpp)
+add_executable(rgbd_test_server_rgbd test/test_server_rgbd.cpp test/test_server_templ.h)
+target_link_libraries(rgbd_test_server_rgbd rgbd)
+
+add_executable(rgbd_test_server_shm test/test_server_shm.cpp test/test_server_templ.h)
+target_link_libraries(rgbd_test_server_shm rgbd)
+
+add_executable(rgbd_test_server_ros test/test_server_ros.cpp test/test_server_templ.h)
+target_link_libraries(rgbd_test_server_ros rgbd)
+
+add_executable(rgbd_test_client test/test_client.cpp test/test_client_templ.h)
 target_link_libraries(rgbd_test_client rgbd)
+
+add_executable(rgbd_test_client_rgbd test/test_client_rgbd.cpp test/test_client_templ.h)
+target_link_libraries(rgbd_test_client_rgbd rgbd)
+
+add_executable(rgbd_test_client_shm test/test_client_shm.cpp test/test_client_templ.h)
+target_link_libraries(rgbd_test_client_shm rgbd)
+
+add_executable(rgbd_test_client_ros test/test_client_ros.cpp test/test_client_templ.h)
+target_link_libraries(rgbd_test_client_ros rgbd)
 
 add_executable(rgbd_test_serialization test/test_serialization.cpp)
 target_link_libraries(rgbd_test_serialization rgbd)

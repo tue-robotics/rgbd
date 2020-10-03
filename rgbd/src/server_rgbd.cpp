@@ -66,6 +66,8 @@ void ServerRGBD::send(const Image& image)
     pub_image_.publish(msg);
 }
 
+// ----------------------------------------------------------------------------------------
+
 bool ServerRGBD::serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetRGBDResponse& resp)
 {
     rgbd::Image image;
@@ -99,9 +101,11 @@ bool ServerRGBD::serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetR
     return false;
 }
 
+// ----------------------------------------------------------------------------------------
+
 void ServerRGBD::serviceThreadFunc(const float freq)
 {
-    ros::Rate r(static_cast<double>(freq));
+    ros::Rate r(freq);
     while(nh_.ok())
     {
         cb_queue_.callAvailable();

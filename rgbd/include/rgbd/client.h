@@ -9,6 +9,17 @@
 #include "rgbd/client_rgbd.h"
 #include "rgbd/client_shm.h"
 
+#include <ros/callback_queue.h>
+#include <ros/node_handle.h>
+#include <ros/subscriber.h>
+#include <ros/time.h>
+
+#include <std_msgs/String.h>
+
+#include <memory>
+#include <mutex>
+#include <thread>
+
 
 namespace rgbd {
 
@@ -30,19 +41,25 @@ public:
     virtual ~Client();
 
     /**
-     * @brief intialize Initialize the client
+     * @brief Initialize the client
      * @param server_name Fully resolved server name
      * @param timeout Timeout used to initialize each interface, currently only the ClientSHM interface requires a timeout
      * @return indicates success
      */
-    bool intialize(const std::string& server_name, float timeout = 5.0);
+    bool initialize(const std::string& server_name, float timeout = 5.0);
 
     /**
-     * @brief Check if the client is initialized. First checks if ClientSHM is initialized, otherwise ClientRGBD.
+     * @brief Calls deinitialize on implementation clients. Shutsdown both implementations and deletes #nh_. #initialized will now return false.
+     * @return indicates success
+     */
+    bool deinitialize();
+
+    /**
+     * @brief Check if the client is initialized. Checks if #nh_ is exists.
      * nextImage will not return an image if client is not initialized.
      * @return initialized or not
      */
-    bool initialized() { return (client_shm_.initialized() || client_rgbd_.initialized()); }
+    bool initialized() { return static_cast<bool>(nh_); }
 
     /**
      * @brief Get a new Image. If no new image has been received since the last call,
@@ -61,9 +78,32 @@ public:
 
 protected:
 
+    enum class ClientImplMode {
+        shm,
+        rgbd
+    };
+
     ClientRGBD client_rgbd_;
 
     ClientSHM client_shm_;
+
+    std::unique_ptr<ros::NodeHandle> nh_;
+    ros::CallbackQueue cb_queue_;
+    ros::Subscriber sub_shm_hosts_;
+
+    std::string hostname_;
+    std::string server_name_;
+
+    ros::WallTime last_time_shm_server_online_;
+
+    std::thread sub_hosts_thread_;
+
+    ClientImplMode client_impl_mode_;
+    std::mutex switch_impl_mutex_;
+
+    void hostsCallback(const std_msgs::StringConstPtr& msg);
+
+    void subHostsThreadFunc(const float frequency);
 
 };
 
