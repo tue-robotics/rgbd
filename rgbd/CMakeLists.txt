@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   tue_serialization
 )
 
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 ###################################
 ## catkin specific configuration ##
