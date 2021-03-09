@@ -4,7 +4,6 @@ project(rgbd_msgs)
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   sensor_msgs
-  std_msgs
   message_generation
 )
 
@@ -25,12 +24,11 @@ generate_messages(
   DEPENDENCIES
     geometry_msgs
     sensor_msgs
-    std_msgs
 )
 
 ###################################
 ## catkin specific configuration ##
 ###################################
 catkin_package(
-  CATKIN_DEPENDS message_runtime geometry_msgs sensor_msgs std_msgs
+  CATKIN_DEPENDS message_runtime geometry_msgs sensor_msgs
 )
