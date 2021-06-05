@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(rgbd)
 
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS iostreams)
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   geolib2
