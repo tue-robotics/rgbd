@@ -37,7 +37,7 @@ public:
      *
      * Pointers are initialized to nullptr
      */
-    ClientROS();
+    ClientROS(ros::NodeHandlePtr nh=nullptr, ros::CallbackQueuePtr cb_queue=nullptr);
 
     /**
      * @brief Destructor
@@ -78,8 +78,8 @@ public:
 
 protected:
 
-    ros::NodeHandle nh_;
-    ros::CallbackQueue cb_queue_;
+    ros::NodeHandlePtr nh_;
+    ros::CallbackQueuePtr cb_queue_;
 
     std::unique_ptr<message_filters::Synchronizer<RGBDApproxPolicy> > sync_;
     std::unique_ptr<message_filters::Subscriber<sensor_msgs::Image> > sub_rgb_sync_;

@@ -14,15 +14,24 @@ namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
 
-ClientROS::ClientROS() : sync_(nullptr), sub_rgb_sync_(nullptr), sub_depth_sync_(nullptr), image_ptr_(nullptr)
+ClientROS::ClientROS(ros::NodeHandlePtr nh, ros::CallbackQueuePtr cb_queue) : nh_(nullptr), cb_queue_(nullptr), sync_(nullptr), sub_rgb_sync_(nullptr), sub_depth_sync_(nullptr), image_ptr_(nullptr)
 {
+    if (nh)
+        nh_ = nh;
+    else
+        nh_ = boost::make_shared<ros::NodeHandle>();
+
+    if (cb_queue)
+        cb_queue_ = cb_queue;
+    else
+        cb_queue_ = boost::make_shared<ros::CallbackQueue>();
 }
 
 // ----------------------------------------------------------------------------------------
 
 ClientROS::~ClientROS()
 {
-    nh_.shutdown();
+    nh_->shutdown();
     sync_.reset();
     sub_rgb_sync_.reset();
     sub_depth_sync_.reset();
@@ -32,12 +41,12 @@ ClientROS::~ClientROS()
 
 bool ClientROS::initialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic)
 {
-    nh_.setCallbackQueue(&cb_queue_);
+    nh_->setCallbackQueue(cb_queue_.get());
 
-    sub_cam_info_ = nh_.subscribe(cam_info_topic, 1, &ClientROS::camInfoCallback, this);
+    sub_cam_info_ = nh_->subscribe(cam_info_topic, 1, &ClientROS::camInfoCallback, this);
 
-    sub_rgb_sync_ = std::unique_ptr<message_filters::Subscriber<sensor_msgs::Image> >(new message_filters::Subscriber<sensor_msgs::Image>(nh_, rgb_image_topic, 1));
-    sub_depth_sync_ = std::unique_ptr<message_filters::Subscriber<sensor_msgs::Image> >(new message_filters::Subscriber<sensor_msgs::Image>(nh_, depth_image_topic, 1));
+    sub_rgb_sync_ = std::make_unique<message_filters::Subscriber<sensor_msgs::Image> >(nh_, rgb_image_topic, 1);
+    sub_depth_sync_ = std::make_unique<message_filters::Subscriber<sensor_msgs::Image> >(nh_, depth_image_topic, 1);
 
     sync_ = std::unique_ptr<message_filters::Synchronizer<RGBDApproxPolicy> >(new message_filters::Synchronizer<RGBDApproxPolicy>(RGBDApproxPolicy(10), *sub_rgb_sync_, *sub_depth_sync_));
     sync_->registerCallback(boost::bind(&ClientROS::imageCallback, this, _1, _2));
@@ -51,7 +60,7 @@ bool ClientROS::nextImage(Image& image)
 {
     new_image_ = false;
     image_ptr_ = &image;
-    cb_queue_.callAvailable();
+    cb_queue_->callAvailable();
     return new_image_;
 }
 
@@ -60,7 +69,7 @@ bool ClientROS::nextImage(Image& image)
 ImagePtr ClientROS::nextImage()
 {
     image_ptr_ = nullptr;
-    cb_queue_.callAvailable();
+    cb_queue_->callAvailable();
     return ImagePtr(image_ptr_);
 }
 

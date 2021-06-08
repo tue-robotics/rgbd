@@ -25,7 +25,7 @@ public:
     /**
      * @brief Constructor
      */
-    Server();
+    Server(ros::NodeHandlePtr nh=nullptr);
 
     /**
      * @brief Destructor
@@ -54,7 +54,7 @@ protected:
 
     ServerSHM server_shm_;
 
-    ros::NodeHandle nh_;
+    ros::NodeHandlePtr nh_;
 
     std::string name_;
     std::string hostname_;

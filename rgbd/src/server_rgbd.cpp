@@ -25,15 +25,19 @@ const int ServerRGBD::MESSAGE_VERSION = 3;
 
 // ----------------------------------------------------------------------------------------
 
-ServerRGBD::ServerRGBD()
+ServerRGBD::ServerRGBD(ros::NodeHandlePtr nh) : nh_(nullptr)
 {
+    if (nh)
+        nh_ = nh;
+    else
+        nh_ = boost::make_shared<ros::NodeHandle>();
 }
 
 // ----------------------------------------------------------------------------------------
 
 ServerRGBD::~ServerRGBD()
 {
-    nh_.shutdown();
+    nh_->shutdown();
     service_thread_.join();
 }
 
@@ -41,12 +45,12 @@ ServerRGBD::~ServerRGBD()
 
 void ServerRGBD::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type, const float service_freq)
 {
-    pub_image_ = nh_.advertise<rgbd_msgs::RGBD>(name, 1);
+    pub_image_ = nh_->advertise<rgbd_msgs::RGBD>(name, 1);
     rgb_type_ = rgb_type;
     depth_type_ = depth_type;
 
-    nh_.setCallbackQueue(&cb_queue_);
-    service_server_ = nh_.advertiseService(name, &ServerRGBD::serviceCallback, this);
+    nh_->setCallbackQueue(&cb_queue_);
+    service_server_ = nh_->advertiseService(name, &ServerRGBD::serviceCallback, this);
     service_thread_ = std::thread(&ServerRGBD::serviceThreadFunc, this, service_freq);
 }
 
@@ -62,8 +66,8 @@ void ServerRGBD::send(const Image& image)
     if (pub_image_.getNumSubscribers() == 0)
         return;
 
-    rgbd_msgs::RGBD msg;
-    msg.version = MESSAGE_VERSION;
+    rgbd_msgs::RGBDPtr msg(new rgbd_msgs::RGBD);
+    msg->version = MESSAGE_VERSION;
 
     std::stringstream stream, stream2;
     tue::serialization::OutputArchive a(stream);
@@ -72,7 +76,7 @@ void ServerRGBD::send(const Image& image)
     in.push(boost::iostreams::gzip_compressor(boost::iostreams::gzip::best_compression));
     in.push(stream);
     boost::iostreams::copy(in, stream2);
-    tue::serialization::convert(stream2, msg.rgb);
+    tue::serialization::convert(stream2, msg->rgb);
 
     pub_image_.publish(msg);
 }
@@ -117,7 +121,7 @@ bool ServerRGBD::serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetR
 void ServerRGBD::serviceThreadFunc(const float freq)
 {
     ros::Rate r(freq);
-    while(nh_.ok())
+    while(nh_->ok())
     {
         cb_queue_.callAvailable();
         r.sleep();
