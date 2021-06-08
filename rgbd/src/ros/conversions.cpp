@@ -1,5 +1,9 @@
 #include "rgbd/ros/conversions.h"
 
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+
 #include <cv_bridge/cv_bridge.h>
 
 #include <geolib/sensors/DepthCamera.h>
@@ -12,6 +16,8 @@
 #include <sensor_msgs/distortion_models.h>
 
 #include <tue/serialization/conversions.h>
+
+#include <sstream>
 
 #include "rgbd/serialization.h"
 
@@ -221,6 +227,18 @@ bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image)
         tue::serialization::InputArchive a(stream);
         rgbd::deserialize(a, *image);
     }
+    else if (msg->version == 3)
+    {
+        std::stringstream compressed, decompressed;
+        tue::serialization::convert(msg->rgb, compressed);
+        boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
+        in.push(boost::iostreams::gzip_decompressor());
+        in.push(compressed);
+        boost::iostreams::copy(in, decompressed);
+        tue::serialization::InputArchive a(decompressed);
+        rgbd::deserialize(a, *image);
+    }
+
     return true;
 }
 
