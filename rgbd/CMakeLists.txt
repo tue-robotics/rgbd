@@ -8,7 +8,9 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   image_geometry
   message_filters
+  nodelet
   pcl_ros
+  pluginlib
   rgbd_msgs
   roscpp
   sensor_msgs
@@ -54,6 +56,11 @@ add_library(rgbd    src/client.cpp
                     ${HEADER_FILES})
 target_link_libraries(rgbd ${catkin_LIBRARIES} rt)
 add_dependencies(rgbd ${catkin_EXPORTED_TARGETS})
+
+# - - - - - - - - - - - - - - - - NODELETS - - - - - - - - - - - - - - - -
+
+#add_library(rgbd_nodelets src/nodelets/ros_to_rgbd.cpp)
+#target_link_libraries(rgbd_nodelets rgbd ${catkin_LIBRARIES})
 
 # - - - - - - - - - - - - - - - - - NODES - - - - - - - - - - - - - - - - -
 
