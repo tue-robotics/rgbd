@@ -42,7 +42,7 @@ int main(int argc, char **argv)
     client.initialize(server_name);
     server.initialize(server_name);
 
-    ros::NodeHandlePtr nh = boost::make_shared<ros::NodeHandle>();
+    ros::NodeHandle nh = ros::NodeHandle();
     std::unique_ptr<std::thread> pub_hostname_thread_ptr(nullptr);
 
     rgbd::ImagePtr image_ptr;
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
         r.sleep();
     }
 
-    nh->shutdown();
+    nh.shutdown();
     if(pub_hostname_thread_ptr)
         pub_hostname_thread_ptr->join();
 

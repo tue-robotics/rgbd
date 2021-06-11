@@ -33,6 +33,7 @@
   <doc_depend>doxygen</doc_depend>
 
   <export>
+    <nodelet plugin="${prefix}/nodelet_plugins.xml" />
     <rosdoc config="rosdoc.yaml" />
   </export>
 

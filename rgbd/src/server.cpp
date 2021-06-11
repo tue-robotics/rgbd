@@ -9,12 +9,8 @@ namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
 
-Server::Server(ros::NodeHandlePtr nh) : nh_(nullptr), pub_hostname_thread_ptr_(nullptr)
+Server::Server(ros::NodeHandle nh) : nh_(nh), pub_hostname_thread_ptr_(nullptr)
 {
-    if (nh)
-        nh_ = nh;
-    else
-        nh_ = boost::make_shared<ros::NodeHandle>();
     const std::string& hostname = get_hostname();
     hostname_ = hostname;
 }
@@ -23,7 +19,7 @@ Server::Server(ros::NodeHandlePtr nh) : nh_(nullptr), pub_hostname_thread_ptr_(n
 
 Server::~Server()
 {
-    nh_->shutdown();
+    nh_.shutdown();
     if (pub_hostname_thread_ptr_)
         pub_hostname_thread_ptr_->join();
 }

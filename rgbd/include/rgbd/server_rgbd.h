@@ -24,7 +24,7 @@ public:
     /**
      * @brief Constructor
      */
-    ServerRGBD(ros::NodeHandlePtr nh=nullptr);
+    ServerRGBD(ros::NodeHandle nh=ros::NodeHandle());
 
     /**
      * @brief Destructor
@@ -55,7 +55,7 @@ public:
 
 protected:
 
-    ros::NodeHandlePtr nh_;
+    ros::NodeHandle nh_;
     ros::Publisher pub_image_;
     ros::ServiceServer service_server_;
     ros::CallbackQueue cb_queue_;

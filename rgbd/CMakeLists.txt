@@ -42,6 +42,7 @@ file(GLOB_RECURSE HEADER_FILES include/*.h)
 
 add_library(rgbd    src/client.cpp
                     src/client_rgbd.cpp
+                    src/client_ros_base.cpp
                     src/client_ros.cpp
                     src/client_shm.cpp
                     src/serialization.cpp
@@ -59,8 +60,8 @@ add_dependencies(rgbd ${catkin_EXPORTED_TARGETS})
 
 # - - - - - - - - - - - - - - - - NODELETS - - - - - - - - - - - - - - - -
 
-#add_library(rgbd_nodelets src/nodelets/ros_to_rgbd.cpp)
-#target_link_libraries(rgbd_nodelets rgbd ${catkin_LIBRARIES})
+add_library(rgbd_nodelets src/nodelets/ros_to_rgbd.cpp)
+target_link_libraries(rgbd_nodelets rgbd ${catkin_LIBRARIES})
 
 # - - - - - - - - - - - - - - - - - NODES - - - - - - - - - - - - - - - - -
 

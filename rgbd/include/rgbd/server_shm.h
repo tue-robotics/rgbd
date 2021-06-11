@@ -4,12 +4,11 @@
 #include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/mapped_region.hpp>
 
+#include <ros/node_handle.h>
+
 #include "rgbd/image_header.h"
 #include "rgbd/types.h"
 
-namespace ros {
-class NodeHandle;
-}
 
 namespace rgbd
 {

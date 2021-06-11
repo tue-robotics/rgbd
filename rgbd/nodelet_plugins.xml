@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<library path="lib/librgbd_nodelets">
+
+  <class name="rgbd/ros_to_rgbd" type="rgbd::ROSToRGBDNodelet" base_class_type="nodelet::Nodelet">
+    <description>
+      Nodelet converting from ros rgb and depth image to combined RGBD message.
+    </description>
+  </class>
+
+</library>
