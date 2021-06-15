@@ -62,7 +62,7 @@ void ServerRGBD::send(const Image& image)
     if (pub_image_.getNumSubscribers() == 0)
         return;
 
-    rgbd_msgs::RGBDPtr msg = std::make_shared<rgbd_msgs::RGBD>();
+    rgbd_msgs::RGBDPtr msg = boost::make_shared<rgbd_msgs::RGBD>();
     msg->version = MESSAGE_VERSION;
 
     std::stringstream stream, stream2;
