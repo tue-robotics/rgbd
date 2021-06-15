@@ -42,7 +42,7 @@ int main(int argc, char **argv)
     client.initialize(server_name);
     server.initialize(server_name);
 
-    ros::NodeHandle nh = ros::NodeHandle();
+    ros::NodeHandle nh;
     std::unique_ptr<std::thread> pub_hostname_thread_ptr(nullptr);
 
     rgbd::ImagePtr image_ptr;
