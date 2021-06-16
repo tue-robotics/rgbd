@@ -25,7 +25,7 @@ const int ServerRGBD::MESSAGE_VERSION = 3;
 
 // ----------------------------------------------------------------------------------------
 
-ServerRGBD::ServerRGBD()
+ServerRGBD::ServerRGBD(ros::NodeHandle nh) : nh_(nh)
 {
 }
 
@@ -62,8 +62,8 @@ void ServerRGBD::send(const Image& image)
     if (pub_image_.getNumSubscribers() == 0)
         return;
 
-    rgbd_msgs::RGBD msg;
-    msg.version = MESSAGE_VERSION;
+    rgbd_msgs::RGBDPtr msg = boost::make_shared<rgbd_msgs::RGBD>();
+    msg->version = MESSAGE_VERSION;
 
     std::stringstream stream, stream2;
     tue::serialization::OutputArchive a(stream);
@@ -72,7 +72,7 @@ void ServerRGBD::send(const Image& image)
     in.push(boost::iostreams::gzip_compressor(boost::iostreams::gzip::best_compression));
     in.push(stream);
     boost::iostreams::copy(in, stream2);
-    tue::serialization::convert(stream2, msg.rgb);
+    tue::serialization::convert(stream2, msg->rgb);
 
     pub_image_.publish(msg);
 }

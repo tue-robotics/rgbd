@@ -25,7 +25,7 @@ public:
     /**
      * @brief Constructor
      */
-    Server();
+    Server(ros::NodeHandle nh=ros::NodeHandle());
 
     /**
      * @brief Destructor

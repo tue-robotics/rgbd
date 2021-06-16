@@ -7,6 +7,7 @@
 
 #include <ros/node_handle.h>
 #include <ros/callback_queue.h>
+#include "ros/callback_queue_interface.h"
 
 #include <message_filters/synchronizer.h>
 #include <message_filters/subscriber.h>
@@ -16,6 +17,7 @@
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
 
+#include "rgbd/client_ros_base.h"
 #include "rgbd/types.h"
 
 #include <memory>
@@ -23,26 +25,20 @@
 
 namespace rgbd {
 
-typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> RGBDApproxPolicy;
-
 /**
  * @brief Client which subscribes to regular ROS image topics
  */
-class ClientROS {
+class ClientROS : public ClientROSBase {
 
 public:
 
     /**
      * @brief Constructor
-     *
-     * Pointers are initialized to nullptr
      */
     ClientROS();
 
     /**
      * @brief Destructor
-     *
-     * image_ptr_ is not delete as the client never owns the image pointer
      */
     virtual ~ClientROS();
 
@@ -54,12 +50,6 @@ public:
      * @return indicates success
      */
     bool initialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic);
-
-    /**
-     * @brief Check if the client is initialized. nextImage will not return an image if client is not initialized.
-     * @return initialized or not
-     */
-    bool initialized() { return sync_.operator bool(); }
 
     /**
      * @brief Get a new Image. If no new image has been received since the last call,
@@ -78,37 +68,7 @@ public:
 
 protected:
 
-    ros::NodeHandle nh_;
     ros::CallbackQueue cb_queue_;
-
-    std::unique_ptr<message_filters::Synchronizer<RGBDApproxPolicy> > sync_;
-    std::unique_ptr<message_filters::Subscriber<sensor_msgs::Image> > sub_rgb_sync_;
-    std::unique_ptr<message_filters::Subscriber<sensor_msgs::Image> > sub_depth_sync_;
-    ros::Subscriber sub_cam_info_;
-    image_geometry::PinholeCameraModel cam_model_;
-
-    /**
-     * @brief new_image_ Track if image is updated in a callback.
-     */
-    bool new_image_;
-    /**
-     * @brief image_ptr_ Pointer to image. Image could be provided by reference or the pointer will be wrapped in a shared_ptr.
-     * Either this class will never take ownership.
-     */
-    Image* image_ptr_;
-
-    /**
-     * @brief Callback for CameraInfo, will unsubscribe after succesfully receiving first message.
-     * @param cam_info_msg message
-     */
-    void camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_msg);
-
-    /**
-     * @brief Callback for synched rgb and depth image
-     * @param rgb_image_msg rgb image message
-     * @param depth_image_msg depth image message
-     */
-    void imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_msg, const sensor_msgs::ImageConstPtr& depth_image_msg);
 
 };
 

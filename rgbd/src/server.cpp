@@ -9,7 +9,7 @@ namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
 
-Server::Server() : pub_hostname_thread_ptr_(nullptr)
+Server::Server(ros::NodeHandle nh) : nh_(nh), pub_hostname_thread_ptr_(nullptr)
 {
     const std::string& hostname = get_hostname();
     hostname_ = hostname;
@@ -40,7 +40,7 @@ void Server::send(const Image& image, bool)
     // Publisher is created here, because shared memory is opened as the first image is send. Because the image size is unknown before.
     // Creating the publisher earlier will cause the client to initialize the client_shm, while the shared memory doesn't exist yet. 
     if (!pub_hostname_thread_ptr_)
-        pub_hostname_thread_ptr_ = std::unique_ptr<std::thread>(new std::thread(rgbd::pubHostnameThreadFunc, std::ref(nh_), name_, hostname_, 20));
+        pub_hostname_thread_ptr_ = std::make_unique<std::thread>(rgbd::pubHostnameThreadFunc, std::ref(nh_), name_, hostname_, 20);
     server_rgbd_.send(image);
     server_shm_.send(image);
 }

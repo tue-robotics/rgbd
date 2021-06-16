@@ -22,7 +22,9 @@
   <depend>geometry_msgs</depend>
   <depend>image_geometry</depend>
   <depend>message_filters</depend>
+  <depend>nodelet</depend>
   <depend>pcl_ros</depend>
+  <depend>pluginlib</depend>
   <depend>rgbd_msgs</depend>
   <depend>roscpp</depend>
   <depend>sensor_msgs</depend>
@@ -31,6 +33,7 @@
   <doc_depend>doxygen</doc_depend>
 
   <export>
+    <nodelet plugin="${prefix}/nodelet_plugins.xml" />
     <rosdoc config="rosdoc.yaml" />
   </export>
 

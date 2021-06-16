@@ -65,7 +65,7 @@ int main(int argc, char **argv)
         if (image_ptr)
         {
             if (!pub_hostname_thread_ptr)
-                pub_hostname_thread_ptr = std::unique_ptr<std::thread>(new std::thread(rgbd::pubHostnameThreadFunc, std::ref(nh), server_name, host_name, 10));
+                pub_hostname_thread_ptr = std::make_unique<std::thread>(rgbd::pubHostnameThreadFunc, std::ref(nh), server_name, host_name, 10);
             server.send(*image_ptr);
         }
         r.sleep();
