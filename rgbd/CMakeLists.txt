@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
   pluginlib
   rgbd_msgs
+  rosconsole_bridge
   roscpp
   sensor_msgs
   tue_serialization
@@ -23,7 +24,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rgbd
-  CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_ros rgbd_msgs roscpp sensor_msgs tue_serialization
+  CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_ros rgbd_msgs rosconsole_bridge roscpp sensor_msgs tue_serialization
   DEPENDS Boost
 )
 
@@ -53,6 +54,8 @@ add_library(rgbd    src/client.cpp
                     src/utility.cpp
                     src/view.cpp
                     src/ros/conversions.cpp
+                    # Forward geolib2 logging to rosconsole
+                    src/ros/rosconsole_bridge.cpp
 
                     ${HEADER_FILES})
 target_link_libraries(rgbd ${catkin_LIBRARIES} rt)
