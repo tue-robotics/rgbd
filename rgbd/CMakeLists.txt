@@ -97,6 +97,9 @@ target_link_libraries(record_to_video rgbd)
 add_executable(rgbd_to_rgb_png tools/rgbd_to_rgb_png.cpp)
 target_link_libraries(rgbd_to_rgb_png rgbd)
 
+add_executable(rgbd_to_pcd tools/rgbd_to_pcd.cpp)
+target_link_libraries(rgbd_to_pcd rgbd)
+
 add_executable(save tools/save.cpp)
 target_link_libraries(save rgbd)
 
