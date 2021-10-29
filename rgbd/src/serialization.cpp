@@ -231,8 +231,6 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         cam_info_msg.P[10] = 1.0;
 
         cam_info_msg.distortion_model = "plumb_bob";
-//        cam_info_msg.width = image_ptr_->rgb_image_.cols;
-//        cam_info_msg.height = image_ptr_->rgb_image_.rows;
 
         image.cam_model_.fromCameraInfo(cam_info_msg);
     }
@@ -276,6 +274,15 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     {
         ROS_ERROR_STREAM("rgbd::deserialize: Unsupported rgb storage format: " << rgb_type);
         return false;
+    }
+
+    if (cam_type == CAMERA_MODEL_PINHOLE)
+    {
+        // now that the image size is known add it to the camera model
+        sensor_msgs::CameraInfo cam_info_msg = image.cam_model_.cameraInfo();
+        cam_info_msg.width = image.rgb_image_.cols;
+        cam_info_msg.height = image.rgb_image_.rows;
+        image.cam_model_.fromCameraInfo(cam_info_msg);
     }
 
     // - - - - - - - - - - - - - - - - DEPTH IMAGE - - - - - - - - - - - - - - - -
