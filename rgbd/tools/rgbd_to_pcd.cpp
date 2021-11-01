@@ -8,13 +8,18 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 
+#include <cmath>
+
 #include <opencv2/highgui/highgui.hpp>
+
+#include <typeinfo>
+
 
 int main(int argc, char **argv) {
 
     if (argc < 2)
     {
-        std::cout << "Usage:\n\n   rgbd_to_rgb_png FILENAME\n\n";
+        std::cout << "Usage:\n\n   rgbd_to_pcd FILENAME\n\n";
         return 1;
     }
 
@@ -37,18 +42,7 @@ int main(int argc, char **argv) {
         rgbd::Image image;
         rgbd::deserialize(a_in, image);
 
-        /*
-        size_t lastindex = name.find_last_of(".");
-        name = name.substr(0, lastindex);
-
-        std::string rgb_filename = name + "_rgb.png";
-
-        if (cv::imwrite(rgb_filename, image.getRGBImage()))
-            std::cout << "Succesfully stored '" << rgb_filename << "'" << std::endl;
-        else
-            std::cerr << "Failed to write rgbd to png" << std::endl;
-        */
-        pcl::PointCloud<pcl::PointXYZ> cloud;
+        pcl::PointCloud<pcl::PointXYZRGB> cloud;
 
         // Fill in the cloud data
         cloud.width    = image.getRGBImage().cols;
@@ -61,28 +55,34 @@ int main(int argc, char **argv) {
 
         double half_height = 0.5 * cloud.height;
         double half_width = 0.5 * cloud.width;
-
         for (int i = 0; i < cloud.height; i++)
         {
             for (int j = 0; j < cloud.width; j++)
             {
-                double d = image.getDepthImage().at<double>(i,j);
-                double z = (half_height-i) * d / fy;
-                double y = (-half_width+j) * d / fx;
+                double x = image.getDepthImage().at<float>(i,j);
+                double y = (half_height-i) * x / fy;
+                double z = (-half_width+j) * x / fx;
+
+                cv::Vec3b pixel = image.getRGBImage().at<cv::Vec3b>(i,j);
+                uint b = pixel[0]; uint g = pixel[1];
+                uint r = pixel[2];
+
+                cloud.at(j,i).x = x;
+                cloud.at(j,i).y = y;
+                cloud.at(j,i).z = z;
+                cloud.at(j,i).r = r;
+                cloud.at(j,i).g = g;
+                cloud.at(j,i).b = b;
             }
         }
 
-        /*
-        for (auto& point: cloud)
-        {
-            point.x = 1.0;
-            point.y = 1.0;
-            point.z = 1.0;
-        }
-        */
+        size_t lastindex = name.find_last_of(".");
+        name = name.substr(0, lastindex);
 
-        pcl::io::savePCDFileASCII ("test_pcd.pcd", cloud);
-        std::cerr << "Saved " << cloud.size () << " data points to test_pcd.pcd." << std::endl;
+        std::string pcd_filename = name + ".pcd";
+
+        pcl::io::savePCDFileASCII (pcd_filename, cloud);
+        std::cerr << "Saved " << cloud.size () << " data points to " << pcd_filename << std::endl;
     }
 
     return 0;
