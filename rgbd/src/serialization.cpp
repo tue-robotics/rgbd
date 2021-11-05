@@ -233,6 +233,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         cam_info_msg.distortion_model = "plumb_bob";
 
         image.cam_model_.fromCameraInfo(cam_info_msg);
+        // note, camera model does not yet contain image size. That is added below in this function
     }
     else
     {
