@@ -55,9 +55,9 @@ int main(int argc, char **argv) {
 
         double half_height = 0.5 * cloud.height;
         double half_width = 0.5 * cloud.width;
-        for (int i = 0; i < cloud.height; i++)
+        for (uint i = 0; i < cloud.height; ++i)
         {
-            for (int j = 0; j < cloud.width; j++)
+            for (uint j = 0; j < cloud.width; ++j)
             {
                 double x = image.getDepthImage().at<float>(i,j);
                 double y = (half_height-i) * x / fy;
