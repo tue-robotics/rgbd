@@ -3,8 +3,8 @@
 #include <rgbd/view.h>
 
 #include <fstream>
-
 #include <iostream>
+
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 
@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 
     if (argc < 2)
     {
-        std::cout << "Usage:\n\n   rgbd_to_pcd FILENAME\n\n";
+        std::cout << "Usage:\n\n   rgbd_to_pcd FILENAME.rgbd\n\n";
         return 1;
     }
 
@@ -64,7 +64,8 @@ int main(int argc, char **argv) {
                 double z = (-half_width+j) * x / fx;
 
                 cv::Vec3b pixel = image.getRGBImage().at<cv::Vec3b>(i,j);
-                uint b = pixel[0]; uint g = pixel[1];
+                uint b = pixel[0];
+                uint g = pixel[1];
                 uint r = pixel[2];
 
                 cloud.at(j,i).x = x;
