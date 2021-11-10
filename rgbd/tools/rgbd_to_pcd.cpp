@@ -45,8 +45,8 @@ int main(int argc, char **argv) {
         pcl::PointCloud<pcl::PointXYZRGB> cloud;
 
         // Fill in the cloud data
-        cloud.width    = image.getRGBImage().cols;
-        cloud.height   = image.getRGBImage().rows;
+        cloud.width = image.getRGBImage().cols;
+        cloud.height = image.getRGBImage().rows;
         cloud.is_dense = false;
         cloud.resize (cloud.width * cloud.height);
 
