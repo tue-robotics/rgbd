@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 
         double half_height = 0.5 * cloud.height;
         double half_width = 0.5 * cloud.width;
-        for (uint i = 0; i < cloud.height; ++i)
+        for (uint i=0; i < cloud.height; ++i)
         {
             for (uint j=0; j < cloud.width; ++j)
             {
