@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
         std::string pcd_filename = name + ".pcd";
 
         pcl::io::savePCDFileASCII (pcd_filename, cloud);
-        std::cerr << "Saved " << cloud.size () << " data points to " << pcd_filename << std::endl;
+        std::cout << "Saved " << cloud.size () << " data points to " << pcd_filename << std::endl;
     }
 
     return 0;
