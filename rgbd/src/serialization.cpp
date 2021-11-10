@@ -39,6 +39,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
         a << cam_model.fx() << cam_model.fy();
         a << cam_model.cx() << cam_model.cy();
         a << cam_model.Tx() << cam_model.Ty();
+        a << cam_model.fullResolution().width << cam_model.fullResolution().height;
     }
     else
     {
@@ -202,9 +203,11 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     else if (cam_type == CAMERA_MODEL_PINHOLE)
     {
         double fx, fy, cx, cy, tx, ty;
+        int width, height;
         a >> fx >> fy;
         a >> cx >> cy;
         a >> tx >> ty;
+        a >> width >> height;
 
         sensor_msgs::CameraInfo cam_info_msg;
 
@@ -231,8 +234,8 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         cam_info_msg.P[10] = 1.0;
 
         cam_info_msg.distortion_model = "plumb_bob";
-//        cam_info_msg.width = image_ptr_->rgb_image_.cols;
-//        cam_info_msg.height = image_ptr_->rgb_image_.rows;
+        cam_info_msg.width = width;
+        cam_info_msg.height = height;
 
         image.cam_model_.fromCameraInfo(cam_info_msg);
     }
