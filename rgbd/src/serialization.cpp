@@ -11,7 +11,7 @@
 namespace rgbd
 {
 
-const static int SERIALIZATION_VERSION = 1;
+const static int SERIALIZATION_VERSION = 2;
 
 // ----------------------------------------------------------------------------------------------------
 //
@@ -207,7 +207,8 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         a >> fx >> fy;
         a >> cx >> cy;
         a >> tx >> ty;
-        a >> width >> height;
+        if (version >=2)
+            a >> width >> height;
 
         sensor_msgs::CameraInfo cam_info_msg;
 
@@ -234,9 +235,10 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         cam_info_msg.P[10] = 1.0;
 
         cam_info_msg.distortion_model = "plumb_bob";
-        cam_info_msg.width = width;
-        cam_info_msg.height = height;
-
+        if (version >= 2){
+            cam_info_msg.width = width;
+            cam_info_msg.height = height;
+        }
         image.cam_model_.fromCameraInfo(cam_info_msg);
     }
     else
