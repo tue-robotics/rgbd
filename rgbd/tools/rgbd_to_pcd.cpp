@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 
     if (argc < 2)
     {
-        std::cout << "Usage:\n\n   rgbd_to_pcd FILENAME.rgbd (optional)SECOND_FILENAME.rgbd\n\n";
+        std::cout << "Usage:\n\n   rgbd_to_pcd FILENAME.rgbd [FILENAME2.rgbd ...]\n\n";
         return 1;
     }
 
