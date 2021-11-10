@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    for (int i = 1; i < argc; ++i)
+    for (uint i=1; i < argc; ++i)
     {
         std::string name = std::string(argv[i]);
 
