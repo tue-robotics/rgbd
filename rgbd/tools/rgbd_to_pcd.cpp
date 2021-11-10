@@ -59,21 +59,14 @@ int main(int argc, char **argv) {
         {
             for (uint j=0; j < cloud.width; ++j)
             {
-                double x = image.getDepthImage().at<float>(i,j);
-                double y = (half_height-i) * x / fy;
-                double z = (-half_width+j) * x / fx;
-
                 cv::Vec3b pixel = image.getRGBImage().at<cv::Vec3b>(i,j);
-                uint b = pixel[0];
-                uint g = pixel[1];
-                uint r = pixel[2];
 
-                cloud.at(j,i).x = x;
-                cloud.at(j,i).y = y;
-                cloud.at(j,i).z = z;
-                cloud.at(j,i).r = r;
-                cloud.at(j,i).g = g;
-                cloud.at(j,i).b = b;
+                cloud.at(j,i).x = image.getDepthImage().at<float>(i,j);
+                cloud.at(j,i).y = (half_height-i) * x / fy;
+                cloud.at(j,i).z = (-half_width+j) * x / fx;
+                cloud.at(j,i).r = pixel[2];
+                cloud.at(j,i).g = pixel[1];
+                cloud.at(j,i).b = pixel[0];
             }
         }
 
