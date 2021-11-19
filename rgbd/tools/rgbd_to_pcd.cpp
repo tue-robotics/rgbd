@@ -63,8 +63,8 @@ int main(int argc, char **argv) {
                 double d = image.getDepthImage().at<float>(i,j);
                 
                 cloud.at(j,i).x = d;
-                cloud.at(j,i).y = (half_height-i) * d / fy;
-                cloud.at(j,i).z = (-half_width+j) * d / fx;
+                cloud.at(j,i).y = (-half_width+j) * d / fx;
+                cloud.at(j,i).z = (-half_height+i) * d / fy;
                 cloud.at(j,i).r = bgr[2];
                 cloud.at(j,i).g = bgr[1];
                 cloud.at(j,i).b = bgr[0];
