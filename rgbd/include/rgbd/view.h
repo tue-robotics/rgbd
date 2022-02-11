@@ -3,6 +3,9 @@
 
 #include <rgbd/image.h>
 
+#include <geolib/datatypes.h>
+#include <geolib/sensors/DepthCamera.h>
+
 namespace rgbd {
 
 class View {
