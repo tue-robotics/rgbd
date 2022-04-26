@@ -37,12 +37,21 @@ int main(int argc, char **argv) {
         size_t lastindex = name.find_last_of(".");
         name = name.substr(0, lastindex);
 
+        // write rgb image
         std::string rgb_filename = name + "_rgb.png";
 
         if (cv::imwrite(rgb_filename, image.getRGBImage()))
             std::cout << "Succesfully stored '" << rgb_filename << "'" << std::endl;
         else
-            std::cerr << "Failed to write rgbd to png" << std::endl;
+            std::cerr << "Failed to write rgbd to rgb png" << std::endl;
+
+        // write depth image
+        std::string depth_filename = name + "_depth.png";
+
+        if (cv::imwrite(depth_filename, image.getDepthImage()))
+            std::cout << "Succesfully stored '" << depth_filename << "'" << std::endl;
+        else
+            std::cerr << "Failed to write rgbd to depth png" << std::endl;
     }
 
     return 0;
