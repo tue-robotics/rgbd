@@ -63,7 +63,7 @@ bool ClientROSBase::imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_ms
 {
     if (!cam_model_.initialized())
     {
-        ROS_ERROR("ClientROSBase: cam_model not yet initialized");
+        ROS_ERROR_DELAYED_THROTTLE(1, "ClientROSBase: cam_model not yet initialized");
         return false;
     }
     cv_bridge::CvImagePtr rgb_img_ptr, depth_img_ptr;
