@@ -1,4 +1,4 @@
-#include "test_client_headless_templ.h"
+#include "test_client_templ.h"
 #include "rgbd/client_ros.h"
 
 class TestClientROS : public rgbd::ClientROS
@@ -27,5 +27,5 @@ bool TestClientROS::initialize(std::string server_name)
 
 int main(int argc, char **argv)
 {
-    return main_templ<TestClientROS>(argc, argv);
+    return main_templ<TestClientROS, true>(argc, argv);
 }

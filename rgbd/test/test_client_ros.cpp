@@ -27,5 +27,5 @@ bool TestClientROS::initialize(std::string server_name)
 
 int main(int argc, char **argv)
 {
-    return main_templ<TestClientROS>(argc, argv);
+    return main_templ<TestClientROS, false>(argc, argv);
 }

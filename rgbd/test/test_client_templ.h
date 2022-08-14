@@ -27,7 +27,7 @@
  * function.
  * Both the RGB and depth image are shown in seperate windows.
  */
-template<class T>
+template<class T, bool headless=false>
 int main_templ(int argc, char **argv)
 {
     ros::init(argc, argv, "rgbd_transport_test_client");
@@ -59,11 +59,19 @@ int main_templ(int argc, char **argv)
         {
             std::cout << "Image: t = " << std::fixed << image.getTimestamp() << ", frame = " << image.getFrameId() << std::endl;
 
-            cv::imshow("rgb", image.getRGBImage());
-            cv::imshow("depth", image.getDepthImage() / 8);
-            cv::waitKey(3);
+            if (!headless)
+            {
+                cv::imshow("rgb", image.getRGBImage());
+                cv::imshow("depth", image.getDepthImage() / 8);
+                cv::waitKey(3);
+            }
         }
         r.sleep();
+    }
+
+    if (!headless)
+    {
+        cv::destroyAllWindows();
     }
 
     return 0;
