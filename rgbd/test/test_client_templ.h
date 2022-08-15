@@ -14,6 +14,14 @@
 
 #include "rgbd/image.h"
 
+#include <string>
+
+
+void usage()
+{
+    std::cout << "Usage: rgbd_test_client_TYPE [--headless] [--help]" << std::endl;
+}
+
 /**
  * Template function to test the communication of a client class.
  * The client should have a
@@ -31,6 +39,28 @@ template<class T>
 int main_templ(int argc, char **argv)
 {
     ros::init(argc, argv, "rgbd_transport_test_client");
+
+    bool headless = false;
+    std::string arg;
+    for (uint i=1; i<argc; ++i)
+    {
+        arg = argv[i];
+        if (arg == "--headless")
+        {
+            headless = true;
+            ROS_INFO("Running in headless mode");
+        }
+        else if(arg == "--help")
+        {
+            usage();
+            return 1;
+        }
+        else
+        {
+            ROS_WARN_STREAM("Incorrect argument: '" << arg);
+        }
+    }
+
     ros::NodeHandle nh_private("~");
 
     float rate = 30;
@@ -59,11 +89,19 @@ int main_templ(int argc, char **argv)
         {
             std::cout << "Image: t = " << std::fixed << image.getTimestamp() << ", frame = " << image.getFrameId() << std::endl;
 
-            cv::imshow("rgb", image.getRGBImage());
-            cv::imshow("depth", image.getDepthImage() / 8);
-            cv::waitKey(3);
+            if (!headless)
+            {
+                cv::imshow("rgb", image.getRGBImage());
+                cv::imshow("depth", image.getDepthImage() / 8);
+                cv::waitKey(3);
+            }
         }
         r.sleep();
+    }
+
+    if (!headless)
+    {
+        cv::destroyAllWindows();
     }
 
     return 0;
