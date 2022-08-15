@@ -16,6 +16,12 @@
 
 #include <string>
 
+
+void usage()
+{
+    std::cout << "Usage: rgbd_test_client_TYPE [--headless] [--help]" << std::endl;
+}
+
 /**
  * Template function to test the communication of a client class.
  * The client should have a
@@ -43,6 +49,11 @@ int main_templ(int argc, char **argv)
         {
             headless = true;
             ROS_INFO("Running in headless mode");
+        }
+        else if(arg == "--help")
+        {
+            usage();
+            return 1;
         }
         else
         {
