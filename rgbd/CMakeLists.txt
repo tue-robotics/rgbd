@@ -135,18 +135,6 @@ target_link_libraries(rgbd_test_client_shm rgbd)
 add_executable(rgbd_test_client_ros test/test_client_ros.cpp test/test_client_templ.h)
 target_link_libraries(rgbd_test_client_ros rgbd)
 
-add_executable(rgbd_test_client_headless test/test_client_headless.cpp test/test_client_templ.h)
-target_link_libraries(rgbd_test_client_headless rgbd)
-
-add_executable(rgbd_test_client_headless_rgbd test/test_client_headless_rgbd.cpp test/test_client_templ.h)
-target_link_libraries(rgbd_test_client_headless_rgbd rgbd)
-
-add_executable(rgbd_test_client_headless_shm test/test_client_headless_shm.cpp test/test_client_templ.h)
-target_link_libraries(rgbd_test_client_headless_shm rgbd)
-
-add_executable(rgbd_test_client_headless_ros test/test_client_headless_ros.cpp test/test_client_templ.h)
-target_link_libraries(rgbd_test_client_headless_ros rgbd)
-
 add_executable(rgbd_test_serialization test/test_serialization.cpp)
 target_link_libraries(rgbd_test_serialization rgbd)
 

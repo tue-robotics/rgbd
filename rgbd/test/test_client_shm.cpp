@@ -3,5 +3,5 @@
 
 int main(int argc, char **argv)
 {
-    return main_templ<rgbd::ClientSHM, false>(argc, argv);
+    return main_templ<rgbd::ClientSHM>(argc, argv);
 }
