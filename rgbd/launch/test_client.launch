@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node name="rgbd_client" pkg="rgbd" type="rgbd_test_client" output="screen" args="--headless" respawn="true">
+		<remap from="test" to="rgbd" />
+    </node>
+
+</launch>

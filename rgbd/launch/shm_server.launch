@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node name="rgbd_shm_server" pkg="rgbd" type="rgbd_to_shm" output="screen" respawn="true">
+    </node>
+
+</launch>
