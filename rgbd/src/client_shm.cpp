@@ -32,6 +32,7 @@ ClientSHM::~ClientSHM()
 
 bool ClientSHM::initialize(const std::string& server_name, float timeout)
 {
+    ROS_DEBUG("ClientSHM::initialize");
     std::string server_name_cp = server_name;
     std::replace(server_name_cp.begin(), server_name_cp.end(), '/', '-');
 
@@ -42,8 +43,10 @@ bool ClientSHM::initialize(const std::string& server_name, float timeout)
     {
         try
         {
+            ROS_DEBUG("ClientSHM::initialize try to open shm");
             // Open already created shared memory object.
             shm_ = ipc::shared_memory_object(ipc::open_only, server_name_cp.c_str(), ipc::read_write);
+            ROS_DEBUG("ClientSHM::initialize opened shm");
 
             mem_buffer_header_ = ipc::mapped_region(shm_, ipc::read_write, 0, sizeof(BufferHeader));
             mem_image_ = ipc::mapped_region(shm_, ipc::read_only, sizeof(BufferHeader));
@@ -76,11 +79,13 @@ bool ClientSHM::initialize(const std::string& server_name, float timeout)
 
 bool ClientSHM::deinitialize()
 {
+    ROS_DEBUG("ClientSHM::deinitialize");
     buffer_header_ = nullptr;
     image_data_ = nullptr;
     mem_image_ = ipc::mapped_region();
     mem_buffer_header_ = ipc::mapped_region();
     shm_= ipc::shared_memory_object();
+    ROS_DEBUG("ClientSHM::deinitialize done");
     return true;
 }
 
@@ -88,13 +93,20 @@ bool ClientSHM::deinitialize()
 
 bool ClientSHM::nextImage(Image& image)
 {
+    ROS_DEBUG("ClientSHM::nextImage");
     if (!initialized())
+    {
+        ROS_DEBUG("ClientSHM::nextImage not initialized");
         return false;
+    }
 
     ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header_->mutex);
 
     if (buffer_header_->sequence_nr == sequence_nr_)
+    {
+        ROS_DEBUG("ClientSHM::nextImage no new image");
         return false;
+    }
 
     cv::Mat* rgb = &(image.rgb_image_);
     cv::Mat* depth = &(image.depth_image_);
@@ -108,6 +120,7 @@ bool ClientSHM::nextImage(Image& image)
 
     if (!image.getCameraModel().initialized())
     {
+        ROS_DEBUG("ClientSHM::nextImage initializing cam model");
         sensor_msgs::CameraInfo cam_info_msg;
         cam_info_msg.header.frame_id = buffer_header_->frame_id;
         cam_info_msg.header.stamp.fromSec(buffer_header_->timestamp);
@@ -130,6 +143,7 @@ bool ClientSHM::nextImage(Image& image)
         cam_info_msg.roi.do_rectify = buffer_header_->roi_do_rectify;
 
         image.cam_model_.fromCameraInfo(cam_info_msg);
+        ROS_DEBUG("ClientSHM::nextImage initializing cam model done");
     }
 
     image.setFrameId(buffer_header_->frame_id);
@@ -137,6 +151,7 @@ bool ClientSHM::nextImage(Image& image)
 
     sequence_nr_ = buffer_header_->sequence_nr;
 
+    ROS_DEBUG("ClientSHM::nextImage done");
     return true;
 }
 
