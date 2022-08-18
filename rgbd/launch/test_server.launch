@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="rgbd_server" pkg="rgbd" type="rgbd_test_server" output="screen" respawn="true">
+        <remap from="test" to="rgbd"/>
+    </node>
+</launch>
