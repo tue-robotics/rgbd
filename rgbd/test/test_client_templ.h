@@ -87,7 +87,7 @@ int main_templ(int argc, char **argv)
         }
         if (client.nextImage(image))
         {
-            std::cout << "Image: t = " << std::fixed << image.getTimestamp() << ", frame = " << image.getFrameId() << std::endl;
+            std::cout << "Image: t = " << std::fixed << std::setprecision(12) << image.getTimestamp() << ", frame = " << image.getFrameId() << std::endl;
 
             if (!headless)
             {
