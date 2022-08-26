@@ -107,6 +107,10 @@ bool ClientSHM::nextImage(Image& image)
         ROS_DEBUG("ClientSHM::nextImage no new image");
         return false;
     }
+    else
+    {
+        ROS_DEBUG_STREAM("ClientSHM::nextImage last sequence: " << sequence_nr_ << ", new sequence: " << buffer_header_->sequence_nr);
+    }
 
     cv::Mat* rgb = &(image.rgb_image_);
     cv::Mat* depth = &(image.depth_image_);
