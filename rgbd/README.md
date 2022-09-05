@@ -1,6 +1,6 @@
 # rgbd
 
-[![CI](https://github.com/tue-robotics/rgbd/workflows/CI/badge.svg)](https://github.com/tue-robotics/rgbd/actions)
+[![CI](https://github.com/tue-robotics/rgbd/actions/workflows/main.yml/badge.svg)](https://github.com/tue-robotics/rgbd/actions/workflows/main.yml)
 
 The rgbd server reads data from a 3D sensor and publishes it in a compressed form.
 It provides a unified format for depthmaps combined with RGB data, which is more compact than a point cloud.
