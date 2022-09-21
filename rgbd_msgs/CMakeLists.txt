@@ -7,8 +7,6 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
-add_definitions(-std=c++11)
-
 add_message_files(
   FILES
     RGBD.msg
