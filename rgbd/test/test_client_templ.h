@@ -42,7 +42,7 @@ int main_templ(int argc, char **argv)
 
     bool headless = false;
     std::string arg;
-    for (uint i=1; i<argc; ++i)
+    for (int i=1; i<argc; ++i)
     {
         arg = argv[i];
         if (arg == "--headless")
