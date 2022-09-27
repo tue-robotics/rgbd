@@ -27,12 +27,12 @@ ServerSHM::ServerSHM() : buffer_header_(nullptr), image_data_(nullptr)
 
 ServerSHM::~ServerSHM()
 {
-    ROS_DEBUG("ServerSHM::~ServerSHM");
+    ROS_ERROR("ServerSHM::~ServerSHM");
     if (!shared_mem_name_.empty())
     {
-        ROS_DEBUG("ServerSHM::~ServerSHM remove shm object");
+        ROS_ERROR("ServerSHM::~ServerSHM remove shm object");
         ipc::shared_memory_object::remove(shared_mem_name_.c_str());
-        ROS_DEBUG("ServerSHM::~ServerSHM remove shm object done");
+        ROS_ERROR("ServerSHM::~ServerSHM remove shm object done");
     }
 }
 
@@ -48,7 +48,7 @@ void ServerSHM::initialize(const std::string& name)
 
 void ServerSHM::send(const Image& image)
 {
-    ROS_DEBUG("ServerSHM::send");
+    ROS_ERROR("ServerSHM::send");
     if (shared_mem_name_.empty())
     {
         ROS_ERROR("rgbd::SharedMemServer is not initialized");
@@ -60,15 +60,15 @@ void ServerSHM::send(const Image& image)
 
     if (!buffer_header_)
     {
-        ROS_DEBUG("ServerSHM::send creating buffer_header");
+        ROS_ERROR("ServerSHM::send creating buffer_header");
         // First time
         // Make sure possibly existing memory with same name is removed
         ipc::shared_memory_object::remove(shared_mem_name_.c_str());
 
         //Create a shared memory object.
-        ROS_DEBUG("ServerSHM::send open shm object create_only");
+        ROS_ERROR("ServerSHM::send open shm object create_only");
         shm_ = ipc::shared_memory_object(ipc::create_only, shared_mem_name_.c_str(), ipc::read_write);
-        ROS_DEBUG("ServerSHM::send open shm object create_only done");
+        ROS_ERROR("ServerSHM::send open shm object create_only done");
 
         // Store size
         rgb_data_size_ = static_cast<uint64_t>(rgb.cols * rgb.rows * 3);
@@ -112,13 +112,13 @@ void ServerSHM::send(const Image& image)
         buffer_header_->roi_height = cam_info.roi.height;
         buffer_header_->roi_width = cam_info.roi.width;
         buffer_header_->roi_do_rectify = cam_info.roi.do_rectify;
-        ROS_DEBUG("ServerSHM::send Done creating buffer_header");
+        ROS_ERROR("ServerSHM::send Done creating buffer_header");
     }
 
     {
-        ROS_DEBUG("ServerSHM::send waiting for lock");
+        ROS_ERROR("ServerSHM::send waiting for lock");
         ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header_->mutex);
-        ROS_DEBUG("ServerSHM::send lock retreived");
+        ROS_ERROR("ServerSHM::send lock retreived");
 
         buffer_header_->timestamp = image.getTimestamp();
 
@@ -127,27 +127,27 @@ void ServerSHM::send(const Image& image)
 
         buffer_header_->cond_empty.notify_one();
         ++buffer_header_->sequence_nr;
-        ROS_DEBUG("ServerSHM::send release lock");
+        ROS_ERROR("ServerSHM::send release lock");
     }
-    ROS_DEBUG("ServerSHM::send done");
+    ROS_ERROR("ServerSHM::send done");
 }
 
 // ----------------------------------------------------------------------------------------
 
 void pubHostnameThreadFunc(ros::NodeHandle& nh, const std::string server_name, const std::string hostname, const float frequency)
 {
-    ROS_DEBUG("pubHostnameThreadFunc");
+    ROS_ERROR("pubHostnameThreadFunc");
     ros::Publisher pub_shm_hostname = nh.advertise<std_msgs::String>(server_name + "/hosts", 1);
     ros::Rate r(frequency);
     std_msgs::String msg;
     msg.data = hostname;
     while(nh.ok())
     {
-        ROS_DEBUG_STREAM("pubHostnameThreadFunc publish: " << hostname);
+        ROS_ERROR_STREAM("pubHostnameThreadFunc publish: " << hostname);
         pub_shm_hostname.publish(msg);
         r.sleep();
     }
-    ROS_DEBUG("pubHostnameThreadFunc done");
+    ROS_ERROR("pubHostnameThreadFunc done");
 }
 
 
