@@ -58,6 +58,10 @@ void ServerSHM::send(const Image& image)
     const cv::Mat& rgb = image.getRGBImage();
     const cv::Mat& depth = image.getDepthImage();
 
+    long shm_size = 0;
+    bool succes = shm_.get_size(shm_size);
+    ROS_ERROR_STREAM("shm_.getsize(): " << shm_size << ", succes: " << succes);
+
     if (!buffer_header_)
     {
         ROS_ERROR("ServerSHM::send creating buffer_header");
