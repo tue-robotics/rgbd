@@ -142,6 +142,9 @@ target_link_libraries(rgbd_test_client_ros rgbd)
 add_executable(rgbd_test_serialization test/test_serialization.cpp)
 target_link_libraries(rgbd_test_serialization rgbd)
 
+add_executable(rgbd_test_shm test/test_shm.cpp)
+target_link_libraries(rgbd_test_shm rgbd)
+
 # - - - - - - - - - - - - - - - - - - CI - - - - - - - - - - - - - - - - -
 
 if (CATKIN_ENABLE_TESTING)
