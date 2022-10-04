@@ -67,7 +67,11 @@ int main_templ(int argc, char **argv)
     nh_private.getParam("rate", rate);
 
     T client;
-    client.initialize(ros::names::resolve("test"));
+    if (!client.initialize(ros::names::resolve("test")))
+    {
+        ROS_FATAL("Could not initialize the client");
+        return 1;
+    }
 
     rgbd::Image image;
 
