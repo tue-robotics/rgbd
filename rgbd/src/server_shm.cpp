@@ -61,6 +61,7 @@ void ServerSHM::send(const Image& image)
     long shm_size = 0;
     bool succes = shm_.get_size(shm_size);
     ROS_ERROR_STREAM("shm_.getsize(): " << shm_size << ", succes: " << succes);
+    ROS_ERROR_STREAM("mem_buffer_header_.get_address(): " << mem_buffer_header_.get_address());
 
     if (!buffer_header_)
     {
