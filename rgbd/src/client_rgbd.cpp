@@ -15,6 +15,7 @@ ClientRGBD::ClientRGBD() : image_ptr_(nullptr)
 
 ClientRGBD::~ClientRGBD()
 {
+    nh_.shutdown();
 }
 
 // ----------------------------------------------------------------------------------------
