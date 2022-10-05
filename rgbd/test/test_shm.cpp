@@ -1,5 +1,7 @@
 #include <ros/init.h>
 
+#include <boost/interprocess/shared_memory_object.hpp>
+
 #include <rgbd/server_shm.h>
 #include <rgbd/image.h>
 
@@ -7,16 +9,24 @@
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/distortion_models.h>
 
+namespace ipc = boost::interprocess;
+
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "test_shm");
     ros::start();
 
-    rgbd::ServerSHM server1;
-    rgbd::ServerSHM server2;
+    std::string server_name = "~bla";
+    if (argc >= 2)
+        server_name = std::string(argv[1]);
 
-    server1.initialize("~bla");
-    server2.initialize("~bla");
+    ROS_INFO_STREAM("server_name: " << server_name);
+
+    std::unique_ptr<rgbd::ServerSHM> server1 = std::make_unique<rgbd::ServerSHM>();
+    std::unique_ptr<rgbd::ServerSHM> server2 = std::make_unique<rgbd::ServerSHM>();
+
+    server1->initialize(server_name);
+    server2->initialize(server_name);
 
     cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0,0,255));
     cv::Mat depth_image(480, 640, CV_32FC1, 5.0);
@@ -35,8 +45,13 @@ int main(int argc, char** argv)
 
     rgbd::Image image(rgb_image, depth_image, cam_model, "test_frame_id", ros::Time::now().toSec());
 
-    server1.send(image);
-    server2.send(image);
+    ipc::shared_memory_object::remove(server_name.c_str());
+
+    server1->send(image);
+    server2->send(image);
+    server1->send(image);
+    server2.reset();
+    server1->send(image);
 
     return 0;
 }
