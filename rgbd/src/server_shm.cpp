@@ -68,10 +68,11 @@ void ServerSHM::send(const Image& image)
         ROS_ERROR("ServerSHM::send creating buffer_header");
         // First time
         // Make sure possibly existing memory with same name is removed
+        ROS_ERROR_STREAM("ServerSHM::send Removing old shm: " << shared_mem_name_);
         ipc::shared_memory_object::remove(shared_mem_name_.c_str());
 
         //Create a shared memory object.
-        ROS_ERROR("ServerSHM::send open shm object create_only");
+        ROS_ERROR_STREAM("ServerSHM::send open shm object create_only: " << shared_mem_name_);
         shm_ = ipc::shared_memory_object(ipc::create_only, shared_mem_name_.c_str(), ipc::read_write);
         ROS_ERROR("ServerSHM::send open shm object create_only done");
 
@@ -119,6 +120,23 @@ void ServerSHM::send(const Image& image)
         buffer_header_->roi_do_rectify = cam_info.roi.do_rectify;
         ROS_ERROR("ServerSHM::send Done creating buffer_header");
     }
+    else
+    {
+        bool shm_open = false;
+        try
+        {
+            ipc::shared_memory_object(ipc::open_only, shared_mem_name_.c_str(), ipc::read_write);
+            shm_open = true;
+        }
+        catch (const ipc::interprocess_exception& ex)
+        {
+            ROS_WARN_STREAM("Could not open(" << ex.get_error_code() << "):" << ex.get_native_error() << ", what: " << ex.what());
+        }
+        if (!shm_open)
+        {
+            ROS_WARN("This shouldn't happen!");
+        }
+    }
 
     ROS_ERROR_STREAM("After mem_buffer_header_.get_address(): " << mem_buffer_header_.get_address());
 
@@ -136,6 +154,7 @@ void ServerSHM::send(const Image& image)
         ++buffer_header_->sequence_nr;
         ROS_ERROR("ServerSHM::send release lock");
     }
+
     ROS_ERROR("ServerSHM::send done");
 }
 
