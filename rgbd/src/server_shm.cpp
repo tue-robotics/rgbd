@@ -141,9 +141,9 @@ void ServerSHM::send(const Image& image)
     ROS_ERROR_STREAM("After mem_buffer_header_.get_address(): " << mem_buffer_header_.get_address());
 
     {
-        ROS_ERROR("ServerSHM::send waiting for lock");
+        ROS_DEBUG("ServerSHM::send waiting for lock");
         ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header_->mutex);
-        ROS_ERROR("ServerSHM::send lock retreived");
+        ROS_DEBUG("ServerSHM::send lock retreived");
 
         buffer_header_->timestamp = image.getTimestamp();
 
@@ -152,7 +152,7 @@ void ServerSHM::send(const Image& image)
 
         buffer_header_->cond_empty.notify_one();
         ++buffer_header_->sequence_nr;
-        ROS_ERROR("ServerSHM::send release lock");
+        ROS_DEBUG("ServerSHM::send release lock");
     }
 
     ROS_ERROR("ServerSHM::send done");
@@ -162,7 +162,7 @@ void ServerSHM::send(const Image& image)
 
 void pubHostnameThreadFunc(ros::NodeHandle& nh, const std::string server_name, const std::string hostname, const float frequency)
 {
-    ROS_ERROR("pubHostnameThreadFunc");
+    ROS_DEBUG("pubHostnameThreadFunc");
     ros::Publisher pub_shm_hostname = nh.advertise<std_msgs::String>(server_name + "/hosts", 1);
     ros::Rate r(frequency);
     std_msgs::String msg;
@@ -173,7 +173,7 @@ void pubHostnameThreadFunc(ros::NodeHandle& nh, const std::string server_name, c
         pub_shm_hostname.publish(msg);
         r.sleep();
     }
-    ROS_ERROR("pubHostnameThreadFunc done");
+    ROS_DEBUG("pubHostnameThreadFunc done");
 }
 
 
