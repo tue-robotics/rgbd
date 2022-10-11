@@ -137,7 +137,7 @@ void ServerSHM::checkSHMThreadFunc(const float frequency)
         ROS_DEBUG_STREAM("ServerSHM::checkSHMThreadFunc: checking shm on: " << shared_mem_name_);
         try
         {
-            ipc::shared_memory_object shm = ipc::shared_memory_object(ipc::open_only, shared_mem_name_.c_str(), ipc::read_only);
+            ipc::shared_memory_object(ipc::open_only, shared_mem_name_.c_str(), ipc::read_only);
         }
         catch (ipc::interprocess_exception &ex)
         {
