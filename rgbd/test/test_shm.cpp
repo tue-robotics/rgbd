@@ -23,10 +23,10 @@ int main(int argc, char** argv)
     ROS_INFO_STREAM("server_name: " << server_name);
 
     std::unique_ptr<rgbd::ServerSHM> server1 = std::make_unique<rgbd::ServerSHM>();
-    std::unique_ptr<rgbd::ServerSHM> server2 = std::make_unique<rgbd::ServerSHM>();
+//    std::unique_ptr<rgbd::ServerSHM> server2 = std::make_unique<rgbd::ServerSHM>();
 
     server1->initialize(server_name);
-    server2->initialize(server_name);
+//    server2->initialize(server_name);
 
     cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0,0,255));
     cv::Mat depth_image(480, 640, CV_32FC1, 5.0);
@@ -45,13 +45,25 @@ int main(int argc, char** argv)
 
     rgbd::Image image(rgb_image, depth_image, cam_model, "test_frame_id", ros::Time::now().toSec());
 
-    ipc::shared_memory_object::remove(server_name.c_str());
+//    ipc::shared_memory_object::remove(server_name.c_str());
 
     server1->send(image);
-    server2->send(image);
-    server1->send(image);
-    server2.reset();
-    server1->send(image);
+//    server2->send(image);
+//    server1->send(image);
+//    server2.reset();
+//    server1->send(image);
+
+    ros::WallTime start = ros::WallTime::now();
+    ros::WallTime end = start + ros::WallDuration(10);
+    ros::WallTime now;
+    uint count = 0;
+    while ((now = ros::WallTime::now()) < end)
+    {
+        ipc::shared_memory_object shm = ipc::shared_memory_object(ipc::open_only, server_name.c_str(), ipc::read_write);
+        ++count;
+    }
+
+    ROS_INFO_STREAM("Opened and closed SHM '" << count << "' times in 10 seconds");
 
     return 0;
 }
