@@ -57,7 +57,8 @@ bool Client::deinitialize()
         return true;
 
     nh_->shutdown();
-    sub_hosts_thread_.join();
+    if (sub_hosts_thread_.joinable())
+        sub_hosts_thread_.join();
 
     if (client_shm_.initialized())
         client_shm_.deinitialize();
