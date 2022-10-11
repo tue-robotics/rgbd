@@ -34,7 +34,8 @@ ServerRGBD::ServerRGBD(ros::NodeHandle nh) : nh_(nh)
 ServerRGBD::~ServerRGBD()
 {
     nh_.shutdown();
-    service_thread_.join();
+    if (service_thread_.joinable())
+        service_thread_.join();
 }
 
 // ----------------------------------------------------------------------------------------

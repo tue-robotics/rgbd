@@ -35,7 +35,7 @@ public:
     virtual ~Node()
     {
         nh_.shutdown();
-        if (pub_hostname_thread_ptr_)
+        if (pub_hostname_thread_ptr_ && pub_hostname_thread_ptr_->joinable())
             pub_hostname_thread_ptr_->join();
     }
 

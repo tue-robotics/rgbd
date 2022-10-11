@@ -20,7 +20,7 @@ Server::Server(ros::NodeHandle nh) : nh_(nh), pub_hostname_thread_ptr_(nullptr)
 Server::~Server()
 {
     nh_.shutdown();
-    if (pub_hostname_thread_ptr_)
+    if (pub_hostname_thread_ptr_ && pub_hostname_thread_ptr_->joinable())
         pub_hostname_thread_ptr_->join();
 }
 
