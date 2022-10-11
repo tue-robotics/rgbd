@@ -19,7 +19,7 @@ namespace rgbd
 
 // ----------------------------------------------------------------------------------------------------
 
-ServerSHM::ServerSHM() : buffer_header_(nullptr), image_data_(nullptr)
+ServerSHM::ServerSHM() : buffer_header_(nullptr), image_data_(nullptr), check_shm_thread_ptr_(nullptr)
 {
 }
 
@@ -28,6 +28,11 @@ ServerSHM::ServerSHM() : buffer_header_(nullptr), image_data_(nullptr)
 ServerSHM::~ServerSHM()
 {
     ROS_ERROR("ServerSHM::~ServerSHM");
+
+    nh_.shutdown();
+    if (check_shm_thread_ptr_ && check_shm_thread_ptr_->joinable())
+        check_shm_thread_ptr_->join();
+
     if (!shared_mem_name_.empty())
     {
         ROS_ERROR("ServerSHM::~ServerSHM remove shm object");
@@ -75,6 +80,10 @@ void ServerSHM::send(const Image& image)
         ROS_ERROR_STREAM("ServerSHM::send open shm object create_only: " << shared_mem_name_);
         shm_ = ipc::shared_memory_object(ipc::create_only, shared_mem_name_.c_str(), ipc::read_write);
         ROS_ERROR("ServerSHM::send open shm object create_only done");
+
+        // Create SHM check thread
+        if (!check_shm_thread_ptr_)
+            check_shm_thread_ptr_ = std::make_unique<std::thread>(&ServerSHM::checkSHMThreadFunc, this, 1);
 
         // Store size
         rgb_data_size_ = static_cast<uint64_t>(rgb.cols * rgb.rows * 3);
@@ -160,6 +169,29 @@ void ServerSHM::send(const Image& image)
 
 // ----------------------------------------------------------------------------------------
 
+void ServerSHM::checkSHMThreadFunc(const float frequency)
+{
+    ROS_DEBUG("ServerSHM::checkSHMThreadFunc");
+    ros::Rate r(frequency);
+    while(nh_.ok())
+    {
+        ROS_DEBUG_STREAM("ServerSHM::checkSHMThreadFunc: checking shm on: " << shared_mem_name_);
+        try
+        {
+            ipc::shared_memory_object shm = ipc::shared_memory_object(ipc::open_only, shared_mem_name_.c_str(), ipc::read_only);
+        }
+        catch (ipc::interprocess_exception &ex)
+        {
+            ROS_FATAL_STREAM("ServerSHM::checkSHMThreadFunc: SHM on '" << shared_mem_name_ << "' is corrupted.");
+            ros::shutdown();
+        }
+        r.sleep();
+    }
+    ROS_DEBUG("ServerSHM::checkSHMThreadFunc done");
+}
+
+// ----------------------------------------------------------------------------------------
+
 void pubHostnameThreadFunc(ros::NodeHandle& nh, const std::string server_name, const std::string hostname, const float frequency)
 {
     ROS_DEBUG("pubHostnameThreadFunc");
@@ -176,6 +208,4 @@ void pubHostnameThreadFunc(ros::NodeHandle& nh, const std::string server_name, c
     ROS_DEBUG("pubHostnameThreadFunc done");
 }
 
-
 } // end namespace rgbd
-
