@@ -141,7 +141,7 @@ void ServerSHM::checkSHMThreadFunc(const float frequency)
         }
         catch (ipc::interprocess_exception &ex)
         {
-            ROS_FATAL_STREAM("ServerSHM::checkSHMThreadFunc: SHM on '" << shared_mem_name_ << "' is corrupted.");
+            ROS_FATAL_STREAM("ServerSHM::checkSHMThreadFunc: SHM on '" << shared_mem_name_ << "' is corrupted: '" << ex.what() << "'");
             ros::shutdown();
         }
         r.sleep();
