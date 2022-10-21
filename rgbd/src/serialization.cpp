@@ -160,7 +160,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
             return false;
         }
 
-        a << (int)depth_data.size();
+        a << static_cast<int>(depth_data.size());
 //        for(unsigned int i = 0; i < depth_data.size(); ++i)
 //        {
 //            a << depth_data[i];
