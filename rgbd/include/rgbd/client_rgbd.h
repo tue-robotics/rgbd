@@ -71,8 +71,6 @@ public:
 
 protected:
 
-    ros::NodeHandle nh_;
-
     ros::Subscriber sub_image_;
     ros::CallbackQueue cb_queue_;
 
