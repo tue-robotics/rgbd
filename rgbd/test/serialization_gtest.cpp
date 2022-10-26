@@ -7,12 +7,11 @@
 #include <rgbd/image.h>
 #include <rgbd/serialization.h>
 
-#include <ros/console.h>
-
 #include <tue/serialization/input_archive.h>
 #include <tue/serialization/output_archive.h>
 
 #include <sstream>
+
 
 TEST(serialization, True)
 {
