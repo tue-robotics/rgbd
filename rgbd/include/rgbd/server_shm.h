@@ -9,6 +9,9 @@
 #include "rgbd/image_header.h"
 #include "rgbd/types.h"
 
+#include <memory>
+#include <thread>
+
 
 namespace rgbd
 {
@@ -63,6 +66,16 @@ private:
     uint64_t depth_data_size_;
     uint64_t image_data_size_;
 
+    ros::NodeHandle nh_; // Nodehandle to stop the SHM check thread
+
+    // SHM check thread
+    std::unique_ptr<std::thread> check_shm_thread_ptr_;
+
+    /**
+     * @brief Check if the SHM can be opened
+     * @param frequency Frequency of checking
+     */
+    void checkSHMThreadFunc(const float frequency);
 };
 
 void pubHostnameThreadFunc(ros::NodeHandle& nh, const std::string server_name, const std::string hostname, const float frequency);

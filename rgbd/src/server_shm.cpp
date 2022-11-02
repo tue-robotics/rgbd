@@ -19,7 +19,7 @@ namespace rgbd
 
 // ----------------------------------------------------------------------------------------------------
 
-ServerSHM::ServerSHM() : buffer_header_(nullptr), image_data_(nullptr)
+ServerSHM::ServerSHM() : buffer_header_(nullptr), image_data_(nullptr), check_shm_thread_ptr_(nullptr)
 {
 }
 
@@ -27,6 +27,10 @@ ServerSHM::ServerSHM() : buffer_header_(nullptr), image_data_(nullptr)
 
 ServerSHM::~ServerSHM()
 {
+    nh_.shutdown();
+    if (check_shm_thread_ptr_ && check_shm_thread_ptr_->joinable())
+        check_shm_thread_ptr_->join();
+
     if (!shared_mem_name_.empty())
         ipc::shared_memory_object::remove(shared_mem_name_.c_str());
 }
@@ -60,6 +64,10 @@ void ServerSHM::send(const Image& image)
 
         //Create a shared memory object.
         shm_ = ipc::shared_memory_object(ipc::create_only, shared_mem_name_.c_str(), ipc::read_write);
+
+        // Create SHM check thread
+        if (!check_shm_thread_ptr_)
+            check_shm_thread_ptr_ = std::make_unique<std::thread>(&ServerSHM::checkSHMThreadFunc, this, 1);
 
         // Store size
         rgb_data_size_ = static_cast<uint64_t>(rgb.cols * rgb.rows * 3);
@@ -120,6 +128,29 @@ void ServerSHM::send(const Image& image)
 
 // ----------------------------------------------------------------------------------------
 
+void ServerSHM::checkSHMThreadFunc(const float frequency)
+{
+    ROS_DEBUG("ServerSHM::checkSHMThreadFunc");
+    ros::Rate r(frequency);
+    while(nh_.ok())
+    {
+        ROS_DEBUG_STREAM("ServerSHM::checkSHMThreadFunc: checking shm on: " << shared_mem_name_);
+        try
+        {
+            ipc::shared_memory_object(ipc::open_only, shared_mem_name_.c_str(), ipc::read_only);
+        }
+        catch (ipc::interprocess_exception &ex)
+        {
+            ROS_FATAL_STREAM("ServerSHM::checkSHMThreadFunc: SHM on '" << shared_mem_name_ << "' is corrupted: '" << ex.what() << "'");
+            ros::shutdown();
+        }
+        r.sleep();
+    }
+    ROS_DEBUG("ServerSHM::checkSHMThreadFunc done");
+}
+
+// ----------------------------------------------------------------------------------------
+
 void pubHostnameThreadFunc(ros::NodeHandle& nh, const std::string server_name, const std::string hostname, const float frequency)
 {
     ros::Publisher pub_shm_hostname = nh.advertise<std_msgs::String>(server_name + "/hosts", 1);
@@ -133,6 +164,4 @@ void pubHostnameThreadFunc(ros::NodeHandle& nh, const std::string server_name, c
     }
 }
 
-
 } // end namespace rgbd
-

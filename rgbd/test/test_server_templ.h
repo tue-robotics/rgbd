@@ -70,7 +70,7 @@ int main_templ(int argc, char **argv)
             last_master_check = ros::WallTime::now();
             if (!ros::master::check())
             {
-                ROS_ERROR("Lost connection to master");
+                ROS_FATAL("Lost connection to master");
                 return 1;
             }
         }
