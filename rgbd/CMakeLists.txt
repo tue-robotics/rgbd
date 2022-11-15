@@ -46,11 +46,15 @@ include_directories(
 file(GLOB_RECURSE HEADER_FILES include/*.h)
 
 add_library(${PROJECT_NAME}
+    ${HEADER_FILES}
     src/client.cpp
     src/client_${PROJECT_NAME}.cpp
-    src/client_ros_base.cpp
     src/client_ros.cpp
+    src/client_ros_base.cpp
     src/client_shm.cpp
+    src/ros/conversions.cpp
+    # Forward geolib2 logging to rosconsole
+    src/ros/rosconsole_bridge.cpp
     src/serialization.cpp
     src/server.cpp
     src/server_${PROJECT_NAME}.cpp
@@ -58,11 +62,7 @@ add_library(${PROJECT_NAME}
     src/server_shm.cpp
     src/utility.cpp
     src/view.cpp
-    src/ros/conversions.cpp
-    # Forward geolib2 logging to rosconsole
-    src/ros/rosconsole_bridge.cpp
-
-    ${HEADER_FILES})
+)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} rt)
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 
@@ -143,7 +143,58 @@ target_link_libraries(${PROJECT_NAME}_test_client_ros ${PROJECT_NAME})
 add_executable(${PROJECT_NAME}_test_serialization test/test_serialization.cpp)
 target_link_libraries(${PROJECT_NAME}_test_serialization ${PROJECT_NAME})
 
-# - - - - - - - - - - - - - - - - - - CI - - - - - - - - - - - - - - - - -
+#############
+## Install ##
+#############
+
+install(
+  FILES nodelet_plugins.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+install(
+  TARGETS
+    ${PROJECT_NAME}
+    ${PROJECT_NAME}_nodelets
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
+
+install(
+  TARGETS
+    analyser
+    full_screen_viewer
+    get_3d_point_from_image_roi_node
+    multitool
+    record_to_video
+    ${PROJECT_NAME}_test_client
+    ${PROJECT_NAME}_test_client_${PROJECT_NAME}
+    ${PROJECT_NAME}_test_client_ros
+    ${PROJECT_NAME}_test_client_shm
+    ${PROJECT_NAME}_test_server
+    ${PROJECT_NAME}_test_server_${PROJECT_NAME}
+    ${PROJECT_NAME}_test_server_ros
+    ${PROJECT_NAME}_test_server_shm
+    ${PROJECT_NAME}_to_pcd
+    ${PROJECT_NAME}_to_png
+    ${PROJECT_NAME}_to_ros
+    ${PROJECT_NAME}_to_shm
+    ros_to_${PROJECT_NAME}
+    save
+    view
+    viewer
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+#############
+## Testing ##
+#############
 
 if (CATKIN_ENABLE_TESTING)
   find_package(catkin_lint_cmake REQUIRED)
