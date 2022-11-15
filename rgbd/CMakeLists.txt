@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   nodelet
   pcl_ros
   pluginlib
-  rgbd_msgs
+  ${PROJECT_NAME}_msgs
   rosconsole_bridge
   roscpp
   sensor_msgs
@@ -26,8 +26,8 @@ find_package(catkin REQUIRED COMPONENTS
 ###################################
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES rgbd
-  CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_ros rgbd_msgs rosconsole_bridge roscpp sensor_msgs tue_serialization
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_ros ${PROJECT_NAME}_msgs rosconsole_bridge roscpp sensor_msgs tue_serialization
   DEPENDS Boost
 )
 
@@ -45,102 +45,103 @@ include_directories(
 # to show header files in Qt Creator
 file(GLOB_RECURSE HEADER_FILES include/*.h)
 
-add_library(rgbd    src/client.cpp
-                    src/client_rgbd.cpp
-                    src/client_ros_base.cpp
-                    src/client_ros.cpp
-                    src/client_shm.cpp
-                    src/serialization.cpp
-                    src/server.cpp
-                    src/server_rgbd.cpp
-                    src/server_ros.cpp
-                    src/server_shm.cpp
-                    src/utility.cpp
-                    src/view.cpp
-                    src/ros/conversions.cpp
-                    # Forward geolib2 logging to rosconsole
-                    src/ros/rosconsole_bridge.cpp
+add_library(${PROJECT_NAME}
+    src/client.cpp
+    src/client_${PROJECT_NAME}.cpp
+    src/client_ros_base.cpp
+    src/client_ros.cpp
+    src/client_shm.cpp
+    src/serialization.cpp
+    src/server.cpp
+    src/server_${PROJECT_NAME}.cpp
+    src/server_ros.cpp
+    src/server_shm.cpp
+    src/utility.cpp
+    src/view.cpp
+    src/ros/conversions.cpp
+    # Forward geolib2 logging to rosconsole
+    src/ros/rosconsole_bridge.cpp
 
-                    ${HEADER_FILES})
-target_link_libraries(rgbd ${catkin_LIBRARIES} rt)
-add_dependencies(rgbd ${catkin_EXPORTED_TARGETS})
+    ${HEADER_FILES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} rt)
+add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 
 # - - - - - - - - - - - - - - - - NODELETS - - - - - - - - - - - - - - - -
 
-add_library(rgbd_nodelets src/nodelets/ros_to_rgbd.cpp)
-target_link_libraries(rgbd_nodelets rgbd ${catkin_LIBRARIES})
+add_library(${PROJECT_NAME}_nodelets src/nodelets/ros_to_${PROJECT_NAME}.cpp)
+target_link_libraries(${PROJECT_NAME}_nodelets ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 # - - - - - - - - - - - - - - - - - NODES - - - - - - - - - - - - - - - - -
 
-add_executable(ros_to_rgbd src/ros_to_rgbd.cpp)
-target_link_libraries(ros_to_rgbd rgbd)
+add_executable(ros_to_${PROJECT_NAME} src/ros_to_${PROJECT_NAME}.cpp)
+target_link_libraries(ros_to_${PROJECT_NAME} ${PROJECT_NAME})
 
-add_executable(rgbd_to_shm src/rgbd_to_shm.cpp)
-target_link_libraries(rgbd_to_shm rgbd)
+add_executable(${PROJECT_NAME}_to_shm src/${PROJECT_NAME}_to_shm.cpp)
+target_link_libraries(${PROJECT_NAME}_to_shm ${PROJECT_NAME})
 
-add_executable(rgbd_to_ros src/rgbd_to_ros.cpp)
-target_link_libraries(rgbd_to_ros rgbd)
+add_executable(${PROJECT_NAME}_to_ros src/${PROJECT_NAME}_to_ros.cpp)
+target_link_libraries(${PROJECT_NAME}_to_ros ${PROJECT_NAME})
 
 add_executable(get_3d_point_from_image_roi_node src/get_3d_point_from_image_roi_node.cpp)
-target_link_libraries(get_3d_point_from_image_roi_node rgbd)
+target_link_libraries(get_3d_point_from_image_roi_node ${PROJECT_NAME})
 
 # - - - - - - - - - - - - - - - - - TOOLS - - - - - - - - - - - - - - - - -
 
 add_executable(analyser tools/analyser.cpp)
-target_link_libraries(analyser rgbd)
+target_link_libraries(analyser ${PROJECT_NAME})
 
 add_executable(full_screen_viewer tools/full_screen_viewer.cpp)
-target_link_libraries(full_screen_viewer rgbd)
+target_link_libraries(full_screen_viewer ${PROJECT_NAME})
 
 add_executable(multitool tools/multitool.cpp)
-target_link_libraries(multitool rgbd)
+target_link_libraries(multitool ${PROJECT_NAME})
 
 add_executable(record_to_video tools/record_to_video.cpp)
-target_link_libraries(record_to_video rgbd)
+target_link_libraries(record_to_video ${PROJECT_NAME})
 
-add_executable(rgbd_to_png tools/rgbd_to_png.cpp)
-target_link_libraries(rgbd_to_png rgbd)
+add_executable(${PROJECT_NAME}_to_png tools/${PROJECT_NAME}_to_png.cpp)
+target_link_libraries(${PROJECT_NAME}_to_png ${PROJECT_NAME})
 
-add_executable(rgbd_to_pcd tools/rgbd_to_pcd.cpp)
-target_link_libraries(rgbd_to_pcd rgbd)
+add_executable(${PROJECT_NAME}_to_pcd tools/${PROJECT_NAME}_to_pcd.cpp)
+target_link_libraries(${PROJECT_NAME}_to_pcd ${PROJECT_NAME})
 
 add_executable(save tools/save.cpp)
-target_link_libraries(save rgbd)
+target_link_libraries(save ${PROJECT_NAME})
 
 add_executable(view tools/view.cpp)
-target_link_libraries(view rgbd)
+target_link_libraries(view ${PROJECT_NAME})
 
 add_executable(viewer tools/viewer.cpp)
-target_link_libraries(viewer rgbd)
+target_link_libraries(viewer ${PROJECT_NAME})
 
 # - - - - - - - - - - - - - - - - - TESTS - - - - - - - - - - - - - - - - -
 
-add_executable(rgbd_test_server test/test_server.cpp test/test_server_templ.h)
-target_link_libraries(rgbd_test_server rgbd)
+add_executable(${PROJECT_NAME}_test_server test/test_server.cpp test/test_server_templ.h)
+target_link_libraries(${PROJECT_NAME}_test_server ${PROJECT_NAME})
 
-add_executable(rgbd_test_server_rgbd test/test_server_rgbd.cpp test/test_server_templ.h)
-target_link_libraries(rgbd_test_server_rgbd rgbd)
+add_executable(${PROJECT_NAME}_test_server_${PROJECT_NAME} test/test_server_${PROJECT_NAME}.cpp test/test_server_templ.h)
+target_link_libraries(${PROJECT_NAME}_test_server_${PROJECT_NAME} ${PROJECT_NAME})
 
-add_executable(rgbd_test_server_shm test/test_server_shm.cpp test/test_server_templ.h)
-target_link_libraries(rgbd_test_server_shm rgbd)
+add_executable(${PROJECT_NAME}_test_server_shm test/test_server_shm.cpp test/test_server_templ.h)
+target_link_libraries(${PROJECT_NAME}_test_server_shm ${PROJECT_NAME})
 
-add_executable(rgbd_test_server_ros test/test_server_ros.cpp test/test_server_templ.h)
-target_link_libraries(rgbd_test_server_ros rgbd)
+add_executable(${PROJECT_NAME}_test_server_ros test/test_server_ros.cpp test/test_server_templ.h)
+target_link_libraries(${PROJECT_NAME}_test_server_ros ${PROJECT_NAME})
 
-add_executable(rgbd_test_client test/test_client.cpp test/test_client_templ.h)
-target_link_libraries(rgbd_test_client rgbd)
+add_executable(${PROJECT_NAME}_test_client test/test_client.cpp test/test_client_templ.h)
+target_link_libraries(${PROJECT_NAME}_test_client ${PROJECT_NAME})
 
-add_executable(rgbd_test_client_rgbd test/test_client_rgbd.cpp test/test_client_templ.h)
-target_link_libraries(rgbd_test_client_rgbd rgbd)
+add_executable(${PROJECT_NAME}_test_client_${PROJECT_NAME} test/test_client_${PROJECT_NAME}.cpp test/test_client_templ.h)
+target_link_libraries(${PROJECT_NAME}_test_client_${PROJECT_NAME} ${PROJECT_NAME})
 
-add_executable(rgbd_test_client_shm test/test_client_shm.cpp test/test_client_templ.h)
-target_link_libraries(rgbd_test_client_shm rgbd)
+add_executable(${PROJECT_NAME}_test_client_shm test/test_client_shm.cpp test/test_client_templ.h)
+target_link_libraries(${PROJECT_NAME}_test_client_shm ${PROJECT_NAME})
 
-add_executable(rgbd_test_client_ros test/test_client_ros.cpp test/test_client_templ.h)
-target_link_libraries(rgbd_test_client_ros rgbd)
+add_executable(${PROJECT_NAME}_test_client_ros test/test_client_ros.cpp test/test_client_templ.h)
+target_link_libraries(${PROJECT_NAME}_test_client_ros ${PROJECT_NAME})
 
-add_executable(rgbd_test_serialization test/test_serialization.cpp)
-target_link_libraries(rgbd_test_serialization rgbd)
+add_executable(${PROJECT_NAME}_test_serialization test/test_serialization.cpp)
+target_link_libraries(${PROJECT_NAME}_test_serialization ${PROJECT_NAME})
 
 # - - - - - - - - - - - - - - - - - - CI - - - - - - - - - - - - - - - - -
 
@@ -149,5 +150,5 @@ if (CATKIN_ENABLE_TESTING)
   catkin_add_catkin_lint_test(-W2)
 
   catkin_add_gtest(serialization_gtest test/serialization_gtest.cpp)
-  target_link_libraries(serialization_gtest rgbd ${catkin_LIBRARIES})
+  target_link_libraries(serialization_gtest ${PROJECT_NAME} ${catkin_LIBRARIES})
 endif()
