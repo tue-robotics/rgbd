@@ -14,10 +14,10 @@ jobs:
           fetch-depth: 300
       - name: Commit Range
         id: commit-range
-        uses: tue-robotics/tue-env/ci/commit-range@master
+        uses: tue-robotics/tue-env/ci/commit-range@MatthijsBurgh-patch-1
       - name: Modified packages
         id: modified-packages
-        uses: tue-robotics/tue-env/ci/modified-packages@master
+        uses: tue-robotics/tue-env/ci/modified-packages@MatthijsBurgh-patch-1
         with:
           commit-range: ${{ steps.commit-range.outputs.commit-range }}
   tue-ci:
