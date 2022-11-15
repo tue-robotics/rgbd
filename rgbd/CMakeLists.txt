@@ -27,7 +27,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS cv_bridge geolib2 image_geometry message_filters pcl_ros ${PROJECT_NAME}_msgs rosconsole_bridge roscpp sensor_msgs tue_serialization
+  CATKIN_DEPENDS geolib2 image_geometry message_filters pcl_ros ${PROJECT_NAME}_msgs roscpp sensor_msgs tue_serialization
   DEPENDS Boost
 )
 
