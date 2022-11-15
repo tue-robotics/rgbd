@@ -31,6 +31,8 @@
   <depend>sensor_msgs</depend>
   <depend>tue_serialization</depend>
 
+  <test_depend>catkin_lint_cmake</test_depend>
+
   <doc_depend>doxygen</doc_depend>
 
   <export>

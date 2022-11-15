@@ -145,6 +145,9 @@ target_link_libraries(rgbd_test_serialization rgbd)
 # - - - - - - - - - - - - - - - - - - CI - - - - - - - - - - - - - - - - -
 
 if (CATKIN_ENABLE_TESTING)
+  find_package(catkin_lint_cmake REQUIRED)
+  catkin_add_catkin_lint_test(-W2)
+
   catkin_add_gtest(serialization_gtest test/serialization_gtest.cpp)
   target_link_libraries(serialization_gtest rgbd ${catkin_LIBRARIES})
 endif()
