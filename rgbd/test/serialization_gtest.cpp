@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <opencv2/core.hpp>
+
 #include <image_geometry/pinhole_camera_model.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/distortion_models.h>
@@ -15,8 +17,10 @@
 
 TEST(serialization, True)
 {
-    cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0,0,255));
-    cv::Mat depth_image(480, 640, CV_32FC1, 5.0);
+    cv::Mat rgb_image(480, 640, CV_8UC3);
+    cv::randu(rgb_image, 0, 255);
+    cv::Mat depth_image(480, 640, CV_32FC1);
+    cv::randu(depth_image, 0., 100.);
     sensor_msgs::CameraInfo cam_info;
     cam_info.D.resize(5, 0.0);
     cam_info.K = {554.2559327880068, 0.0, 320.5,
@@ -41,7 +45,7 @@ TEST(serialization, True)
     std::stringstream ss;
     tue::serialization::OutputArchive output_achive(ss);
 
-    EXPECT_TRUE(rgbd::serialize(image, output_achive, rgbd::RGB_STORAGE_LOSSLESS));
+    EXPECT_TRUE(rgbd::serialize(image, output_achive, rgbd::RGB_STORAGE_LOSSLESS, rgbd::DEPTH_STORAGE_LOSSLESS));
     tue::serialization::InputArchive input_achive(ss);
     EXPECT_TRUE(rgbd::deserialize(input_achive, image2));
 
