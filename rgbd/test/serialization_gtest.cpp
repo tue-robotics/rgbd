@@ -67,12 +67,6 @@ TEST(serialization, True)
     EXPECT_TRUE(image.getTimestamp() == image2.getTimestamp());
 }
 
-//TEST(deserialization, True)
-//{
-//    EXPECT_TRUE(true);
-//}
-
-
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
