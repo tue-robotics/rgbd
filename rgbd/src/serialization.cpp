@@ -6,7 +6,8 @@
 #include <tue/serialization/input_archive.h>
 #include <tue/serialization/output_archive.h>
 
-#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
 
 namespace rgbd
 {
