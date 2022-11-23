@@ -200,6 +200,9 @@ if (CATKIN_ENABLE_TESTING)
   find_package(catkin_lint_cmake REQUIRED)
   catkin_add_catkin_lint_test(-W2)
 
+  add_library(test_utils INTERFACE test/test_utils.h)
+  target_link_libraries(test_utils INTERFACE ${PROJECT_NAME} ${catkin_LIBRARIES})
+
   catkin_add_gtest(serialization_gtest test/serialization_gtest.cpp)
-  target_link_libraries(serialization_gtest ${PROJECT_NAME} ${catkin_LIBRARIES})
+  target_link_libraries(serialization_gtest test_utils ${PROJECT_NAME} ${catkin_LIBRARIES})
 endif()
