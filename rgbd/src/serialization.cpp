@@ -276,7 +276,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         for(int i = 0; i < rgb_size; ++i)
             a >> rgb_data[i];
 
-        image.rgb_image_ = cv::imdecode(cv::Mat(rgb_data), cv::IMREAD_UNCHANGED);
+        image.rgb_image_ = cv::imdecode(rgb_data, cv::IMREAD_UNCHANGED);
     }
     else
     {
