@@ -17,14 +17,6 @@
 class Serialization : public testing::Test
 {
 protected:
-    Serialization()
-    {
-    }
-
-    virtual ~Serialization() override
-    {
-    }
-
     void SetUp() override
     {
         image1 = rgbd::generateRandomImage();
