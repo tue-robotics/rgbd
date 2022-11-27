@@ -15,7 +15,7 @@
 
 namespace ipc = boost::interprocess;
 
-class SHM : public testing::Test
+class SHMServer : public testing::Test
 {
 protected:
     void SetUp() override
@@ -31,7 +31,7 @@ protected:
     rgbd::ServerSHM server;
 };
 
-TEST_F(SHM, DeleteSHM)
+TEST_F(SHMServer, DeleteSHM)
 {
     EXPECT_FALSE(ros::isShuttingDown());
     ros::NodeHandle nh;

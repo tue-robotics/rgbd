@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+      <test test-name="shm_server_gtest" pkg="rgbd" type="shm_server_gtest" />
+</launch>
