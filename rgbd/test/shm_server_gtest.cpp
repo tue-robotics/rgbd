@@ -49,7 +49,6 @@ TEST_F(SHMServer, SHMCreated)
 TEST_F(SHMServer, DeleteSHM)
 {
     EXPECT_FALSE(ros::isShuttingDown());
-    ros::NodeHandle nh;
     server.send(image);
     EXPECT_FALSE(ros::isShuttingDown());
     ipc::shared_memory_object::remove(test_server_name_shm.c_str());
