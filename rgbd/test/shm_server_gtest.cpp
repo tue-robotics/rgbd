@@ -31,6 +31,21 @@ protected:
     rgbd::ServerSHM server;
 };
 
+TEST_F(SHMServer, Initialize)
+{
+    EXPECT_FALSE(ros::isShuttingDown());
+    EXPECT_THROW(ipc::shared_memory_object(ipc::open_only, test_server_name_shm.c_str(), ipc::read_write), ipc::interprocess_exception);
+}
+
+TEST_F(SHMServer, SHMCreated)
+{
+    EXPECT_FALSE(ros::isShuttingDown());
+    server.send(image);
+    EXPECT_FALSE(ros::isShuttingDown());
+    ros::Duration(1.1).sleep(); // Give thread some time to run
+    EXPECT_FALSE(ros::isShuttingDown());
+}
+
 TEST_F(SHMServer, DeleteSHM)
 {
     EXPECT_FALSE(ros::isShuttingDown());
