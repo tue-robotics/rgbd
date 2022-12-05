@@ -56,6 +56,15 @@ TEST_F(SHMServer, DeleteSHM)
     EXPECT_TRUE(ros::isShuttingDown());
 }
 
+TEST_F(SHMServer, pubHostnameThreadFunc)
+{
+    ros::NodeHandle nh;
+    std::thread thread = std::thread(rgbd::pubHostnameThreadFunc, std::ref(nh), test_server_name, "test_hostname", 10);
+    ros::Duration(1.).sleep();
+    nh.shutdown();
+    thread.join();
+}
+
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
