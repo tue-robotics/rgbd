@@ -24,8 +24,8 @@ protected:
         server.initialize(test_server_name);
     }
 
-    const std::string test_server_name = "/test_ns/test_name";
-    const std::string test_server_name_shm = "-test_ns-test_name";
+    const std::string test_server_name = "/test_ns/rgbd";
+    const std::string test_server_name_shm = "-test_ns-rgbd";
 
     rgbd::Image image;
     rgbd::ServerSHM server;
