@@ -3,6 +3,7 @@
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
+#include <boost/iostreams/filter/zstd.hpp>
 
 #include <cv_bridge/cv_bridge.h>
 
@@ -233,6 +234,17 @@ bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image)
         tue::serialization::convert(msg->rgb, compressed);
         boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
         in.push(boost::iostreams::gzip_decompressor());
+        in.push(compressed);
+        boost::iostreams::copy(in, decompressed);
+        tue::serialization::InputArchive a(decompressed);
+        rgbd::deserialize(a, *image);
+    }
+    else if (msg->version == 4)
+    {
+        std::stringstream compressed, decompressed;
+        tue::serialization::convert(msg->rgb, compressed);
+        boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
+        in.push(boost::iostreams::zstd_decompressor());
         in.push(compressed);
         boost::iostreams::copy(in, decompressed);
         tue::serialization::InputArchive a(decompressed);

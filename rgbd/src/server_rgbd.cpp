@@ -2,7 +2,7 @@
 
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/iostreams/copy.hpp>
-#include <boost/iostreams/filter/gzip.hpp>
+#include <boost/iostreams/filter/zstd.hpp>
 
 #include <opencv2/core/mat.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -21,7 +21,7 @@
 
 namespace rgbd {
 
-const int ServerRGBD::MESSAGE_VERSION = 3;
+const int ServerRGBD::MESSAGE_VERSION = 4;
 
 // ----------------------------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ void ServerRGBD::send(const Image& image)
     tue::serialization::OutputArchive a(stream);
     serialize(image, a, rgb_type_, depth_type_);
     boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
-    in.push(boost::iostreams::gzip_compressor(boost::iostreams::gzip::best_speed));
+    in.push(boost::iostreams::zstd_compressor(boost::iostreams::zstd::best_speed));
     in.push(stream);
     boost::iostreams::copy(in, stream2);
     tue::serialization::convert(stream2, msg->rgb);
