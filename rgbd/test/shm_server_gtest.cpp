@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
 
-    ros::init(argc, argv, "shm_behaviour");
+    ros::init(argc, argv, "shm_server_behaviour");
 
     return RUN_ALL_TESTS();
 }
