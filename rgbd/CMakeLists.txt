@@ -201,7 +201,7 @@ if (CATKIN_ENABLE_TESTING)
   find_package(catkin_lint_cmake REQUIRED)
   catkin_add_catkin_lint_test(-W2)
 
-  include_directories(SYSTEM ${GTEST_INCLUDE_DIRS})
+  include_directories(BEFORE SYSTEM ${GTEST_INCLUDE_DIRS})
 
   add_library(test_utils OBJECT test/test_utils.h)
   target_link_libraries(test_utils ${PROJECT_NAME} ${catkin_LIBRARIES})
