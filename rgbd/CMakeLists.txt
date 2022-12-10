@@ -116,29 +116,35 @@ target_link_libraries(viewer ${PROJECT_NAME})
 
 # - - - - - - - - - - - - - - - - - TESTS - - - - - - - - - - - - - - - - -
 
-add_executable(${PROJECT_NAME}_test_server test/test_server.cpp test/test_server_templ.h)
-target_link_libraries(${PROJECT_NAME}_test_server ${PROJECT_NAME})
+add_library(test_server_templ OBJECT test/test_server_templ.h)
+target_link_libraries(test_server_templ ${PROJECT_NAME} ${catkin_LIBRARIES})
 
-add_executable(${PROJECT_NAME}_test_server_${PROJECT_NAME} test/test_server_${PROJECT_NAME}.cpp test/test_server_templ.h)
-target_link_libraries(${PROJECT_NAME}_test_server_${PROJECT_NAME} ${PROJECT_NAME})
+add_executable(${PROJECT_NAME}_test_server test/test_server.cpp)
+target_link_libraries(${PROJECT_NAME}_test_server $<TARGET_OBJECTS:test_server_templ> ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_test_server_shm test/test_server_shm.cpp test/test_server_templ.h)
-target_link_libraries(${PROJECT_NAME}_test_server_shm ${PROJECT_NAME})
+add_executable(${PROJECT_NAME}_test_server_${PROJECT_NAME} test/test_server_${PROJECT_NAME}.cpp)
+target_link_libraries(${PROJECT_NAME}_test_server_${PROJECT_NAME} $<TARGET_OBJECTS:test_server_templ> ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_test_server_ros test/test_server_ros.cpp test/test_server_templ.h)
-target_link_libraries(${PROJECT_NAME}_test_server_ros ${PROJECT_NAME})
+add_executable(${PROJECT_NAME}_test_server_shm test/test_server_shm.cpp)
+target_link_libraries(${PROJECT_NAME}_test_server_shm $<TARGET_OBJECTS:test_server_templ> ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_test_client test/test_client.cpp test/test_client_templ.h)
-target_link_libraries(${PROJECT_NAME}_test_client ${PROJECT_NAME})
+add_executable(${PROJECT_NAME}_test_server_ros test/test_server_ros.cpp)
+target_link_libraries(${PROJECT_NAME}_test_server_ros $<TARGET_OBJECTS:test_server_templ> ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_test_client_${PROJECT_NAME} test/test_client_${PROJECT_NAME}.cpp test/test_client_templ.h)
-target_link_libraries(${PROJECT_NAME}_test_client_${PROJECT_NAME} ${PROJECT_NAME})
+add_library(test_client_templ OBJECT test/test_client_templ.h)
+target_link_libraries(test_client_templ ${PROJECT_NAME} ${catkin_LIBRARIES})
 
-add_executable(${PROJECT_NAME}_test_client_shm test/test_client_shm.cpp test/test_client_templ.h)
-target_link_libraries(${PROJECT_NAME}_test_client_shm ${PROJECT_NAME})
+add_executable(${PROJECT_NAME}_test_client test/test_client.cpp)
+target_link_libraries(${PROJECT_NAME}_test_client $<TARGET_OBJECTS:test_client_templ> ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_test_client_ros test/test_client_ros.cpp test/test_client_templ.h)
-target_link_libraries(${PROJECT_NAME}_test_client_ros ${PROJECT_NAME})
+add_executable(${PROJECT_NAME}_test_client_${PROJECT_NAME} test/test_client_${PROJECT_NAME}.cpp)
+target_link_libraries(${PROJECT_NAME}_test_client_${PROJECT_NAME} $<TARGET_OBJECTS:test_client_templ> ${PROJECT_NAME})
+
+add_executable(${PROJECT_NAME}_test_client_shm test/test_client_shm.cpp)
+target_link_libraries(${PROJECT_NAME}_test_client_shm $<TARGET_OBJECTS:test_client_templ> ${PROJECT_NAME})
+
+add_executable(${PROJECT_NAME}_test_client_ros test/test_client_ros.cpp)
+target_link_libraries(${PROJECT_NAME}_test_client_ros $<TARGET_OBJECTS:test_client_templ> ${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME}_test_serialization test/test_serialization.cpp)
 target_link_libraries(${PROJECT_NAME}_test_serialization ${PROJECT_NAME})
