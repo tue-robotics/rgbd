@@ -9,7 +9,22 @@
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/distortion_models.h>
 
+#include <random>
+#include <string>
+
 namespace rgbd {
+
+std::string randomString(size_t length=10)
+{
+    std::mt19937 generator{std::random_device{}()};
+   //modify range according to your need "A-Z","a-z" or "0-9" or whatever you need.
+    std::uniform_int_distribution<int> distribution{'a', 'z'};
+    std::string rand_str(length, '\0');
+    for (auto& dis: rand_str)
+        dis = distribution(generator);
+
+    return rand_str;
+}
 
 rgbd::Image generateRandomImage()
 {
@@ -35,7 +50,7 @@ rgbd::Image generateRandomImage()
     image_geometry::PinholeCameraModel cam_model;
     cam_model.fromCameraInfo(cam_info);
 
-    return rgbd::Image(rgb_image, depth_image, cam_model, "test_frame_id", 5);
+    return rgbd::Image(rgb_image, depth_image, cam_model, randomString(), 5);
 }
 
 }
