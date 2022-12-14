@@ -70,7 +70,7 @@ Image Image::clone() const
 
 bool Image::operator==(const rgbd::Image& other) const
 {
-    if (getTimestamp() > 0 && getTimestamp() != other.getTimestamp())
+    if (getTimestamp() > 0 && std::abs<double>(getTimestamp()-other.getTimestamp()) > 1e-9)
         return false;
     if (!getFrameId().empty() && getFrameId() != other.getFrameId())
         return false;
