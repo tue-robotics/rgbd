@@ -64,8 +64,6 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
         a << image.rgb_image_.rows;
 
         int size = image.rgb_image_.rows * image.rgb_image_.cols * 3;
-//        for(int i = 0; i < size; ++i)
-//            a << image.rgb_image_.data[i];
         a.write((const char*)image.rgb_image_.data, size);
     }
     else if (rgb_type == RGB_STORAGE_JPG)
@@ -86,10 +84,6 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
         }
 
         a << (int)rgb_data.size();
-//        for(unsigned int i = 0; i < rgb_data.size(); ++i)
-//        {
-//            a << rgb_data[i];
-//        }
         a.write((const char*)&rgb_data[0], rgb_data.size());
     }
     else
@@ -114,8 +108,6 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
         a << image.depth_image_.rows;
 
         int size = image.depth_image_.rows * image.depth_image_.cols * 4;
-//        for(int i = 0; i < size; ++i)
-//            a << image.depth_image_.data[i];
         a.write((const char*)image.depth_image_.data, size);
     }
     else if (depth_type == DEPTH_STORAGE_PNG)
@@ -162,10 +154,6 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
         }
 
         a << static_cast<int>(depth_data.size());
-//        for(unsigned int i = 0; i < depth_data.size(); ++i)
-//        {
-//            a << depth_data[i];
-//        }
         a.write((const char*)&depth_data[0], depth_data.size());
     }
     else
