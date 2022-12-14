@@ -28,6 +28,7 @@ protected:
 TEST_F(SHM, InitializeBeforeSend)
 {
     EXPECT_FALSE(ros::isShuttingDown());
+    EXPECT_FALSE(client.initialized());
     EXPECT_FALSE(client.initialize(test_server_name, 1.));
     EXPECT_FALSE(client.initialized());
     EXPECT_FALSE(ros::isShuttingDown());
@@ -37,6 +38,7 @@ TEST_F(SHM, InitializeAfterSend)
 {
     EXPECT_FALSE(ros::isShuttingDown());
     server.send(image);
+    EXPECT_FALSE(client.initialized());
     EXPECT_TRUE(client.initialize(test_server_name));
     EXPECT_TRUE(client.initialized());
     EXPECT_FALSE(ros::isShuttingDown());
@@ -46,6 +48,7 @@ TEST_F(SHM, DeInitialize)
 {
     EXPECT_FALSE(ros::isShuttingDown());
     server.send(image);
+    EXPECT_FALSE(client.initialized());
     EXPECT_TRUE(client.initialize(test_server_name));
     EXPECT_TRUE(client.initialized());
     EXPECT_TRUE(client.deinitialize());
@@ -84,7 +87,7 @@ TEST_F(SHM, NextImageTwice)
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
-    image.setTimestamp(1000.);
+    image.setTimestamp(image.getTimestamp()+10.);
     server.send(image);
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
