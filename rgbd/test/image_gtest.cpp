@@ -15,6 +15,7 @@ TEST(Image, EmptyClone)
     rgbd::Image image2 = image1.clone();
 
     EXPECT_EQ(image1, image2);
+    EXPECT_FALSE(image1 != image2);
 }
 
 TEST(Image, RandomClone)
@@ -23,6 +24,7 @@ TEST(Image, RandomClone)
     rgbd::Image image2 = image1.clone();
 
     EXPECT_EQ(image1, image2);
+    EXPECT_FALSE(image1 != image2);
 }
 
 TEST(Image, NotEqual)
