@@ -2,20 +2,11 @@
 
 #include <gtest/gtest.h>
 
-#include <boost/interprocess/shared_memory_object.hpp>
-
 #include <rgbd/image.h>
 #include <rgbd/server_shm.h>
 #include <rgbd/client_shm.h>
 
 #include <ros/init.h>
-
-#include <memory>
-#include <sstream>
-#include <thread>
-
-
-namespace ipc = boost::interprocess;
 
 
 class SHM : public testing::Test
