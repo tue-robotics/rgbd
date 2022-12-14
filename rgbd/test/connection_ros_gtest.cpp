@@ -13,7 +13,7 @@
 class ROS : public testing::Test
 {
 protected:
-    ROS() : server(nh)
+    ROS(const std::string& _ns="") : ns(_ns), server(nh)
     {
     }
 
@@ -26,13 +26,23 @@ protected:
     void SetUp() override
     {
         image = rgbd::generateRandomImage();
-        server.initialize("", true, true, false);
+        server.initialize(ns, true, true, false);
     }
+
+    const std::string ns;
 
     ros::NodeHandle nh;
     rgbd::Image image;
     rgbd::ServerROS server;
     rgbd::ClientROS client;
+};
+
+class ROS_NS : public ROS
+{
+protected:
+    ROS_NS() : ROS("test_ns")
+    {
+    }
 };
 
 TEST_F(ROS, Initialize)
@@ -61,23 +71,6 @@ TEST_F(ROS, NextImagePtrBeforeSend)
     EXPECT_TRUE(client.initialized());
     rgbd::ImagePtr image2 = client.nextImage();
     EXPECT_FALSE(image2);
-    EXPECT_FALSE(ros::isShuttingDown());
-}
-
-TEST_F(ROS, NextImage)
-{
-    EXPECT_FALSE(ros::isShuttingDown());
-    EXPECT_TRUE(client.initialize("rgb/image", "depth/image", "rgb/camera_info"));
-    EXPECT_TRUE(client.initialized());
-    rgbd::Image image2;
-    for (uint i=0; i<2; ++i)
-    {
-        client.nextImage(image2);
-        server.send(image);
-        ros::Duration(0.05).sleep();
-    }
-    EXPECT_TRUE(client.nextImage(image2));
-    EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
 }
 
@@ -120,6 +113,23 @@ TEST_F(ROS, NextImageTwice)
     image.setTimestamp(image.getTimestamp()+10.);
     server.send(image);
     ros::Duration(0.05).sleep();
+    EXPECT_TRUE(client.nextImage(image2));
+    EXPECT_EQ(image, image2);
+    EXPECT_FALSE(ros::isShuttingDown());
+}
+
+TEST_F(ROS_NS, NextImage)
+{
+    EXPECT_FALSE(ros::isShuttingDown());
+    EXPECT_TRUE(client.initialize("test_ns/rgb/image", "test_ns/depth/image", "test_ns/rgb/camera_info"));
+    EXPECT_TRUE(client.initialized());
+    rgbd::Image image2;
+    for (uint i=0; i<2; ++i)
+    {
+        client.nextImage(image2);
+        server.send(image);
+        ros::Duration(0.05).sleep();
+    }
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
