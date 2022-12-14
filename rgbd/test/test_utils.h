@@ -26,6 +26,13 @@ std::string randomString(size_t length=10)
     return rand_str;
 }
 
+double randomDouble(double min=0, double max=1000000)
+{
+    static std::default_random_engine e;
+    std::uniform_real_distribution<double> dis(min, max); // range min - max
+    return dis(e);
+}
+
 rgbd::Image generateRandomImage()
 {
     cv::Mat rgb_image(480, 640, CV_8UC3);
@@ -50,7 +57,7 @@ rgbd::Image generateRandomImage()
     image_geometry::PinholeCameraModel cam_model;
     cam_model.fromCameraInfo(cam_info);
 
-    return rgbd::Image(rgb_image, depth_image, cam_model, randomString(), 5);
+    return rgbd::Image(rgb_image, depth_image, cam_model, randomString(), randomDouble());
 }
 
 }
