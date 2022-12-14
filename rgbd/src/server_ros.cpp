@@ -15,7 +15,7 @@ namespace rgbd {
 
 // ----------------------------------------------------------------------------------------
 
-ServerROS::ServerROS()
+ServerROS::ServerROS(ros::NodeHandle nh) : nh_(nh)
 {
 }
 
