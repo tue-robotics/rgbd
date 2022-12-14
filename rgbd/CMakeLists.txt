@@ -212,6 +212,9 @@ if (CATKIN_ENABLE_TESTING)
   add_library(test_utils OBJECT test/test_utils.h)
   target_link_libraries(test_utils ${PROJECT_NAME} ${catkin_LIBRARIES})
 
+  catkin_add_gtest(image_gtest test/image_gtest.cpp)
+  target_link_libraries(image_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${catkin_LIBRARIES})
+
   catkin_add_gtest(serialization_gtest test/serialization_gtest.cpp)
   target_link_libraries(serialization_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${catkin_LIBRARIES})
 
