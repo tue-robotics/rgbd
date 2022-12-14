@@ -22,10 +22,7 @@ ClientROSBase::ClientROSBase(ros::NodeHandle nh) : nh_(nh), sync_(nullptr), sub_
 
 ClientROSBase::~ClientROSBase()
 {
-    nh_.shutdown();
-    sync_.reset();
-    sub_rgb_sync_.reset();
-    sub_depth_sync_.reset();
+    deinitialize();
 }
 
 // ----------------------------------------------------------------------------------------
@@ -39,6 +36,17 @@ bool ClientROSBase::initialize(const std::string& rgb_image_topic, const std::st
 
     sync_ = std::unique_ptr<message_filters::Synchronizer<RGBDApproxPolicy> >(new message_filters::Synchronizer<RGBDApproxPolicy>(RGBDApproxPolicy(10), *sub_rgb_sync_, *sub_depth_sync_));
 
+    return true;
+}
+
+// ----------------------------------------------------------------------------------------
+
+bool ClientROSBase::deinitialize()
+{
+    nh_.shutdown();
+    sync_.reset();
+    sub_rgb_sync_.reset();
+    sub_depth_sync_.reset();
     return true;
 }
 
