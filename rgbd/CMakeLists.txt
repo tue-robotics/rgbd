@@ -224,6 +224,16 @@ if (CATKIN_ENABLE_TESTING)
   add_dependencies(tests shm_server_gtest)
   add_rostest(test/shm_server.test)
 
+  add_executable(connection_${PROJECT_NAME}_gtest EXCLUDE_FROM_ALL test/connection_${PROJECT_NAME}_gtest.cpp)
+  target_link_libraries(connection_${PROJECT_NAME}_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${GTEST_LIBRARIES} ${catkin_LIBRARIES})
+  add_dependencies(tests connection_${PROJECT_NAME}_gtest)
+  add_rostest(test/connection_${PROJECT_NAME}.test)
+
+  add_executable(connection_ros_gtest EXCLUDE_FROM_ALL test/connection_ros_gtest.cpp)
+  target_link_libraries(connection_ros_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${GTEST_LIBRARIES} ${catkin_LIBRARIES})
+  add_dependencies(tests connection_ros_gtest)
+  add_rostest(test/connection_ros.test)
+
   add_executable(connection_shm_gtest EXCLUDE_FROM_ALL test/connection_shm_gtest.cpp)
   target_link_libraries(connection_shm_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${GTEST_LIBRARIES} ${catkin_LIBRARIES})
   add_dependencies(tests connection_shm_gtest)
