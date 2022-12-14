@@ -81,7 +81,7 @@ bool srvGet3dPointFromROI(rgbd_msgs::Project2DTo3D::Request& req, rgbd_msgs::Pro
 
         geometry_msgs::PointStamped point_msg;
         point_msg.header.frame_id = last_image->getFrameId();
-        point_msg.header.stamp = ros::Time(last_image->getTimestamp());
+        point_msg.header.stamp.fromSec(last_image->getTimestamp());
         if (depths.empty())
         {
             ROS_ERROR("All depths within ROI are invalid! We will send a NAN point");
@@ -152,7 +152,7 @@ int main(int argc, char **argv)
         {
             if (image.getDepthImage().data)
             {
-                last_image_stamp = ros::Time(image.getTimestamp());
+                last_image_stamp.fromSec(image.getTimestamp());
 
                 g_last_images_.push_back(std::make_shared<rgbd::Image>(image));
                 ROS_DEBUG("New image added to buffer");

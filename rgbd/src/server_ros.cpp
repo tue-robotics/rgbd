@@ -87,7 +87,7 @@ void ServerROS::send(const Image& image)
 
             rgbd::convert(image.getDepthImage(), view.getRasterizer(), msg, info_msg);
 
-            msg.header.stamp = ros::Time(image.getTimestamp());
+            msg.header.stamp.fromSec(image.getTimestamp());
             msg.header.frame_id = image.getFrameId();
             info_msg.header = msg.header;
 
@@ -150,7 +150,7 @@ void ServerROS::send(const Image& image)
 
         rgbd::convert(image.getRGBImage(), view.getRasterizer(), msg, info_msg);
 
-        msg.header.stamp = ros::Time(image.getTimestamp());
+        msg.header.stamp.fromSec(image.getTimestamp());
         msg.header.frame_id = image.getFrameId();
         info_msg.header = msg.header;
 
