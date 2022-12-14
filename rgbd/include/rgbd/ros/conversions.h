@@ -23,14 +23,6 @@ namespace rgbd
 bool convert(const cv::Mat& image, sensor_msgs::Image& image_msg);
 
 /**
- * @brief Convert DepthCamera to CameraInfo message
- * @param cam_model Depthcamera
- * @param cam_model_msg CameraInfo message to fill
- * @return success
- */
-bool convert(const geo::DepthCamera& cam_model, sensor_msgs::CameraInfo& cam_model_msg);
-
-/**
  * @brief Convert either a rgb or depth image to image and CameraInfo message. Also rectifies the image.
  * @param image rgb or depth image
  * @param cam_model Camera model
