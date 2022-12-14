@@ -93,12 +93,11 @@ TEST_F(SHM, NextImageTwice)
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
-    image.setFrameId("bla");
     image.setTimestamp(1000.);
     server.send(image);
     EXPECT_TRUE(client.nextImage(image2));
-    EXPECT_EQ(image.getCameraModel().cameraInfo(), image2.getCameraModel().cameraInfo());
     EXPECT_EQ(image, image2);
+    EXPECT_FALSE(ros::isShuttingDown());
 }
 
 // Run all the tests that were declared with TEST()
