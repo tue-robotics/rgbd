@@ -105,12 +105,12 @@ bool ClientSHM::nextImage(Image& image)
     memcpy(rgb->data, image_data_, rgb_data_size_);
     memcpy(depth->data, image_data_ + rgb_data_size_, depth_data_size_);
 
+    image.frame_id_ = buffer_header_->frame_id;
+    image.timestamp_ = buffer_header_->timestamp;
 
     if (!image.getCameraModel().initialized())
     {
         sensor_msgs::CameraInfo cam_info_msg;
-        cam_info_msg.header.frame_id = buffer_header_->frame_id;
-        cam_info_msg.header.stamp.fromSec(buffer_header_->timestamp);
 
         cam_info_msg.height = buffer_header_->height;
         cam_info_msg.width = buffer_header_->width;
@@ -150,6 +150,8 @@ ImagePtr ClientSHM::nextImage()
     else
         return ImagePtr();
 }
+
+// ----------------------------------------------------------------------------------------------------
 
 } // end namespace rgbd
 
