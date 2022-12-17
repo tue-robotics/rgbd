@@ -145,12 +145,6 @@ bool convert(const cv::Mat& image,
 
 bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image)
 {
-    if (msg->version == 0)
-    {
-        ROS_ERROR("convert: version 0 not supported");
-        return false;
-    }
-
     if (!image)
         image = new rgbd::Image;
 
@@ -249,6 +243,11 @@ bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image)
         boost::iostreams::copy(in, decompressed);
         tue::serialization::InputArchive a(decompressed);
         rgbd::deserialize(a, *image);
+    }
+    else
+    {
+        ROS_ERROR_STREAM_NAMED("conversions", "convert: version '" << msg->version << "' not supported");
+        return false;
     }
 
     return true;
