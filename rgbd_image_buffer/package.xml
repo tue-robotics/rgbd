@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>rgbd_image_buffer</name>
+  <version>0.1.0</version>
+  <description>Buffer which combines RGBD images with TF transformations</description>
+
+  <maintainer email="MatthijsBurgh@outlook.com">Matthijs van der Burgh</maintainer>
+
+  <license>TODO</license>
+
+  <url type="bugtracker">https://github.com/tue-robotics/rgbd/issues</url>
+  <url type="repository">https://github.com/tue-robotics/rgbd</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>geolib2</depend>
+  <depend>rgbd</depend>
+  <depend>roscpp</depend>
+  <depend>tf2_ros</depend>
+
+  <build_depend>geometry_msgs</build_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+
+  <doc_depend>doxygen</doc_depend>
+
+  <test_depend>catkin_lint_cmake</test_depend>
+
+  <export>
+    <rosdoc config="rosdoc.yaml" />
+  </export>
+
+</package>
