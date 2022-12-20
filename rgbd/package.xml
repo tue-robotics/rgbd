@@ -27,6 +27,7 @@
   <depend>boost</depend>
   <depend>geolib2</depend>
   <depend>image_geometry</depend>
+  <depend>libopencv-dev</depend>
   <depend>message_filters</depend>
   <depend>pcl_ros</depend>
   <depend>rgbd_msgs</depend>
