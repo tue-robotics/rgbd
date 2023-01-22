@@ -154,7 +154,7 @@ void ServerSHM::checkSHMThreadFunc(const float frequency)
 void pubHostnameThreadFunc(ros::NodeHandle& nh, const std::string server_name, const std::string hostname, const float frequency)
 {
     ros::Publisher pub_shm_hostname = nh.advertise<std_msgs::String>(server_name + "/hosts", 1);
-    ros::Rate r(frequency);
+    ros::WallRate r(frequency);
     std_msgs::String msg;
     msg.data = hostname;
     while(nh.ok())
