@@ -49,7 +49,7 @@ void ServerSHM::send(const Image& image)
 {
     if (shared_mem_name_.empty())
     {
-        ROS_ERROR("rgbd::SharedMemServer is not initialized");
+        ROS_ERROR_NAMED("ServerSHM", "rgbd::SharedMemServer is not initialized");
         return;
     }
 
@@ -130,23 +130,23 @@ void ServerSHM::send(const Image& image)
 
 void ServerSHM::checkSHMThreadFunc(const float frequency)
 {
-    ROS_DEBUG("ServerSHM::checkSHMThreadFunc");
+    ROS_DEBUG_NAMED("ServerSHM", "ServerSHM::checkSHMThreadFunc");
     ros::Rate r(frequency);
     while(nh_.ok())
     {
-        ROS_DEBUG_STREAM("ServerSHM::checkSHMThreadFunc: checking shm on: " << shared_mem_name_);
+        ROS_DEBUG_STREAM_NAMED("ServerSHM", "ServerSHM::checkSHMThreadFunc: checking shm on: " << shared_mem_name_);
         try
         {
             ipc::shared_memory_object(ipc::open_only, shared_mem_name_.c_str(), ipc::read_only);
         }
         catch (ipc::interprocess_exception &ex)
         {
-            ROS_FATAL_STREAM("ServerSHM::checkSHMThreadFunc: SHM on '" << shared_mem_name_ << "' is corrupted: '" << ex.what() << "'");
+            ROS_FATAL_STREAM_NAMED("ServerSHM", "ServerSHM::checkSHMThreadFunc: SHM on '" << shared_mem_name_ << "' is corrupted: '" << ex.what() << "'");
             ros::shutdown();
         }
         r.sleep();
     }
-    ROS_DEBUG("ServerSHM::checkSHMThreadFunc done");
+    ROS_DEBUG_NAMED("ServerSHM", "ServerSHM::checkSHMThreadFunc done");
 }
 
 // ----------------------------------------------------------------------------------------

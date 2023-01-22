@@ -55,19 +55,19 @@ bool ClientSHM::initialize(const std::string& server_name, float timeout)
             depth_data_size_ = static_cast<uint64_t>(buffer_header_->depth_width * buffer_header_->depth_height * 4);
 
             sequence_nr_ = 0;
-            ROS_INFO_STREAM("Opened shared memory on: '" << server_name_cp << "' succesfully.");
+            ROS_INFO_STREAM_NAMED("ClientSHM", "Opened shared memory on: '" << server_name_cp << "' succesfully.");
             return true;
         }
         catch(ipc::interprocess_exception &ex)
         {
-            ROS_DEBUG_STREAM("Could not open shared memory: " << ex.what());
+            ROS_DEBUG_STREAM_NAMED("ClientSHM", "Could not open shared memory: " << ex.what());
         }
         d.sleep();
         now = ros::Time::now();
     }
     while (ros::ok() && (now - start).toSec() < static_cast<double>(timeout));
 
-    ROS_INFO_STREAM("Opening shared memory on: '" << server_name_cp << "' failed on timeout(" << timeout << ").");
+    ROS_INFO_STREAM_NAMED("ClientSHM", "Opening shared memory on: '" << server_name_cp << "' failed on timeout(" << timeout << ").");
 
     return false;
 }

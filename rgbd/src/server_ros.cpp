@@ -38,34 +38,34 @@ void ServerROS::initialize(std::string ns, const bool publish_rgb, const bool pu
     {
         pub_rgb_img_ = std::make_shared<ros::Publisher>(nh_.advertise<sensor_msgs::Image>(ns + "rgb/image", 1));
         pub_rgb_info_ = std::make_shared<ros::Publisher>(nh_.advertise<sensor_msgs::CameraInfo>(ns + "rgb/camera_info", 1));
-        ROS_DEBUG_STREAM("rgb image topic: " << pub_rgb_img_->getTopic());
-        ROS_DEBUG_STREAM("rgb camera info topic: " << pub_rgb_info_->getTopic());
+        ROS_DEBUG_STREAM_NAMED("ServerROS", "rgb image topic: " << pub_rgb_img_->getTopic());
+        ROS_DEBUG_STREAM_NAMED("ServerROS", "rgb camera info topic: " << pub_rgb_info_->getTopic());
     }
     else
     {
-        ROS_DEBUG("rgb image publisher not initialized");
-        ROS_DEBUG("rgb camera info publisher not initialized");
+        ROS_DEBUG_NAMED("ServerROS", "rgb image publisher not initialized");
+        ROS_DEBUG_NAMED("ServerROS", "rgb camera info publisher not initialized");
     }
     if (publish_depth)
     {
         pub_depth_img_ = std::make_shared<ros::Publisher>(nh_.advertise<sensor_msgs::Image>(ns + "depth/image", 1));
         pub_depth_info_ = std::make_shared<ros::Publisher>(nh_.advertise<sensor_msgs::CameraInfo>(ns + "depth/camera_info", 1));
-        ROS_DEBUG_STREAM("depth image topic: " << pub_depth_img_->getTopic());
-        ROS_DEBUG_STREAM("depth camera info topic: " << pub_depth_info_->getTopic());
+        ROS_DEBUG_STREAM_NAMED("ServerROS", "depth image topic: " << pub_depth_img_->getTopic());
+        ROS_DEBUG_STREAM_NAMED("ServerROS", "depth camera info topic: " << pub_depth_info_->getTopic());
     }
     else
     {
-        ROS_DEBUG("depth image publisher not initialized");
-        ROS_DEBUG("depth camera info publisher not initialized");
+        ROS_DEBUG_NAMED("ServerROS", "depth image publisher not initialized");
+        ROS_DEBUG_NAMED("ServerROS", "depth camera info publisher not initialized");
     }
     if (publish_pc)
     {
         pub_depth_pc_ = std::make_shared<ros::Publisher>(nh_.advertise<pcl::PointCloud<pcl::PointXYZ> >(ns + "depth/points", 1));
-        ROS_DEBUG_STREAM("pointcloud topic: " << pub_depth_pc_->getTopic());
+        ROS_DEBUG_STREAM_NAMED("ServerROS", "pointcloud topic: " << pub_depth_pc_->getTopic());
     }
     else
     {
-        ROS_DEBUG("pointcloud publisher not initialized");
+        ROS_DEBUG_NAMED("ServerROS", "pointcloud publisher not initialized");
     }
 
 }
