@@ -109,12 +109,12 @@ void Client::hostsCallback(const std_msgs::StringConstPtr& msg)
 void Client::subHostsThreadFunc(const float frequency)
 {
     ros::WallRate r(frequency);
-    ros::WallDuration d(5*r.expectedCycleTime().toSec()); // To prevent any issues by a very small delay
+    ros::WallDuration d(3*r.expectedCycleTime().toSec()); // To prevent any issues by a very small delay
     while(nh_->ok())
     {
         cb_queue_.callAvailable();
         // Decide on implementation mode
-        if (ros::WallTime::now() - d > last_time_shm_server_online_)
+        if (ros::WallTime::now() > last_time_shm_server_online_ + d)
         {
             // Too much time has elapsed since last message, use rgbd
             // Lock the entire switching procedure, but not the decision;
