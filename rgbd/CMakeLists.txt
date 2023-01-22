@@ -79,10 +79,10 @@ target_link_libraries(${PROJECT_NAME}_nodelets ${PROJECT_NAME} ${catkin_LIBRARIE
 add_executable(ros_to_${PROJECT_NAME} src/ros_to_${PROJECT_NAME}.cpp)
 target_link_libraries(ros_to_${PROJECT_NAME} ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_to_shm src/${PROJECT_NAME}_to_shm.cpp)
+add_executable(${PROJECT_NAME}_to_shm src/rgbd_to_shm.cpp)
 target_link_libraries(${PROJECT_NAME}_to_shm ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_to_ros src/${PROJECT_NAME}_to_ros.cpp)
+add_executable(${PROJECT_NAME}_to_ros src/rgbd_to_ros.cpp)
 target_link_libraries(${PROJECT_NAME}_to_ros ${PROJECT_NAME})
 
 add_executable(get_3d_point_from_image_roi_node src/get_3d_point_from_image_roi_node.cpp)
@@ -102,10 +102,10 @@ target_link_libraries(multitool ${PROJECT_NAME} ${OpenCV_LIBRARIES})
 add_executable(record_to_video tools/record_to_video.cpp)
 target_link_libraries(record_to_video ${PROJECT_NAME} ${OpenCV_LIBRARIES})
 
-add_executable(${PROJECT_NAME}_to_png tools/${PROJECT_NAME}_to_png.cpp)
+add_executable(${PROJECT_NAME}_to_png tools/rgbd_to_png.cpp)
 target_link_libraries(${PROJECT_NAME}_to_png ${PROJECT_NAME} ${OpenCV_LIBRARIES})
 
-add_executable(${PROJECT_NAME}_to_pcd tools/${PROJECT_NAME}_to_pcd.cpp)
+add_executable(${PROJECT_NAME}_to_pcd tools/rgbd_to_pcd.cpp)
 target_link_libraries(${PROJECT_NAME}_to_pcd ${PROJECT_NAME} ${OpenCV_LIBRARIES})
 
 add_executable(save tools/save.cpp)
@@ -125,7 +125,7 @@ target_link_libraries(test_server_templ ${PROJECT_NAME} ${catkin_LIBRARIES})
 add_executable(${PROJECT_NAME}_test_server test/test_server.cpp)
 target_link_libraries(${PROJECT_NAME}_test_server $<TARGET_OBJECTS:test_server_templ> ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_test_server_${PROJECT_NAME} test/test_server_${PROJECT_NAME}.cpp)
+add_executable(${PROJECT_NAME}_test_server_${PROJECT_NAME} test/test_server_rgbd.cpp)
 target_link_libraries(${PROJECT_NAME}_test_server_${PROJECT_NAME} $<TARGET_OBJECTS:test_server_templ> ${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME}_test_server_shm test/test_server_shm.cpp)
@@ -226,7 +226,7 @@ if (CATKIN_ENABLE_TESTING)
   add_dependencies(tests shm_server_gtest)
   add_rostest(test/shm_server.test)
 
-  add_executable(connection_${PROJECT_NAME}_gtest EXCLUDE_FROM_ALL test/connection_${PROJECT_NAME}_gtest.cpp)
+  add_executable(connection_${PROJECT_NAME}_gtest EXCLUDE_FROM_ALL test/connection_rgbd_gtest.cpp)
   target_link_libraries(connection_${PROJECT_NAME}_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${GTEST_LIBRARIES} ${catkin_LIBRARIES})
   add_dependencies(tests connection_${PROJECT_NAME}_gtest)
   add_rostest(test/connection_${PROJECT_NAME}.test)
