@@ -50,15 +50,17 @@ TEST_F(Connection, ConsistentConnection)
     ros::Time end = start + ros::Duration(20);
     EXPECT_FALSE(ros::isShuttingDown());
     ros::Rate r(1);
+    int i=1;
     while(ros::Time::now() < end)
     {
         if (!shm_killed && ros::Time::now() >= shm_kill_time)
         {
             ipc::shared_memory_object::remove(test_server_name_shm.c_str());
             shm_killed = true;
-            ros::Duration(0.5).sleep(); // Wait for RGBD client to take over
+            ros::Duration(1).sleep(); // Wait for RGBD client to take over
         }
-        EXPECT_TRUE(client.nextImage(image));
+        EXPECT_TRUE(client.nextImage(image))<< "i=" << i;
+        ++i;
         EXPECT_GE(image.getTimestamp(), last_time_stamp);
         last_time_stamp = image.getTimestamp();
         r.sleep();
