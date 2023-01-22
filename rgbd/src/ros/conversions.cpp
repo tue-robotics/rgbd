@@ -156,13 +156,14 @@ bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image)
         image->cam_model_ = cam_model;
         image->timestamp_ = msg->header.stamp.toSec();
         image->frame_id_ = msg->header.frame_id;
+        return true;
     }
     else if (msg->version == 2)
     {
         std::stringstream stream;
         tue::serialization::convert(msg->rgb, stream);
         tue::serialization::InputArchive a(stream);
-        rgbd::deserialize(a, *image);
+        return rgbd::deserialize(a, *image);
     }
     else if (msg->version == 3)
     {
@@ -173,7 +174,7 @@ bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image)
         in.push(compressed);
         boost::iostreams::copy(in, decompressed);
         tue::serialization::InputArchive a(decompressed);
-        rgbd::deserialize(a, *image);
+        return rgbd::deserialize(a, *image);
     }
     else if (msg->version == 4)
     {
@@ -184,15 +185,13 @@ bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image)
         in.push(compressed);
         boost::iostreams::copy(in, decompressed);
         tue::serialization::InputArchive a(decompressed);
-        rgbd::deserialize(a, *image);
+        return rgbd::deserialize(a, *image);
     }
     else
     {
         ROS_ERROR_STREAM_NAMED("conversions", "convert: version '" << msg->version << "' not supported");
         return false;
     }
-
-    return true;
 }
 
 }
