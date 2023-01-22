@@ -241,9 +241,6 @@ if (CATKIN_ENABLE_TESTING)
   add_dependencies(tests connection_shm_gtest)
   add_rostest(test/connection_shm.test)
 
-  add_executable(test_server_connection test/test_server_connection.cpp)
-  target_link_libraries(test_server_connection $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${catkin_LIBRARIES})
-
   add_executable(connection_gtest EXCLUDE_FROM_ALL test/connection_gtest.cpp)
   target_link_libraries(connection_gtest ${PROJECT_NAME} ${GTEST_LIBRARIES} ${catkin_LIBRARIES})
   add_dependencies(tests connection_gtest)
