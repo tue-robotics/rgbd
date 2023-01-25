@@ -23,7 +23,6 @@ protected:
     }
 
     rgbd::Image image1;
-    rgbd::Image image2;
 };
 
 TEST_F(Serialization, LossLess)
@@ -33,6 +32,7 @@ TEST_F(Serialization, LossLess)
 
     EXPECT_TRUE(rgbd::serialize(image1, output_achive, rgbd::RGB_STORAGE_LOSSLESS, rgbd::DEPTH_STORAGE_LOSSLESS));
     tue::serialization::InputArchive input_achive(ss);
+    rgbd::Image image2;
     EXPECT_TRUE(rgbd::deserialize(input_achive, image2));
 
     EXPECT_EQ(image1, image2);
@@ -45,6 +45,7 @@ TEST_F(Serialization, Lossy)
 
     EXPECT_TRUE(rgbd::serialize(image1, output_achive, rgbd::RGB_STORAGE_JPG, rgbd::DEPTH_STORAGE_LOSSLESS));
     tue::serialization::InputArchive input_achive(ss);
+    rgbd::Image image2;
     EXPECT_TRUE(rgbd::deserialize(input_achive, image2));
 
     std::vector<int> rgb_params;
