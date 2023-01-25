@@ -58,15 +58,17 @@ TEST(Image, NotEqual)
 
     // Different depth image
     image2 = image1.clone();
-    cv::Mat& depth = image2.getDepthImage();
+    cv::Mat depth = image2.getDepthImage();
     depth.at<float>(0, 0) += 0.1;
+    image2.setDepthImage(depth);
     EXPECT_FALSE(image1 == image2);
     EXPECT_NE(image1, image2);
 
     // Different RGB color image
     image2 = image1.clone();
-    cv::Mat& color = image2.getRGBImage();
+    cv::Mat color = image2.getRGBImage();
     color.at<cv::Vec3b>(0, 0) *= 2;
+    image2.setRGBImage(color);
     EXPECT_FALSE(image1 == image2);
     EXPECT_NE(image1, image2);
 }
