@@ -72,22 +72,10 @@ public:
     inline const cv::Mat& getDepthImage() const { return depth_image_; }
 
     /**
-     * @brief Get the depth image.
-     * @return reference to the depth image.
-     */
-    inline cv::Mat& getDepthImage() { return depth_image_; }
-
-    /**
      * @brief Get the RGB color image.
      * @return Const reference to the RGB color image.
      */
     inline const cv::Mat& getRGBImage() const { return rgb_image_; }
-
-    /**
-     * @brief Get the BGR color image.
-     * @return reference to the BGR color image.
-     */
-    inline cv::Mat& getRGBImage() { return rgb_image_; }
 
     /**
      * @brief Get the frame_id.
