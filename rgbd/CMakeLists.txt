@@ -60,7 +60,7 @@ add_library(${PROJECT_NAME}
     src/ros/rosconsole_bridge.cpp
     src/serialization.cpp
     src/server.cpp
-    src/server_${PROJECT_NAME}.cpp
+    src/server_rgbd.cpp
     src/server_ros.cpp
     src/server_shm.cpp
     src/utility.cpp
@@ -71,12 +71,12 @@ add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 
 # - - - - - - - - - - - - - - - - NODELETS - - - - - - - - - - - - - - - -
 
-add_library(${PROJECT_NAME}_nodelets src/nodelets/ros_to_${PROJECT_NAME}.cpp)
+add_library(${PROJECT_NAME}_nodelets src/nodelets/ros_to_rgbd.cpp)
 target_link_libraries(${PROJECT_NAME}_nodelets ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 # - - - - - - - - - - - - - - - - - NODES - - - - - - - - - - - - - - - - -
 
-add_executable(ros_to_${PROJECT_NAME} src/ros_to_${PROJECT_NAME}.cpp)
+add_executable(ros_to_${PROJECT_NAME} src/ros_to_rgbd.cpp)
 target_link_libraries(ros_to_${PROJECT_NAME} ${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME}_to_shm src/rgbd_to_shm.cpp)
@@ -140,7 +140,7 @@ target_link_libraries(test_client_templ ${PROJECT_NAME} ${OpenCV_LIBRARIES} ${ca
 add_executable(${PROJECT_NAME}_test_client test/test_client.cpp)
 target_link_libraries(${PROJECT_NAME}_test_client $<TARGET_OBJECTS:test_client_templ> ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_test_client_${PROJECT_NAME} test/test_client_${PROJECT_NAME}.cpp)
+add_executable(${PROJECT_NAME}_test_client_${PROJECT_NAME} test/test_client_rgbd.cpp)
 target_link_libraries(${PROJECT_NAME}_test_client_${PROJECT_NAME} $<TARGET_OBJECTS:test_client_templ> ${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME}_test_client_shm test/test_client_shm.cpp)
