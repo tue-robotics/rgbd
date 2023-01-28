@@ -121,6 +121,64 @@ TEST_F(RGBD, NextImageTwice)
     EXPECT_FALSE(ros::isShuttingDown());
 }
 
+TEST_F(RGBD, NextImageTwiceWithoutSend)
+{
+    EXPECT_FALSE(ros::isShuttingDown());
+    EXPECT_TRUE(client.initialize(test_server_name));
+    EXPECT_TRUE(client.initialized());
+    server.send(image);
+    rgbd::Image image2;
+    EXPECT_TRUE(client.nextImage(image2));
+    EXPECT_EQ(image, image2);
+    EXPECT_FALSE(ros::isShuttingDown());
+    EXPECT_FALSE(client.nextImage(image2));
+    EXPECT_FALSE(ros::isShuttingDown());
+}
+
+TEST_F(RGBD, NextImagePtrTwice)
+{
+    EXPECT_FALSE(ros::isShuttingDown());
+    EXPECT_TRUE(client.initialize(test_server_name));
+    EXPECT_TRUE(client.initialized());
+    server.send(image);
+    rgbd::ImagePtr image2 = client.nextImage();
+    EXPECT_TRUE(image2);
+    if (image2) // This prevents a crash of the node. Test will still fail because of previous line
+    {
+        EXPECT_EQ(image, *image2);
+    }
+    EXPECT_FALSE(ros::isShuttingDown());
+    image.setTimestamp(image.getTimestamp()+10.);
+    image2.reset();
+    server.send(image);
+    image2 = client.nextImage();
+    EXPECT_TRUE(image2);
+    if (image2) // This prevents a crash of the node. Test will still fail because of previous line
+    {
+        EXPECT_EQ(image, *image2);
+    }
+    EXPECT_FALSE(ros::isShuttingDown());
+}
+
+TEST_F(RGBD, NextImagePtrTwiceWithoutSend)
+{
+    EXPECT_FALSE(ros::isShuttingDown());
+    EXPECT_TRUE(client.initialize(test_server_name));
+    EXPECT_TRUE(client.initialized());
+    server.send(image);
+    rgbd::ImagePtr image2 = client.nextImage();
+    EXPECT_TRUE(image2);
+    if (image2) // This prevents a crash of the node. Test will still fail because of previous line
+    {
+        EXPECT_EQ(image, *image2);
+    }
+    EXPECT_FALSE(ros::isShuttingDown());
+    image2.reset();
+    image2 = client.nextImage();
+    EXPECT_FALSE(image2);
+    EXPECT_FALSE(ros::isShuttingDown());
+}
+
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
