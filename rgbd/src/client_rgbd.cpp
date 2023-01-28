@@ -43,6 +43,7 @@ bool ClientRGBD::deinitialize()
 
 bool ClientRGBD::nextImage(Image& image)
 {
+    new_image_ = false;
     image_ptr_ = &image;
     cb_queue_.callAvailable();
     return new_image_;
@@ -52,6 +53,7 @@ bool ClientRGBD::nextImage(Image& image)
 
 ImagePtr ClientRGBD::nextImage()
 {
+    new_image_ = false;
     image_ptr_ = nullptr;
     cb_queue_.callAvailable();
     if (!new_image_)
