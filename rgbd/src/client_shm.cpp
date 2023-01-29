@@ -148,7 +148,7 @@ ImagePtr ClientSHM::nextImage()
     if (nextImage(*img))
         return img;
     else
-        return ImagePtr();
+        return nullptr;
 }
 
 // ----------------------------------------------------------------------------------------------------
