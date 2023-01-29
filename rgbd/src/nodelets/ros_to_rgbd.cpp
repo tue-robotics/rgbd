@@ -99,14 +99,15 @@ private:
         client_->getSync()->registerCallback(boost::bind(&ROSToRGBDNodelet::imageCallback, this, _1, _2));
     }
 
-    void imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_msg, const sensor_msgs::ImageConstPtr& depth_image_msg)
+    bool imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_msg, const sensor_msgs::ImageConstPtr& depth_image_msg)
     {
         if (!client_->imageCallback(rgb_image_msg, depth_image_msg))
         {
             ROS_ERROR("Error during processing the image callback. See log above.");
-            return;
+            return false;
         }
         server_->send(*client_->getImage());
+        return true;
     }
 
     std::unique_ptr<rgbd::ClientRosNodelet> client_;
