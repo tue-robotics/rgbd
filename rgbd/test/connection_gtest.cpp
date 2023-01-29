@@ -59,9 +59,9 @@ TEST_F(Connection, ConsistentConnection)
             shm_killed = true;
             ros::Duration(1).sleep(); // Wait for RGBD client to take over
         }
-        EXPECT_TRUE(client.nextImage(image))<< "i=" << i;
+        EXPECT_TRUE(client.nextImage(image)) << "i=" << i;
         ++i;
-        EXPECT_GE(image.getTimestamp(), last_time_stamp);
+        EXPECT_GT(image.getTimestamp(), last_time_stamp);
         last_time_stamp = image.getTimestamp();
         r.sleep();
     }
