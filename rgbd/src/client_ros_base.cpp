@@ -47,6 +47,7 @@ bool ClientROSBase::deinitialize()
     sync_.reset();
     sub_rgb_sync_.reset();
     sub_depth_sync_.reset();
+    cam_model_ = image_geometry::PinholeCameraModel();
     return true;
 }
 
