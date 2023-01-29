@@ -37,10 +37,38 @@ protected:
     rgbd::ClientROS client;
 };
 
-class ROS_NS : public ROS
+class ROSInitialized : public ROS
 {
 protected:
-    ROS_NS() : ROS("test_ns")
+    ROSInitialized(const std::string& _ns="") : ROS(_ns)
+    {
+    }
+
+    void SetUp() override
+    {
+        ROS::SetUp();
+        client.initialize(ros::names::append(ns, "rgb/image"), ros::names::append(ns, "depth/image"), ros::names::append(ns, "rgb/camera_info"));
+        ros::Time end = ros::Time::now() + ros::Duration(5);
+        bool received = false;
+        while (!received || ros::Time::now() <= end)
+        {
+            server.send(image);
+            ros::Duration(0.5).sleep();
+            received = static_cast<bool>(client.nextImage());
+            if (received)
+            {
+                ros::Duration(2).sleep();
+                EXPECT_FALSE(client.nextImage()) << "SetUp failed, client should not have gotten a new image after getting one image correctly";
+            }
+        }
+        EXPECT_TRUE(received) << "SetUp failed, because client wasn't able to get one image correctly.";
+    }
+};
+
+class ROS_NS : public ROSInitialized
+{
+protected:
+    ROS_NS() : ROSInitialized("test_ns")
     {
     }
 };
@@ -74,18 +102,12 @@ TEST_F(ROS, NextImagePtrBeforeSend)
     EXPECT_FALSE(ros::isShuttingDown());
 }
 
-TEST_F(ROS, NextImagePtr)
+TEST_F(ROSInitialized, NextImagePtr)
 {
     EXPECT_FALSE(ros::isShuttingDown());
-    EXPECT_TRUE(client.initialize("rgb/image", "depth/image", "rgb/camera_info"));
-    EXPECT_TRUE(client.initialized());
     rgbd::ImagePtr image2;
-    for (uint i=0; i<2; ++i)
-    {
-        image2 = client.nextImage();
-        server.send(image);
-        ros::Duration(0.05).sleep();
-    }
+    server.send(image);
+    ros::Duration(0.1).sleep();
     image2 = client.nextImage();
     EXPECT_TRUE(image2);
     if (image2) // This prevents a crash of the node. Test will still fail because of previous line
@@ -95,41 +117,29 @@ TEST_F(ROS, NextImagePtr)
     EXPECT_FALSE(ros::isShuttingDown());
 }
 
-TEST_F(ROS, NextImageTwice)
+TEST_F(ROSInitialized, NextImageTwice)
 {
     EXPECT_FALSE(ros::isShuttingDown());
-    EXPECT_TRUE(client.initialize("rgb/image", "depth/image", "rgb/camera_info"));
-    EXPECT_TRUE(client.initialized());
     rgbd::Image image2;
-    for (uint i=0; i<2; ++i)
-    {
-        client.nextImage(image2);
-        server.send(image);
-        ros::Duration(0.05).sleep();
-    }
+    server.send(image);
+    ros::Duration(0.1).sleep();
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
     image.setTimestamp(image.getTimestamp()+10.);
     server.send(image);
-    ros::Duration(0.05).sleep();
+    ros::Duration(0.1).sleep();
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
 }
 
-TEST_F(ROS, NextImageTwiceWithoutSend)
+TEST_F(ROSInitialized, NextImageTwiceWithoutSend)
 {
     EXPECT_FALSE(ros::isShuttingDown());
-    EXPECT_TRUE(client.initialize("rgb/image", "depth/image", "rgb/camera_info"));
-    EXPECT_TRUE(client.initialized());
     rgbd::Image image2;
-    for (uint i=0; i<2; ++i)	
-    {	
-        client.nextImage(image2);	
-        server.send(image);	
-        ros::Duration(0.05).sleep();	
-    }
+    server.send(image);
+    ros::Duration(0.1).sleep();
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
@@ -137,19 +147,14 @@ TEST_F(ROS, NextImageTwiceWithoutSend)
     EXPECT_FALSE(ros::isShuttingDown());
 }
 
-TEST_F(ROS, NextImagePtrTwice)
+TEST_F(ROSInitialized, NextImagePtrTwice)
 {
     EXPECT_FALSE(ros::isShuttingDown());
-    EXPECT_TRUE(client.initialize("rgb/image", "depth/image", "rgb/camera_info"));
-    EXPECT_TRUE(client.initialized());
     server.send(image);
     rgbd::ImagePtr image2;
-    for (uint i=0; i<2; ++i)	
-    {	
-        image2 = client.nextImage();	
-        server.send(image);	
-        ros::Duration(0.05).sleep();	
-    }
+    server.send(image);
+    ros::Duration(0.1).sleep();
+    image2 = client.nextImage();
     EXPECT_TRUE(image2);
     if (image2) // This prevents a crash of the node. Test will still fail because of previous line
     {
@@ -159,7 +164,7 @@ TEST_F(ROS, NextImagePtrTwice)
     image.setTimestamp(image.getTimestamp()+10.);
     image2.reset();
     server.send(image);
-    ros::Duration(0.05).sleep();
+    ros::Duration(0.1).sleep();
     image2 = client.nextImage();
     EXPECT_TRUE(image2);
     if (image2) // This prevents a crash of the node. Test will still fail because of previous line
@@ -169,19 +174,14 @@ TEST_F(ROS, NextImagePtrTwice)
     EXPECT_FALSE(ros::isShuttingDown());
 }
 
-TEST_F(ROS, NextImagePtrTwiceWithoutSend)
+TEST_F(ROSInitialized, NextImagePtrTwiceWithoutSend)
 {
     EXPECT_FALSE(ros::isShuttingDown());
-    EXPECT_TRUE(client.initialize("rgb/image", "depth/image", "rgb/camera_info"));
-    EXPECT_TRUE(client.initialized());
     server.send(image);
     rgbd::ImagePtr image2;
-    for (uint i=0; i<2; ++i)	
-    {	
-        image2 = client.nextImage();	
-        server.send(image);	
-        ros::Duration(0.05).sleep();	
-    }
+    server.send(image);
+    ros::Duration(0.1).sleep();
+    image2 = client.nextImage();
     EXPECT_TRUE(image2);
     if (image2) // This prevents a crash of the node. Test will still fail because of previous line
     {
@@ -197,15 +197,9 @@ TEST_F(ROS, NextImagePtrTwiceWithoutSend)
 TEST_F(ROS_NS, NextImage)
 {
     EXPECT_FALSE(ros::isShuttingDown());
-    EXPECT_TRUE(client.initialize("test_ns/rgb/image", "test_ns/depth/image", "test_ns/rgb/camera_info"));
-    EXPECT_TRUE(client.initialized());
     rgbd::Image image2;
-    for (uint i=0; i<2; ++i)
-    {
-        client.nextImage(image2);
-        server.send(image);
-        ros::Duration(0.05).sleep();
-    }
+    server.send(image);
+    ros::Duration(0.1).sleep();
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
