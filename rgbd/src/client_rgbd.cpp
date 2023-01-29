@@ -58,7 +58,7 @@ ImagePtr ClientRGBD::nextImage()
     cb_queue_.callAvailable();
     if (!new_image_)
     {
-        delete image_ptr_; // Needs to be deleted, want caller doesn't get a shared ptr to this raw pointer.
+        delete image_ptr_; // Needs to be deleted, because caller doesn't get a shared ptr to this raw pointer.
         return nullptr;
     }
     return ImagePtr(image_ptr_);
