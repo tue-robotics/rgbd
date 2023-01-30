@@ -25,6 +25,20 @@ protected:
     rgbd::ClientSHM client;
 };
 
+class SHMInitialized : public SHM
+{
+protected:
+    void SetUp() override
+    {
+        SHM::SetUp();
+        server.send(rgbd::generateRandomImage());
+        ros::Duration(0.01).sleep();
+        EXPECT_TRUE(client.initialize(test_server_name));
+        EXPECT_TRUE(client.initialized());
+        EXPECT_TRUE(static_cast<boo>(client.nextImage()));
+    }
+};
+
 TEST_F(SHM, InitializeBeforeSend)
 {
     EXPECT_FALSE(ros::isShuttingDown());
@@ -38,6 +52,7 @@ TEST_F(SHM, InitializeAfterSend)
 {
     EXPECT_FALSE(ros::isShuttingDown());
     server.send(image);
+    ros:Duration(0.01).sleep();
     EXPECT_FALSE(client.initialized());
     EXPECT_TRUE(client.initialize(test_server_name));
     EXPECT_TRUE(client.initialized());
@@ -48,6 +63,7 @@ TEST_F(SHM, DeInitialize)
 {
     EXPECT_FALSE(ros::isShuttingDown());
     server.send(image);
+    ros:Duration(0.01).sleep();
     EXPECT_FALSE(client.initialized());
     EXPECT_TRUE(client.initialize(test_server_name));
     EXPECT_TRUE(client.initialized());
@@ -56,41 +72,101 @@ TEST_F(SHM, DeInitialize)
     EXPECT_FALSE(ros::isShuttingDown());
 }
 
-TEST_F(SHM, NextImage)
+TEST_F(SHMInitialized, NextImage)
 {
     EXPECT_FALSE(ros::isShuttingDown());
     server.send(image);
-    EXPECT_TRUE(client.initialize(test_server_name));
+    ros::Duration(0.01).sleep();
     rgbd::Image image2;
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
 }
 
-TEST_F(SHM, NextImagePtr)
+TEST_F(SHMInitialized, NextImagePtr)
 {
     EXPECT_FALSE(ros::isShuttingDown());
     server.send(image);
-    EXPECT_TRUE(client.initialize(test_server_name));
+    ros::Duration(0.01).sleep();
     rgbd::ImagePtr image2 = client.nextImage();
     EXPECT_TRUE(image2);
-    EXPECT_EQ(image, *image2);
+    if (image2) // This prevents a crash of the node. Test will still fail because of previous line
+    {
+        EXPECT_EQ(image, *image2);
+    }
     EXPECT_FALSE(ros::isShuttingDown());
 }
 
-TEST_F(SHM, NextImageTwice)
+TEST_F(SHMInitialized, NextImageTwice)
 {
     EXPECT_FALSE(ros::isShuttingDown());
     server.send(image);
-    EXPECT_TRUE(client.initialize(test_server_name));
+    ros::Duration(0.01).sleep();
     rgbd::Image image2;
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
     image.setTimestamp(image.getTimestamp()+10.);
     server.send(image);
+    ros::Duration(0.01).sleep();
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
+    EXPECT_FALSE(ros::isShuttingDown());
+}
+
+TEST_F(SHMInitialized, NextImageTwiceWithoutSend)
+{
+    EXPECT_FALSE(ros::isShuttingDown());
+    server.send(image);
+    ros::Duration(0.01).sleep();
+    rgbd::Image image2;
+    EXPECT_TRUE(client.nextImage(image2));
+    EXPECT_EQ(image, image2);
+    EXPECT_FALSE(ros::isShuttingDown());
+    EXPECT_FALSE(client.nextImage(image2));
+    EXPECT_FALSE(ros::isShuttingDown());
+}
+
+TEST_F(SHMInitialized, NextImagePtrTwice)
+{
+    EXPECT_FALSE(ros::isShuttingDown());
+    server.send(image);
+    ros::Duration(0.01).sleep();
+    rgbd::ImagePtr image2 = client.nextImage();
+    EXPECT_TRUE(image2);
+    if (image2) // This prevents a crash of the node. Test will still fail because of previous line
+    {
+        EXPECT_EQ(image, *image2);
+    }
+    EXPECT_FALSE(ros::isShuttingDown());
+    image.setTimestamp(image.getTimestamp()+10.);
+    image2.reset();
+    server.send(image);
+    ros::Duration(0.01).sleep();
+    image2 = client.nextImage();
+    EXPECT_TRUE(image2);
+    if (image2) // This prevents a crash of the node. Test will still fail because of previous line
+    {
+        EXPECT_EQ(image, *image2);
+    }
+    EXPECT_FALSE(ros::isShuttingDown());
+}
+
+TEST_F(SHMInitialized, NextImagePtrTwiceWithoutSend)
+{
+    EXPECT_FALSE(ros::isShuttingDown());
+    server.send(image);
+    ros::Duration(0.01).sleep();
+    rgbd::ImagePtr image2 = client.nextImage();
+    EXPECT_TRUE(image2);
+    if (image2) // This prevents a crash of the node. Test will still fail because of previous line
+    {
+        EXPECT_EQ(image, *image2);
+    }
+    EXPECT_FALSE(ros::isShuttingDown());
+    image2.reset();
+    image2 = client.nextImage();
+    EXPECT_FALSE(image2);
     EXPECT_FALSE(ros::isShuttingDown());
 }
 
