@@ -53,7 +53,7 @@ TEST_F(SHM, InitializeAfterSend)
 {
     EXPECT_FALSE(ros::isShuttingDown());
     server.send(image);
-    ros:Duration(0.01).sleep();
+    ros::Duration(0.01).sleep();
     EXPECT_FALSE(client.initialized());
     EXPECT_TRUE(client.initialize(test_server_name));
     EXPECT_TRUE(client.initialized());
@@ -64,7 +64,7 @@ TEST_F(SHM, DeInitialize)
 {
     EXPECT_FALSE(ros::isShuttingDown());
     server.send(image);
-    ros:Duration(0.01).sleep();
+    ros::Duration(0.01).sleep();
     EXPECT_FALSE(client.initialized());
     EXPECT_TRUE(client.initialize(test_server_name));
     EXPECT_TRUE(client.initialized());
