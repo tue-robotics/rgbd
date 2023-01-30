@@ -7,6 +7,7 @@
 #include <rgbd/image.h>
 #include <rgbd/server_shm.h>
 
+#include <ros/duration.h>
 #include <ros/init.h>
 #include <ros/node_handle.h>
 #include <ros/subscriber.h>
