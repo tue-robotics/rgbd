@@ -32,11 +32,14 @@ protected:
     void SetUp() override
     {
         SHM::SetUp();
-        server.send(rgbd::generateRandomImage());
+        server.send(image);
         ros::Duration(0.01).sleep();
         EXPECT_TRUE(client.initialize(test_server_name));
         EXPECT_TRUE(client.initialized());
         EXPECT_TRUE(static_cast<bool>(client.nextImage()));
+        std::string old_frame_id = image.getFrameId();
+        image = rgbd::generateRandomImage();
+        image.setFrameId(old_frame_id); // As FrameId is assumed to be constant in the SHM communication
     }
 };
 
