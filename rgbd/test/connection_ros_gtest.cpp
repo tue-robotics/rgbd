@@ -53,7 +53,7 @@ protected:
         while (!received || ros::Time::now() <= end)
         {
             server.send(image);
-            ros::Duration(0.5).sleep();
+            ros::Duration(0.1).sleep();
             received = static_cast<bool>(client.nextImage());
             if (received)
             {
@@ -107,7 +107,7 @@ TEST_F(ROSInitialized, NextImagePtr)
     EXPECT_FALSE(ros::isShuttingDown());
     rgbd::ImagePtr image2;
     server.send(image);
-    ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
     image2 = client.nextImage();
     EXPECT_TRUE(image2);
     if (image2) // This prevents a crash of the node. Test will still fail because of previous line
@@ -122,13 +122,13 @@ TEST_F(ROSInitialized, NextImageTwice)
     EXPECT_FALSE(ros::isShuttingDown());
     rgbd::Image image2;
     server.send(image);
-    ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
     image.setTimestamp(image.getTimestamp()+10.);
     server.send(image);
-    ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
@@ -139,7 +139,7 @@ TEST_F(ROSInitialized, NextImageTwiceWithoutSend)
     EXPECT_FALSE(ros::isShuttingDown());
     rgbd::Image image2;
     server.send(image);
-    ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
@@ -153,7 +153,7 @@ TEST_F(ROSInitialized, NextImagePtrTwice)
     server.send(image);
     rgbd::ImagePtr image2;
     server.send(image);
-    ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
     image2 = client.nextImage();
     EXPECT_TRUE(image2);
     if (image2) // This prevents a crash of the node. Test will still fail because of previous line
@@ -164,7 +164,7 @@ TEST_F(ROSInitialized, NextImagePtrTwice)
     image.setTimestamp(image.getTimestamp()+10.);
     image2.reset();
     server.send(image);
-    ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
     image2 = client.nextImage();
     EXPECT_TRUE(image2);
     if (image2) // This prevents a crash of the node. Test will still fail because of previous line
@@ -180,7 +180,7 @@ TEST_F(ROSInitialized, NextImagePtrTwiceWithoutSend)
     server.send(image);
     rgbd::ImagePtr image2;
     server.send(image);
-    ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
     image2 = client.nextImage();
     EXPECT_TRUE(image2);
     if (image2) // This prevents a crash of the node. Test will still fail because of previous line
@@ -199,7 +199,7 @@ TEST_F(ROS_NS, NextImage)
     EXPECT_FALSE(ros::isShuttingDown());
     rgbd::Image image2;
     server.send(image);
-    ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
