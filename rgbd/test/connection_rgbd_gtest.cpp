@@ -83,6 +83,7 @@ TEST_F(RGBD, NextImage)
     EXPECT_TRUE(client.initialize(test_server_name));
     EXPECT_TRUE(client.initialized());
     server.send(image);
+    ros::Duration(0.01).sleep();
     rgbd::Image image2;
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
@@ -95,6 +96,7 @@ TEST_F(RGBD, NextImagePtr)
     EXPECT_TRUE(client.initialize(test_server_name));
     EXPECT_TRUE(client.initialized());
     server.send(image);
+    ros::Duration(0.01).sleep();
     rgbd::ImagePtr image2 = client.nextImage();
     EXPECT_TRUE(image2);
     if (image2) // This prevents a crash of the node. Test will still fail because of previous line
@@ -110,12 +112,14 @@ TEST_F(RGBD, NextImageTwice)
     EXPECT_TRUE(client.initialize(test_server_name));
     EXPECT_TRUE(client.initialized());
     server.send(image);
+    ros::Duration(0.01).sleep();
     rgbd::Image image2;
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
     image.setTimestamp(image.getTimestamp()+10.);
     server.send(image);
+    ros::Duration(0.01).sleep();
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
@@ -127,6 +131,7 @@ TEST_F(RGBD, NextImageTwiceWithoutSend)
     EXPECT_TRUE(client.initialize(test_server_name));
     EXPECT_TRUE(client.initialized());
     server.send(image);
+    ros::Duration(0.01).sleep();
     rgbd::Image image2;
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
@@ -141,6 +146,7 @@ TEST_F(RGBD, NextImagePtrTwice)
     EXPECT_TRUE(client.initialize(test_server_name));
     EXPECT_TRUE(client.initialized());
     server.send(image);
+    ros::Duration(0.01).sleep();
     rgbd::ImagePtr image2 = client.nextImage();
     EXPECT_TRUE(image2);
     if (image2) // This prevents a crash of the node. Test will still fail because of previous line
@@ -151,6 +157,7 @@ TEST_F(RGBD, NextImagePtrTwice)
     image.setTimestamp(image.getTimestamp()+10.);
     image2.reset();
     server.send(image);
+    ros::Duration(0.01).sleep();
     image2 = client.nextImage();
     EXPECT_TRUE(image2);
     if (image2) // This prevents a crash of the node. Test will still fail because of previous line
@@ -166,6 +173,7 @@ TEST_F(RGBD, NextImagePtrTwiceWithoutSend)
     EXPECT_TRUE(client.initialize(test_server_name));
     EXPECT_TRUE(client.initialized());
     server.send(image);
+    ros::Duration(0.01).sleep();
     rgbd::ImagePtr image2 = client.nextImage();
     EXPECT_TRUE(image2);
     if (image2) // This prevents a crash of the node. Test will still fail because of previous line
