@@ -6,6 +6,7 @@
 #include <rgbd/server_shm.h>
 #include <rgbd/client_shm.h>
 
+#include <ros/duration.h>
 #include <ros/init.h>
 
 
@@ -35,7 +36,7 @@ protected:
         ros::Duration(0.01).sleep();
         EXPECT_TRUE(client.initialize(test_server_name));
         EXPECT_TRUE(client.initialized());
-        EXPECT_TRUE(static_cast<boo>(client.nextImage()));
+        EXPECT_TRUE(static_cast<bool>(client.nextImage()));
     }
 };
 
