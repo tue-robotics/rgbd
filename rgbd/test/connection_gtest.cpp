@@ -57,7 +57,7 @@ TEST_F(Connection, ConsistentConnection)
         {
             ipc::shared_memory_object::remove(test_server_name_shm.c_str());
             shm_killed = true;
-            ros::Duration(1).sleep(); // Wait for RGBD client to take over
+            ros::Duration(2).sleep(); // Wait for RGBD client to take over
         }
         EXPECT_TRUE(client.nextImage(image)) << "i=" << i;
         ++i;
