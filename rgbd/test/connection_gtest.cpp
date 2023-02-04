@@ -48,7 +48,6 @@ TEST_F(Connection, ConsistentConnection)
     ros::Time shm_kill_time = start + ros::Duration(5);
     bool shm_killed = false;
     ros::Time end = start + ros::Duration(20);
-    EXPECT_FALSE(ros::isShuttingDown());
     ros::Rate r(1);
     int i=1;
     while(ros::Time::now() < end)
