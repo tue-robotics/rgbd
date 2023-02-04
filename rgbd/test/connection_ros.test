@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+    <test test-name="connection_ros_gtest" pkg="rgbd" type="connection_ros_gtest" />
+</launch>

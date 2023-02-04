@@ -22,10 +22,7 @@ ClientROSBase::ClientROSBase(ros::NodeHandle nh) : nh_(nh), sync_(nullptr), sub_
 
 ClientROSBase::~ClientROSBase()
 {
-    nh_.shutdown();
-    sync_.reset();
-    sub_rgb_sync_.reset();
-    sub_depth_sync_.reset();
+    deinitialize();
 }
 
 // ----------------------------------------------------------------------------------------
@@ -44,6 +41,18 @@ bool ClientROSBase::initialize(const std::string& rgb_image_topic, const std::st
 
 // ----------------------------------------------------------------------------------------
 
+bool ClientROSBase::deinitialize()
+{
+    nh_.shutdown();
+    sync_.reset();
+    sub_rgb_sync_.reset();
+    sub_depth_sync_.reset();
+    cam_model_ = image_geometry::PinholeCameraModel();
+    return true;
+}
+
+// ----------------------------------------------------------------------------------------
+
 void ClientROSBase::camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_info_msg)
 {
     if (!cam_model_.initialized())
@@ -53,7 +62,7 @@ void ClientROSBase::camInfoCallback(const sensor_msgs::CameraInfoConstPtr& cam_i
     }
     else
     {
-        ROS_ERROR("CameraInfo should unsubsribe after inititializing the camera model");
+        ROS_ERROR_NAMED("ClientROS", "CameraInfo should unsubsribe after inititializing the camera model");
     }
 }
 
@@ -63,7 +72,7 @@ bool ClientROSBase::imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_ms
 {
     if (!cam_model_.initialized())
     {
-        ROS_ERROR_DELAYED_THROTTLE(1, "ClientROSBase: cam_model not yet initialized");
+        ROS_ERROR_DELAYED_THROTTLE_NAMED(1, "ClientROS", "ClientROSBase: cam_model not yet initialized");
         return false;
     }
     cv_bridge::CvImagePtr rgb_img_ptr, depth_img_ptr;
@@ -75,7 +84,7 @@ bool ClientROSBase::imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_ms
     }
     catch (cv_bridge::Exception& e)
     {
-        ROS_ERROR("ClientROSBase: Could not deserialize rgb image: %s", e.what());
+        ROS_ERROR_NAMED("ClientROS", "ClientROSBase: Could not deserialize rgb image: %s", e.what());
         return false;
     }
 
@@ -103,7 +112,7 @@ bool ClientROSBase::imageCallback(const sensor_msgs::ImageConstPtr& rgb_image_ms
     }
     catch (cv_bridge::Exception& e)
     {
-        ROS_ERROR("ClientROSBase: Could not deserialize depth image: %s", e.what());
+        ROS_ERROR_NAMED("ClientROS", "ClientROSBase: Could not deserialize depth image: %s", e.what());
         return false;
     }
 

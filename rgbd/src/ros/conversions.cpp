@@ -8,6 +8,7 @@
 #include <cv_bridge/cv_bridge.h>
 
 #include <geolib/sensors/DepthCamera.h>
+#include <geolib/ros/msg_conversions.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -47,73 +48,14 @@ bool convert(const cv::Mat& image, sensor_msgs::Image& image_msg)
 
 // ----------------------------------------------------------------------------------------------------
 
-bool convert(const geo::DepthCamera& cam_model, sensor_msgs::CameraInfo& cam_model_msg)
-{
-    // Distortion model and parameters
-    cam_model_msg.distortion_model = "plumb_bob";
-    cam_model_msg.D.resize(5, 0);
-
-    // Intrinsic camera matrix for the raw (distorted) images.
-    //     [fx  0 cx]
-    // K = [ 0 fy cy]
-    //     [ 0  0  1]
-    cam_model_msg.K[0] = cam_model.getFocalLengthX();
-    cam_model_msg.K[1] = 0;
-    cam_model_msg.K[2] = cam_model.getOpticalCenterX();
-    cam_model_msg.K[3] = 0;
-    cam_model_msg.K[4] = cam_model.getFocalLengthY();
-    cam_model_msg.K[5] = cam_model.getOpticalCenterX();
-    cam_model_msg.K[6] = 0;
-    cam_model_msg.K[7] = 0;
-    cam_model_msg.K[8] = 1;
-
-    // Rectification matrix (stereo cameras only)
-    cam_model_msg.R[0] = 1;
-    cam_model_msg.R[1] = 0;
-    cam_model_msg.R[2] = 0;
-    cam_model_msg.R[3] = 0;
-    cam_model_msg.R[4] = 1;
-    cam_model_msg.R[5] = 0;
-    cam_model_msg.R[6] = 0;
-    cam_model_msg.R[7] = 0;
-    cam_model_msg.R[8] = 1;
-
-    // Projection/camera matrix
-    //     [fx'  0  cx' Tx]
-    // P = [ 0  fy' cy' Ty]
-    //     [ 0   0   1   0]
-    cam_model_msg.P[0] = cam_model.getFocalLengthX();
-    cam_model_msg.P[1] = 0;
-    cam_model_msg.P[2] = cam_model.getOpticalCenterX();
-    cam_model_msg.P[3] = cam_model.getOpticalTranslationX();
-    cam_model_msg.P[4] = 0;
-    cam_model_msg.P[5] = cam_model.getFocalLengthY();
-    cam_model_msg.P[6] = cam_model.getOpticalCenterY();
-    cam_model_msg.P[7] = cam_model.getOpticalTranslationY();
-    cam_model_msg.P[8] = 0;
-    cam_model_msg.P[9] = 0;
-    cam_model_msg.P[10] = 1;
-    cam_model_msg.P[11] = 0;
-
-    // TODO: add width and height field to DepthCamera
-    cam_model_msg.width = static_cast<unsigned int>((cam_model.getOpticalCenterX() + 0.5) * 2); // 0.5 instead of 1 to round up properly
-    cam_model_msg.height = static_cast<unsigned int>((cam_model.getOpticalCenterY() + 0.5) * 2);
-
-    cam_model_msg.binning_x = 0;
-    cam_model_msg.binning_y = 0;
-    return true;
-}
-
-// ----------------------------------------------------------------------------------------------------
-
 bool convert(const cv::Mat& image, 
              const geo::DepthCamera& cam_model, 
              sensor_msgs::Image& image_msg, 
              sensor_msgs::CameraInfo& cam_model_msg)
 {
-    convert(cam_model, cam_model_msg);
-    size_t width = cam_model_msg.width;
-    size_t height = cam_model_msg.height;
+    geo::convert(cam_model, cam_model_msg);
+    int width = static_cast<int>(cam_model_msg.width);
+    int height = static_cast<int>(cam_model_msg.height);
 
     cv_bridge::CvImage image_cv_bridge;
 
@@ -121,12 +63,12 @@ bool convert(const cv::Mat& image,
     if (image.type() == CV_32FC1) // Depth image
     {
         image_cv_bridge.encoding = "32FC1";
-        img_rect = cv::Mat(static_cast<int>(height), static_cast<int>(width), CV_32FC1, cv::Scalar(0));
+        img_rect = cv::Mat(height, width, CV_32FC1, cv::Scalar(0.));
     }
     else if (image.type() == CV_8UC3) // RGB image
     {
         image_cv_bridge.encoding = "bgr8";
-        img_rect = cv::Mat(static_cast<int>(height), static_cast<int>(width), CV_8UC3, cv::Scalar(0, 0, 0));
+        img_rect = cv::Mat(height, width, CV_8UC3, cv::Scalar(0, 0, 0));
     }
     else
         return false;
@@ -214,13 +156,14 @@ bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image)
         image->cam_model_ = cam_model;
         image->timestamp_ = msg->header.stamp.toSec();
         image->frame_id_ = msg->header.frame_id;
+        return true;
     }
     else if (msg->version == 2)
     {
         std::stringstream stream;
         tue::serialization::convert(msg->rgb, stream);
         tue::serialization::InputArchive a(stream);
-        rgbd::deserialize(a, *image);
+        return rgbd::deserialize(a, *image);
     }
     else if (msg->version == 3)
     {
@@ -231,7 +174,7 @@ bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image)
         in.push(compressed);
         boost::iostreams::copy(in, decompressed);
         tue::serialization::InputArchive a(decompressed);
-        rgbd::deserialize(a, *image);
+        return rgbd::deserialize(a, *image);
     }
     else if (msg->version == 4)
     {
@@ -242,15 +185,13 @@ bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image)
         in.push(compressed);
         boost::iostreams::copy(in, decompressed);
         tue::serialization::InputArchive a(decompressed);
-        rgbd::deserialize(a, *image);
+        return rgbd::deserialize(a, *image);
     }
     else
     {
         ROS_ERROR_STREAM_NAMED("conversions", "convert: version '" << msg->version << "' not supported");
         return false;
     }
-
-    return true;
 }
 
 }

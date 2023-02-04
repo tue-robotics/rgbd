@@ -101,7 +101,7 @@ void Client::hostsCallback(const std_msgs::StringConstPtr& msg)
         return;
 
     last_time_shm_server_online_ = ros::WallTime::now();
-    ROS_DEBUG_STREAM_THROTTLE(5, "SHM server online on: " << hostname_);
+    ROS_DEBUG_STREAM_THROTTLE_NAMED(5, "Client", "SHM server online on: " << hostname_);
 }
 
 // ----------------------------------------------------------------------------------------
@@ -109,12 +109,12 @@ void Client::hostsCallback(const std_msgs::StringConstPtr& msg)
 void Client::subHostsThreadFunc(const float frequency)
 {
     ros::WallRate r(frequency);
-    ros::WallDuration d(5*r.expectedCycleTime().toSec()); // To prevent any issues by a very small delay
+    ros::WallDuration d(3*r.expectedCycleTime().toSec()); // To prevent any issues by a very small delay
     while(nh_->ok())
     {
         cb_queue_.callAvailable();
         // Decide on implementation mode
-        if (ros::WallTime::now() - d > last_time_shm_server_online_)
+        if (ros::WallTime::now() > last_time_shm_server_online_ + d)
         {
             // Too much time has elapsed since last message, use rgbd
             // Lock the entire switching procedure, but not the decision;
@@ -123,7 +123,7 @@ void Client::subHostsThreadFunc(const float frequency)
                 client_shm_.deinitialize();
             if(!client_rgbd_.initialized())
             {
-                ROS_DEBUG("Switching to ClientRGBD");
+                ROS_DEBUG_NAMED("Client", "Switching to ClientRGBD");
                 client_rgbd_.initialize(server_name_);
             }
             client_impl_mode_ = ClientImplMode::rgbd;
@@ -136,7 +136,7 @@ void Client::subHostsThreadFunc(const float frequency)
                 client_rgbd_.deinitialize();
             if (!client_shm_.initialized())
             {
-                ROS_DEBUG("Switching to ClientSHM");
+                ROS_DEBUG_NAMED("Client", "Switching to ClientSHM");
                 // It might take multiple iterations before ClientSHM is initialized.
                 client_shm_.initialize(server_name_, 0);
             }

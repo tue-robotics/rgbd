@@ -5,7 +5,7 @@
 <package format="3">
   <name>rgbd</name>
   <version>0.1.0</version>
-  <description>The rgbd package</description>
+  <description>Provides communication and tools for combined RGB and Depth images</description>
 
   <maintainer email="MatthijsBurgh@outlook.com">Matthijs van der Burgh</maintainer>
 
@@ -16,20 +16,29 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>cv_bridge</depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>nodelet</build_depend>
+  <build_depend>pluginlib</build_depend>
+  <build_depend>rosconsole_bridge</build_depend>
+
+  <exec_depend>nodelet</exec_depend>
+
   <depend>boost</depend>
   <depend>geolib2</depend>
-  <depend>geometry_msgs</depend>
   <depend>image_geometry</depend>
+  <depend>libopencv-dev</depend>
   <depend>message_filters</depend>
-  <depend>nodelet</depend>
   <depend>pcl_ros</depend>
-  <depend>pluginlib</depend>
   <depend>rgbd_msgs</depend>
-  <depend>rosconsole_bridge</depend>
   <depend>roscpp</depend>
   <depend>sensor_msgs</depend>
   <depend>tue_serialization</depend>
+
+  <test_depend>catkin_lint_cmake</test_depend>
+  <test_depend>rospy</test_depend>
+  <test_depend>rostest</test_depend>
+  <test_depend>std_msgs</test_depend>
 
   <doc_depend>doxygen</doc_depend>
 

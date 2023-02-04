@@ -55,19 +55,19 @@ bool ClientSHM::initialize(const std::string& server_name, float timeout)
             depth_data_size_ = static_cast<uint64_t>(buffer_header_->depth_width * buffer_header_->depth_height * 4);
 
             sequence_nr_ = 0;
-            ROS_INFO_STREAM("Opened shared memory on: '" << server_name_cp << "' succesfully.");
+            ROS_INFO_STREAM_NAMED("ClientSHM", "Opened shared memory on: '" << server_name_cp << "' succesfully.");
             return true;
         }
         catch(ipc::interprocess_exception &ex)
         {
-            ROS_DEBUG_STREAM("Could not open shared memory: " << ex.what());
+            ROS_DEBUG_STREAM_NAMED("ClientSHM", "Could not open shared memory: " << ex.what());
         }
         d.sleep();
         now = ros::Time::now();
     }
     while (ros::ok() && (now - start).toSec() < static_cast<double>(timeout));
 
-    ROS_INFO_STREAM("Opening shared memory on: '" << server_name_cp << "' failed on timeout(" << timeout << ").");
+    ROS_INFO_STREAM_NAMED("ClientSHM", "Opening shared memory on: '" << server_name_cp << "' failed on timeout(" << timeout << ").");
 
     return false;
 }
@@ -105,12 +105,12 @@ bool ClientSHM::nextImage(Image& image)
     memcpy(rgb->data, image_data_, rgb_data_size_);
     memcpy(depth->data, image_data_ + rgb_data_size_, depth_data_size_);
 
+    image.frame_id_ = buffer_header_->frame_id;
+    image.timestamp_ = buffer_header_->timestamp;
 
     if (!image.getCameraModel().initialized())
     {
         sensor_msgs::CameraInfo cam_info_msg;
-        cam_info_msg.header.frame_id = buffer_header_->frame_id;
-        cam_info_msg.header.stamp.fromSec(buffer_header_->timestamp);
 
         cam_info_msg.height = buffer_header_->height;
         cam_info_msg.width = buffer_header_->width;
@@ -148,8 +148,10 @@ ImagePtr ClientSHM::nextImage()
     if (nextImage(*img))
         return img;
     else
-        return ImagePtr();
+        return nullptr;
 }
+
+// ----------------------------------------------------------------------------------------------------
 
 } // end namespace rgbd
 

@@ -90,7 +90,7 @@ bool ServerRGBD::serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetR
     // Check for valid input
     if (req.compression != rgbd_msgs::GetRGBDRequest::JPEG && req.compression != rgbd_msgs::GetRGBDRequest::PNG)
     {
-        ROS_ERROR("Invalid compression, only JPEG and PNG are supported (see ENUM in srv definition)");
+        ROS_ERROR_NAMED("ServerRGBD", "Invalid compression, only JPEG and PNG are supported (see ENUM in srv definition)");
         return false;
     }
 
@@ -108,7 +108,7 @@ bool ServerRGBD::serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetR
     if (cv::imencode(compression_str, resized_rgb, resp.rgb_data) && cv::imencode(compression_str, resized_depth, resp.depth_data))
         return true;
 
-    ROS_ERROR_STREAM("cv::imencode with compression_str " << compression_str << " failed!");
+    ROS_ERROR_STREAM_NAMED("ServerRGBD", "cv::imencode with compression_str " << compression_str << " failed!");
 
     return false;
 }

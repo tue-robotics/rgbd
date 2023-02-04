@@ -15,7 +15,7 @@ std::string get_hostname()
     char hostname[HOST_NAME_MAX];
     if (gethostname(hostname, HOST_NAME_MAX) != 0)
     {
-        ROS_FATAL("Can't determine hostname");
+        ROS_FATAL_NAMED("utility", "Can't determine hostname");
         throw std::runtime_error("Can't determine hostname");
     }
 

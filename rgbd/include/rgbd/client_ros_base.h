@@ -57,6 +57,12 @@ public:
     bool initialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic);
 
     /**
+     * @brief Clears the subscribers. #initialized will now return false.
+     * @return indicates success
+     */
+    bool deinitialize();
+
+    /**
      * @brief Check if the client is initialized. nextImage will not return an image if client is not initialized.
      * @return initialized or not
      */

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+    <test test-name="connection_rgbd_gtest" pkg="rgbd" type="connection_rgbd_gtest" />
+</launch>

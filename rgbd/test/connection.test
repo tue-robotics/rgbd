@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="test_server" pkg="rgbd" type="rgbd_test_server_rgbd">
+        <remap from="test" to="rgbd" />
+        <param name="rate" value="15" />
+    </node>
+
+    <node name="shm_server" pkg="rgbd" type="rgbd_to_shm" respawn="true" respawn_delay="5" />
+
+    <test test-name="connection_gtest" pkg="rgbd" type="connection_gtest" />
+</launch>
