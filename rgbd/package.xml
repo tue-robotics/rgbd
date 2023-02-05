@@ -24,7 +24,8 @@
 
   <exec_depend>nodelet</exec_depend>
 
-  <depend>boost</depend>
+  <depend>libboost-dev</depend>
+  <depend>libboost-iostreams-dev</depend>
   <depend>geolib2</depend>
   <depend>image_geometry</depend>
   <depend>libopencv-dev</depend>
