@@ -16,15 +16,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>cv_bridge</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>nodelet</build_depend>
-  <build_depend>pluginlib</build_depend>
-  <build_depend>rosconsole_bridge</build_depend>
-
-  <exec_depend>nodelet</exec_depend>
-
-  <depend>boost</depend>
+  <depend>libboost-dev</depend>
   <depend>geolib2</depend>
   <depend>image_geometry</depend>
   <depend>libopencv-dev</depend>
@@ -34,6 +26,20 @@
   <depend>roscpp</depend>
   <depend>sensor_msgs</depend>
   <depend>tue_serialization</depend>
+
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>libboost-iostreams-dev</build_depend>
+  <build_depend>nodelet</build_depend>
+  <build_depend>pluginlib</build_depend>
+  <build_depend>rosconsole_bridge</build_depend>
+
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>libboost-iostreams-dev</exec_depend>
+  <exec_depend>nodelet</exec_depend>
+  <exec_depend>pluginlib</exec_depend>
+  <exec_depend>rosconsole_bridge</exec_depend>
 
   <test_depend>catkin_lint_cmake</test_depend>
   <test_depend>rospy</test_depend>
