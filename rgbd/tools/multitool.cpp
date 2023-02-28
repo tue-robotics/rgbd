@@ -258,7 +258,7 @@ int main(int argc, char **argv)
             {
             case ' ': PAUSE = !PAUSE;
                 break;
-            case 'm': MODE = "MEASURE";
+            case 'm': MODE = MODE == "MEASURE" ? "" : "MEASURE";
                 break;
             case 'q': MODE="DONE";
                 break;
