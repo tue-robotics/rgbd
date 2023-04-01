@@ -11,14 +11,18 @@
 #include "rgbd/image.h"
 #include "rgbd/server_ros.h"
 
+#include <string>
+
 int main(int argc, char **argv)
 {
+    std::vector<std::string> myargv;
+    ros::removeROSArgs(argc, argv, myargv);
     bool publish_rgb = false, publish_depth = false, publish_pc = false;
     {
         bool valid_arg_provided = false;
-        for (int i = 1; i < argc; ++i)
+        for (uint i = 1; i < myargv.size(); ++i)
         {
-            std::string opt(argv[i]);
+            const std::string& opt = myargv[i];
             if (opt == "-h" || opt == "--help")
             {
                 std::cout << "Usage: rgbd_to_ros [OPTIONS]" << std::endl
