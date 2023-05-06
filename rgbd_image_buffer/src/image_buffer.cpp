@@ -83,7 +83,7 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& se
     if (!tf_buffer_.canTransform(root_frame_, rgbd_image->getFrameId(), ros::Time(rgbd_image->getTimestamp()))) // Get the TF when it is available now
         if (!tf_buffer_.canTransform(root_frame_, rgbd_image->getFrameId(), ros::Time(rgbd_image->getTimestamp()), t_end - ros::Time::now()))
         {
-            ROS_ERROR_NAMED("image_buffer", "[IMAGE_BUFFER] timeout waiting for tf");
+            ROS_ERROR_THROTTLE_NAMED(5, "image_buffer", "[IMAGE_BUFFER] timeout waiting for tf");
             return false;
         }
 
