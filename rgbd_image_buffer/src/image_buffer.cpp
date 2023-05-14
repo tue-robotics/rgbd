@@ -7,6 +7,9 @@
 #include <rgbd/client.h>
 #include <rgbd/image.h>
 
+#include <ros/rate.h>
+#include <ros/time.h>
+
 #include <tf2_ros/transform_listener.h>
 
 namespace rgbd
@@ -46,7 +49,7 @@ void ImageBuffer::initialize(const std::string& topic, const std::string& root_f
 
 // ----------------------------------------------------------------------------------------------------
 
-bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec)
+bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec, uint timeout_tries)
 {
     if (!rgbd_client_)
     {
@@ -59,6 +62,9 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& se
 
     ros::Time t_start = ros::Time::now();
     ros::Time t_end = t_start + ros::Duration(timeout_sec);
+    timeout_tries = timeout_tries == 0 ? timeout_tries : 10;
+    double freq = timeout_sec > 0 ? timeout_sec/timeout_tries : 1000; // In case of no timeout, there will be no sleeping, so arbitrary number
+    ros::Rate r(freq);
 
     rgbd::ImageConstPtr rgbd_image;
     do
@@ -73,7 +79,7 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& se
             return false;
         }
         else
-            ros::Duration(0.1).sleep();
+            r.sleep();
     }
     while(ros::ok()); // Give it minimal one go
 
