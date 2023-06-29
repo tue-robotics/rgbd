@@ -49,7 +49,7 @@ void ImageBuffer::initialize(const std::string& topic, const std::string& root_f
 
 // ----------------------------------------------------------------------------------------------------
 
-bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec, uint timeout_tries)
+bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec, double check_rate)
 {
     if (!rgbd_client_)
     {
@@ -59,12 +59,14 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& se
 
     // - - - - - - - - - - - - - - - - - -
     // Wait until we get a new image
-
     ros::Time t_start = ros::Time::now();
     ros::Time t_end = t_start + ros::Duration(timeout_sec);
-    timeout_tries = timeout_tries > 0 ? timeout_tries : 10;
-    double freq = timeout_sec > 0 ? timeout_sec/timeout_tries : 1000; // In case of no timeout, there will be no sleeping, so arbitrary number
-    ros::Rate r(freq);
+    if (check_rate <= 0)
+    {
+        ROS_DEBUG_STREAM_NAMED("iamge_buffer", "[IMAGE_BUFFER](waitForRecentImage) defaulting to 10Hz instead of '" << check_rate << "'");
+        check_rate = 10.;
+    }
+    ros::Rate r(check_rate);
 
     rgbd::ImageConstPtr rgbd_image;
     do
@@ -113,6 +115,20 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& se
     image = rgbd_image;
 
     return true;
+}
+
+// ----------------------------------------------------------------------------------------------------
+
+bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec, uint timeout_tries)
+{
+    if (timeout_tries <= 0)
+    {
+        ROS_DEBUG_STREAM_NAMED("iamge_buffer", "[IMAGE_BUFFER](waitForRecentImage) defaulting to 10 tries instead of '" << timeout_tries << "'");
+        timeout_tries = 10;
+    }
+    double freq = timeout_sec > 0 ? timeout_sec/timeout_tries : 1000; // In case of no timeout, there will be no sleeping, so arbitrary number
+
+    return waitForRecentImage(image, sensor_pose, timeout_sec, freq);
 }
 
 // ----------------------------------------------------------------------------------------------------
