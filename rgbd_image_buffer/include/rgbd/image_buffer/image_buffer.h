@@ -59,9 +59,21 @@ public:
      * @param[out] image rgbd image to write the next image to. Iff a next image is found
      * @param[out] sensor_pose will be filled with the sensor pose corresponding to the next image. Iff a next image is found
      * @param[in] timeout_sec maximum duration to block.
+     * @param[in,opt] check_rate Check for a new image on this frequency. In case =0, set to 10 Hz
      * @return whether or not a next image was available within the timeout duration.
      */
-    bool waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec);
+    bool waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec, double check_rate = 10.);
+
+    /**
+     * @brief Blocks until a new image with transform is found. Returns false if no image or TF could be found within 'timeout_sec' seconds.
+     * But will always give it one try, both to get the image and to get TF.
+     * @param[out] image rgbd image to write the next image to. Iff a next image is found
+     * @param[out] sensor_pose will be filled with the sensor pose corresponding to the next image. Iff a next image is found
+     * @param[in] timeout_sec maximum duration to block.
+     * @param[in] timeout_tries number of tries to check for a new image. In case =0, set to 10 tries
+     * @return whether or not a next image was available within the timeout duration.
+     */
+    bool waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec, uint timeout_tries);
 
 private:
 
