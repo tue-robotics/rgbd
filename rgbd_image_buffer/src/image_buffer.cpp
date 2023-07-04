@@ -74,7 +74,9 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& se
         rgbd_image = rgbd_client_->nextImage();
 
         if (rgbd_image)
+        {
             break;
+        }
         else if (ros::Time::now() > t_end)
         {
             ROS_ERROR_NAMED("image_buffer", "[IMAGE_BUFFER] timeout waiting for rgbd image");
