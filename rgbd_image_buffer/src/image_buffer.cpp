@@ -128,7 +128,7 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& se
         ROS_DEBUG_STREAM_NAMED("iamge_buffer", "[IMAGE_BUFFER](waitForRecentImage) defaulting to 10 tries instead of '" << timeout_tries << "'");
         timeout_tries = 10;
     }
-    double freq = timeout_sec > 0 ? timeout_sec/timeout_tries : 1000; // In case of no timeout, there will be no sleeping, so arbitrary number
+    double freq = timeout_sec > 0 ? timeout_tries/timeout_sec : 1000; // In case of no timeout, there will be no sleeping, so arbitrary number
 
     return waitForRecentImage(image, sensor_pose, timeout_sec, freq);
 }
