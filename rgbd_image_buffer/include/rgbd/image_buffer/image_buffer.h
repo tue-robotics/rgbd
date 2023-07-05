@@ -70,10 +70,10 @@ public:
      * @param[out] image rgbd image to write the next image to. Iff a next image is found
      * @param[out] sensor_pose will be filled with the sensor pose corresponding to the next image. Iff a next image is found
      * @param[in] timeout_sec maximum duration to block.
-     * @param[in,opt] timeout_tries number of tries to check for a new image. In case =0, set to 10 tries
+     * @param[in,opt] timeout_tries number of tries to check for a new image. In case =0, set to 25 tries
      * @return whether or not a next image was available within the timeout duration.
      */
-    bool waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec, uint timeout_tries = 10u);
+    bool waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec, uint timeout_tries = 25u);
 
 private:
 
