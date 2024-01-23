@@ -12,9 +12,11 @@
 
 #include <rgbd/serialization.h>
 #include <fstream>
+#include <iostream>
 
 int main(int argc, char **argv)
 {
+	char key_pressed;
     ros::init(argc, argv, "rgbd_saver");
 
     ros::NodeHandle nh_private("~");
@@ -22,7 +24,7 @@ int main(int argc, char **argv)
     float rate = 30;
     nh_private.getParam("rate", rate);
 
-    std::string file_name = "rgbd_image";
+    std::string file_name = "rgbd_image_1";
 
     rgbd::Client client;
     client.initialize(ros::names::resolve("rgbd"));
@@ -43,8 +45,15 @@ int main(int argc, char **argv)
                 return 1;
             }
         }
-        if (client.nextImage(image))
-        {
+        ROS_INFO("Press s to save and q to exit.");
+        system("stty raw");
+        key_pressed = getchar(); 
+        system("stty cooked");
+        system("clear");
+        
+        if (key_pressed=='s'){
+			if (client.nextImage(image))
+			{
             // write
             std::ofstream f_out;
             f_out.open(file_name.c_str(), std::ifstream::binary);
@@ -53,8 +62,13 @@ int main(int argc, char **argv)
             f_out.close();
 
             ROS_INFO("Image stored to disk.");
-            return 0;
-        }
+			}
+			continue;
+		}
+        if (key_pressed == 'q'){
+			system("stty cooked");
+			return 0;
+		}
 
         r.sleep();
     }
