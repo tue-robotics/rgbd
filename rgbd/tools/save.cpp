@@ -13,6 +13,7 @@
 #include <rgbd/serialization.h>
 #include <fstream>
 #include <iostream>
+#include <sys/stat.h>
 
 int main(int argc, char **argv)
 {
@@ -24,7 +25,8 @@ int main(int argc, char **argv)
     float rate = 30;
     nh_private.getParam("rate", rate);
 
-    std::string file_name = "rgbd_image_1";
+    std::string file_name = "rgbd_image_";
+    struct stat sb;
 
     rgbd::Client client;
     client.initialize(ros::names::resolve("rgbd"));
@@ -52,19 +54,32 @@ int main(int argc, char **argv)
         if (key_pressed=='s'){
 			if (client.nextImage(image))
 			{
-            // write
-            std::ofstream f_out;
-            f_out.open(file_name.c_str(), std::ifstream::binary);
-            tue::serialization::OutputArchive a_out(f_out);
-            rgbd::serialize(image, a_out);
-            f_out.close();
+                for (int i = 1; i < 10000; i++) 
+                {
+                    std::string file_name_new = file_name + std::to_string(i);
+                    if (stat(file_name_new.c_str(), &sb) == 0 && !(sb.st_mode & S_IFDIR))
+                    {
+                        // filename exists
+                        continue;
+                    }
+                    else
+                    {
+                        // write
+                        std::ofstream f_out;
+                        f_out.open(file_name_new.c_str(), std::ifstream::binary);
+                        tue::serialization::OutputArchive a_out(f_out);
+                        rgbd::serialize(image, a_out);
+                        f_out.close();
+                        break;
+                    }
+                }
 
             ROS_INFO("Image stored to disk.");
 			}
 			continue;
 		}
-        if (key_pressed == 'q'){
-			system("stty cooked");
+        if (key_pressed == 'q')
+        {
 			return 0;
 		}
 
