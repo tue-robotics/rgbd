@@ -46,10 +46,8 @@ int main(int argc, char **argv)
             }
         }
         ROS_INFO("Press s to save and q to exit.");
-        system("stty raw");
-        key_pressed = getchar(); 
-        system("stty cooked");
-        system("clear");
+        
+        std::cin >> key_pressed;
         
         if (key_pressed=='s'){
 			if (client.nextImage(image))
