@@ -14,19 +14,18 @@
 #include <fstream>
 #include <iostream>
 #include <sys/stat.h>
+#include <chrono>  // chrono::system_clock
+#include <ctime>   // localtime
 
 int main(int argc, char **argv)
 {
-	char key_pressed;
+    char key_pressed;
     ros::init(argc, argv, "rgbd_saver");
 
     ros::NodeHandle nh_private("~");
 
     float rate = 30;
     nh_private.getParam("rate", rate);
-
-    std::string file_name = "rgbd_image_";
-    struct stat sb;
 
     rgbd::Client client;
     client.initialize(ros::names::resolve("rgbd"));
@@ -49,40 +48,35 @@ int main(int argc, char **argv)
         }
         ROS_INFO("Press s to save and q to exit.");
         
-        std::cin >> key_pressed;
+        //std::cin >> key_pressed;
+        system ("/bin/stty raw");
+        key_pressed = getchar();
         
-        if (key_pressed=='s'){
-			if (client.nextImage(image))
-			{
-                for (int i = 1; i < 10000; i++) 
-                {
-                    std::string file_name_new = file_name + std::to_string(i);
-                    if (stat(file_name_new.c_str(), &sb) == 0 && !(sb.st_mode & S_IFDIR))
-                    {
-                        // filename exists
-                        continue;
-                    }
-                    else
-                    {
-                        // write
-                        std::ofstream f_out;
-                        f_out.open(file_name_new.c_str(), std::ifstream::binary);
-                        tue::serialization::OutputArchive a_out(f_out);
-                        rgbd::serialize(image, a_out);
-                        f_out.close();
-                        break;
-                    }
-                }
-
-            ROS_INFO("Image stored to disk.");
-			}
-			continue;
-		}
+        if (key_pressed == 's')
+        {
+            system ("/bin/stty cooked");
+            if (client.nextImage(image))
+            {
+                auto now = std::chrono::system_clock::now();
+                auto in_time_t = std::chrono::system_clock::to_time_t(now);
+                std::stringstream ss;
+                ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d_%X");
+                auto file_name = ss.str();
+                const char* file_name_new = file_name.c_str(); 
+                // write
+                std::ofstream f_out;
+                f_out.open(file_name_new, std::ifstream::binary);
+                tue::serialization::OutputArchive a_out(f_out);
+                rgbd::serialize(image, a_out);
+                f_out.close();
+                ROS_INFO("Image stored to disk.");
+            }
+        }
         if (key_pressed == 'q')
         {
-			return 0;
-		}
-
+            system ("/bin/stty cooked");
+            return 0;
+        }
         r.sleep();
     }
 
