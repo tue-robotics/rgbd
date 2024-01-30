@@ -48,33 +48,41 @@ int main(int argc, char **argv)
         }
         ROS_INFO("Press s to save and q to exit.");
         
-        //std::cin >> key_pressed;
+        #pragma GCC diagnostic ignored "-Wunused-result"
         system ("/bin/stty raw");
         key_pressed = getchar();
+        #pragma GCC diagnostic ignored "-Wunused-result"
+        system ("/bin/stty cooked");
         
         if (key_pressed == 's')
         {
-            system ("/bin/stty cooked");
             if (client.nextImage(image))
             {
-                auto now = std::chrono::system_clock::now();
-                auto in_time_t = std::chrono::system_clock::to_time_t(now);
                 std::stringstream ss;
-                ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d_%X");
-                auto file_name = ss.str();
-                const char* file_name_new = file_name.c_str(); 
-                // write
+                ss << "image_";
+                const std::time_t time = image.getTimestamp();
+                ss << std::put_time(std::localtime(&time), "%Y-%m-%d_%H.%M.%S.%f");
+                ss << ".rgbd";
+                const std::string file_name = ss.str();
+
                 std::ofstream f_out;
-                f_out.open(file_name_new, std::ifstream::binary);
-                tue::serialization::OutputArchive a_out(f_out);
-                rgbd::serialize(image, a_out);
+                f_out.open(file_name.c_str(), std::ifstream::binary);
+                try
+                {
+                    tue::serialization::OutputArchive a_out(f_out);
+                    rgbd::serialize(image, a_out);
+                    ROS_INFO_STREAM("Written image to '" << file_name << "'");
+                }
+                catch (const std::exception& e) // caught by reference to base
+                {
+                    ROS_ERROR_STREAM("Error while writing to '" << file_name << "':\n" << e.what());
+                }
                 f_out.close();
-                ROS_INFO("Image stored to disk.");
             }
         }
-        if (key_pressed == 'q')
+        else if (key_pressed == 'q')
         {
-            system ("/bin/stty cooked");
+            ROS_INFO("Exiting");
             return 0;
         }
         r.sleep();
