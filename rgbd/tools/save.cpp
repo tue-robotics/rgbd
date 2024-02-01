@@ -51,7 +51,6 @@ int main(int argc, char **argv)
         #pragma GCC diagnostic ignored "-Wunused-result"
         system ("/bin/stty raw");
         key_pressed = getchar();
-        #pragma GCC diagnostic ignored "-Wunused-result"
         system ("/bin/stty cooked");
         
         if (key_pressed == 's')
