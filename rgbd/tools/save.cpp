@@ -47,11 +47,13 @@ int main(int argc, char **argv)
             }
         }
         ROS_INFO("Press s to save and q to exit.");
-        
+
+        #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wunused-result"
         system ("/bin/stty raw");
         key_pressed = getchar();
         system ("/bin/stty cooked");
+        #pragma GCC diagnostic pop
         
         if (key_pressed == 's')
         {
