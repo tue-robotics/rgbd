@@ -9,17 +9,14 @@
 
 #include "rgbd/client.h"
 #include "rgbd/image.h"
+#include "rgbd/serialization.h"
 
-#include <rgbd/serialization.h>
+#include <ctime>
 #include <fstream>
 #include <iostream>
-#include <sys/stat.h>
-#include <chrono>  // chrono::system_clock
-#include <ctime>   // localtime
 
 int main(int argc, char **argv)
 {
-    char key_pressed;
     ros::init(argc, argv, "rgbd_saver");
 
     ros::NodeHandle nh_private("~");
@@ -35,6 +32,7 @@ int main(int argc, char **argv)
     ros::WallTime last_master_check = ros::WallTime::now();
 
     ros::Rate r(rate);
+    char key_pressed;
     while (ros::ok())
     {
         if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
