@@ -14,7 +14,6 @@
 #include <ctime>
 #include <fstream>
 #include <iostream>
-#include <chrono>
 
 int main(int argc, char **argv)
 {
@@ -62,8 +61,8 @@ int main(int argc, char **argv)
                 ss << "image_";
                 const std::time_t time = image.getTimestamp();
                 ss << std::put_time(std::localtime(&time), "%Y-%m-%d_%H.%M.%S");
-                const auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
-                ss << "." << std::setfill('0') << std::setw(3) << ms.time_since_epoch().count() % 1000;
+                const auto ms = ros::Time(image.getTimestamp()-time).toNSec() * 1e-6;
+                ss << "." << std::setfill('0') << std::setw(3) << ms;
                 ss << ".rgbd";
                 const std::string file_name = ss.str();
 
