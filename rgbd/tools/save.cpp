@@ -59,10 +59,11 @@ int main(int argc, char **argv)
             {
                 std::stringstream ss;
                 ss << "image_";
-                const std::time_t time = image.getTimestamp();
+                double sec;
+                const double fractional = std::modf(image.getTimestamp(), &sec);
+                const std::time_t time = sec;
                 ss << std::put_time(std::localtime(&time), "%Y-%m-%d_%H.%M.%S");
-                const auto ms = ros::Time(image.getTimestamp()-time).toNSec() * 1e-6;
-                ss << "." << std::setfill('0') << std::setw(3) << ms;
+                ss << "." << std::setw(6) << std::setfill('0') << static_cast<int32_t>(fractional*1e6);
                 ss << ".rgbd";
                 const std::string file_name = ss.str();
 
