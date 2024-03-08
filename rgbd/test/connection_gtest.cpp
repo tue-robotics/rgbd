@@ -56,7 +56,7 @@ TEST_F(Connection, ConsistentConnection)
         {
             ipc::shared_memory_object::remove(test_server_name_shm.c_str());
             shm_killed = true;
-            ros::Duration(1).sleep(); // Wait for RGBD client to take over
+            ros::Duration(1.5).sleep(); // Wait for RGBD client to take over
             /* Reset rate, otherwise first sleep is zero, because of the longer sleep above.
              * Which eliminates any time between the two consecutive nextImage calls.
              * The second call will fail then, because the elapsed time has been to short to receive any new image.
