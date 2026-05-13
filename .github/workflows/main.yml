@@ -33,3 +33,4 @@ jobs:
         uses: tue-robotics/tue-env/ci/main@master
         with:
           package: ${{ matrix.package }}
+          default-branch: copilot/rename-rgbd-msgs-to-rgbd-interfaces
