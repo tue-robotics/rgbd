@@ -23,7 +23,7 @@ bool ClientRGBD::initialize(const std::string& server_name)
 {
     ros::NodeHandle nh;
     ros::SubscribeOptions sub_options =
-            ros::SubscribeOptions::create<rgbd_msgs::RGBD>(
+            ros::SubscribeOptions::create<rgbd_interfaces::RGBD>(
                 server_name, 1, boost::bind(&ClientRGBD::rgbdImageCallback, this, _1), ros::VoidPtr(), &cb_queue_);
 
     sub_image_ = nh.subscribe(sub_options);
@@ -66,7 +66,7 @@ ImagePtr ClientRGBD::nextImage()
 
 // ----------------------------------------------------------------------------------------
 
-void ClientRGBD::rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg)
+void ClientRGBD::rgbdImageCallback(const rgbd_interfaces::RGBD::ConstPtr& msg)
 {
     new_image_ = convert(msg, image_ptr_);
 }

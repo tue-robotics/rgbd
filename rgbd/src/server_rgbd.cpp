@@ -7,7 +7,7 @@
 #include <opencv2/core/mat.hpp>
 #include <opencv2/imgcodecs.hpp>
 
-#include <rgbd_msgs/RGBD.h>
+#include <rgbd_interfaces/RGBD.h>
 
 #include <ros/node_handle.h>
 
@@ -42,7 +42,7 @@ ServerRGBD::~ServerRGBD()
 
 void ServerRGBD::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type, const float service_freq)
 {
-    pub_image_ = nh_.advertise<rgbd_msgs::RGBD>(name, 1);
+    pub_image_ = nh_.advertise<rgbd_interfaces::RGBD>(name, 1);
     rgb_type_ = rgb_type;
     depth_type_ = depth_type;
 
@@ -63,7 +63,7 @@ void ServerRGBD::send(const Image& image)
     if (pub_image_.getNumSubscribers() == 0)
         return;
 
-    rgbd_msgs::RGBDPtr msg = boost::make_shared<rgbd_msgs::RGBD>();
+    rgbd_interfaces::RGBDPtr msg = boost::make_shared<rgbd_interfaces::RGBD>();
     msg->version = MESSAGE_VERSION;
 
     std::stringstream stream, stream2;
@@ -80,7 +80,7 @@ void ServerRGBD::send(const Image& image)
 
 // ----------------------------------------------------------------------------------------
 
-bool ServerRGBD::serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetRGBDResponse& resp)
+bool ServerRGBD::serviceCallback(rgbd_interfaces::GetRGBDRequest& req, rgbd_interfaces::GetRGBDResponse& resp)
 {
     rgbd::Image image;
     {
@@ -88,7 +88,7 @@ bool ServerRGBD::serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetR
         image = image_.clone();
     }
     // Check for valid input
-    if (req.compression != rgbd_msgs::GetRGBDRequest::JPEG && req.compression != rgbd_msgs::GetRGBDRequest::PNG)
+    if (req.compression != rgbd_interfaces::GetRGBDRequest::JPEG && req.compression != rgbd_interfaces::GetRGBDRequest::PNG)
     {
         ROS_ERROR_NAMED("ServerRGBD", "Invalid compression, only JPEG and PNG are supported (see ENUM in srv definition)");
         return false;
@@ -104,7 +104,7 @@ bool ServerRGBD::serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetR
     cv::resize(image.getDepthImage(), resized_depth, cv::Size(req.width, static_cast<int>(image.getDepthImage().rows * ratio_depth)));
 
     // Compress images
-    std::string compression_str = req.compression == rgbd_msgs::GetRGBDRequest::JPEG ? ".jpeg" : ".png";
+    std::string compression_str = req.compression == rgbd_interfaces::GetRGBDRequest::JPEG ? ".jpeg" : ".png";
     if (cv::imencode(compression_str, resized_rgb, resp.rgb_data) && cv::imencode(compression_str, resized_depth, resp.depth_data))
         return true;
 

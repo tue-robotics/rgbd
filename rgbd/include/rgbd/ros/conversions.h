@@ -1,7 +1,7 @@
 #ifndef RGBD_ROS_CONVERSIONS_H_
 #define RGBD_ROS_CONVERSIONS_H_
 
-#include <rgbd_msgs/RGBD.h>
+#include <rgbd_interfaces/RGBD.h>
 
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
@@ -38,7 +38,7 @@ bool convert(const cv::Mat& image, const geo::DepthCamera& cam_model, sensor_msg
  * @param image raw pointer to an Image. In case it is a nullptr, a new instance will be created.
  * @return success
  */
-bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image);
+bool convert(const rgbd_interfaces::RGBDConstPtr& msg, rgbd::Image*& image);
 
 }
 

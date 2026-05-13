@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(rgbd_msgs)
+project(rgbd_interfaces)
 
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs

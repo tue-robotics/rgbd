@@ -85,7 +85,7 @@ bool convert(const cv::Mat& image,
 
 // ----------------------------------------------------------------------------------------------------
 
-bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image)
+bool convert(const rgbd_interfaces::RGBDConstPtr& msg, rgbd::Image*& image)
 {
     if (!image)
         image = new rgbd::Image;

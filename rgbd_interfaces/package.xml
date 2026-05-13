@@ -3,9 +3,9 @@
   href="http://download.ros.org/schema/package_format3.xsd"
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>rgbd_msgs</name>
+  <name>rgbd_interfaces</name>
   <version>0.1.0</version>
-  <description>The rgbd_msgs package</description>
+  <description>The rgbd_interfaces package</description>
 
   <maintainer email="MatthijsBurgh@outlook.com">Matthijs van der Burgh</maintainer>
 
