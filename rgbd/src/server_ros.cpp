@@ -1,6 +1,6 @@
 #include "rgbd/server_ros.h"
 
-#include <pcl_ros/point_cloud.hpp>
+#include <pcl_conversions/pcl_conversions.h>
 
 #include "rgbd/ros/conversions.h"
 #include "rgbd/view.h"
@@ -32,7 +32,7 @@ void ServerROS::initialize(std::string ns, bool publish_rgb, bool publish_depth,
     }
     if (publish_pc)
     {
-        pub_depth_pc_ = node_->create_publisher<pcl::PointCloud<pcl::PointXYZRGB>>(ns + "depth/points", 1);
+        pub_depth_pc_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(ns + "depth/points", 1);
     }
 }
 
@@ -91,7 +91,11 @@ void ServerROS::send(const Image& image)
                 }
             }
 
-            pub_depth_pc_->publish(pc_msg);
+            sensor_msgs::msg::PointCloud2 pc2_msg;
+            pcl::toROSMsg(pc_msg, pc2_msg);
+            pc2_msg.header.stamp = rclcpp::Time(static_cast<int64_t>(image.getTimestamp() * 1e9)).to_msg();
+            pc2_msg.header.frame_id = image.getFrameId();
+            pub_depth_pc_->publish(pc2_msg);
         }
     }
 

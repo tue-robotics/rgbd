@@ -12,6 +12,7 @@ find_package(geolib2 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(image_geometry REQUIRED)
 find_package(message_filters REQUIRED)
+find_package(pcl_conversions REQUIRED)
 find_package(pcl_ros REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rgbd_interfaces REQUIRED)
@@ -46,15 +47,24 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   ${Boost_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )
-target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBRARIES} rt)
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+    ${OpenCV_LIBRARIES}
+    rclcpp::rclcpp
+    rgbd_interfaces::rgbd_interfaces__rosidl_typesupport_cpp
+    sensor_msgs::sensor_msgs__rosidl_typesupport_cpp
+    geometry_msgs::geometry_msgs__rosidl_typesupport_cpp
+    std_msgs::std_msgs__rosidl_typesupport_cpp
+    rt
+)
 ament_target_dependencies(${PROJECT_NAME}
   cv_bridge
   geolib2
   geometry_msgs
   image_geometry
   message_filters
+  pcl_conversions
   pcl_ros
-  rclcpp
   rgbd_interfaces
   sensor_msgs
   std_msgs
@@ -99,8 +109,8 @@ ament_export_dependencies(
   geometry_msgs
   image_geometry
   message_filters
+  pcl_conversions
   pcl_ros
-  rclcpp
   rgbd_interfaces
   sensor_msgs
   std_msgs

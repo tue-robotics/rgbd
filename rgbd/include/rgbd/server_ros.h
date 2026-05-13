@@ -4,6 +4,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
@@ -28,7 +29,7 @@ protected:
     rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr pub_rgb_info_;
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_depth_img_;
     rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr pub_depth_info_;
-    rclcpp::Publisher<pcl::PointCloud<pcl::PointXYZRGB>>::SharedPtr pub_depth_pc_;
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_depth_pc_;
 };
 
 }  // namespace rgbd
