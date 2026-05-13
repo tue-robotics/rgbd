@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   nodelet
   pcl_ros
   pluginlib
-  ${PROJECT_NAME}_msgs
+  rgbd_interfaces
   rosconsole_bridge
   roscpp
   sensor_msgs
@@ -28,7 +28,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS geolib2 image_geometry message_filters pcl_ros ${PROJECT_NAME}_msgs roscpp sensor_msgs tue_serialization
+  CATKIN_DEPENDS geolib2 image_geometry message_filters pcl_ros rgbd_interfaces roscpp sensor_msgs tue_serialization
   DEPENDS Boost OpenCV
 )
 
