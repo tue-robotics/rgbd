@@ -2,7 +2,7 @@
 #define RGBD_SERVER_RGBD_H_
 
 #include "rgbd/image.h"
-#include "rgbd_msgs/GetRGBD.h"
+#include "rgbd_interfaces/GetRGBD.h"
 
 #include <ros/callback_queue.h>
 #include <ros/node_handle.h>
@@ -75,7 +75,7 @@ protected:
      * @param resp Service Response
      * @return success
      */
-    bool serviceCallback(rgbd_msgs::GetRGBDRequest& req, rgbd_msgs::GetRGBDResponse& resp);
+    bool serviceCallback(rgbd_interfaces::GetRGBDRequest& req, rgbd_interfaces::GetRGBDResponse& resp);
 
     /**
      * @brief Function to be called in the thread proving the service

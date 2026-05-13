@@ -11,7 +11,7 @@
 
 #include "rgbd/types.h"
 
-#include "rgbd_msgs/RGBD.h"
+#include "rgbd_interfaces/RGBD.h"
 
 
 namespace rgbd {
@@ -86,7 +86,7 @@ protected:
      */
     Image* image_ptr_;
 
-    void rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg);
+    void rgbdImageCallback(const rgbd_interfaces::RGBD::ConstPtr& msg);
 
 };
 

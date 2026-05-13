@@ -5,7 +5,7 @@
 
 #include <opencv2/core.hpp>
 #include <image_geometry/pinhole_camera_model.h>
-#include <rgbd_msgs/RGBD.h>
+#include <rgbd_interfaces/RGBD.h>
 #include <sensor_msgs/CameraInfo.h>
 
 
@@ -165,7 +165,7 @@ public:
 
     friend bool deserialize(tue::serialization::InputArchive& a, Image& image);
 
-    friend bool convert(const rgbd_msgs::RGBDConstPtr& msg, rgbd::Image*& image);
+    friend bool convert(const rgbd_interfaces::RGBDConstPtr& msg, rgbd::Image*& image);
 
 protected:
 

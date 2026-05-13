@@ -7,7 +7,7 @@
 #include <rgbd/view.h>
 #include <rgbd/client.h>
 
-#include <rgbd_msgs/Project2DTo3D.h>
+#include <rgbd_interfaces/Project2DTo3D.h>
 
 #include <ros/console.h>
 #include <ros/duration.h>
@@ -27,7 +27,7 @@
 // ----------------------------------------------------------------------------------------------------
 
 boost::circular_buffer<std::shared_ptr<rgbd::Image> > g_last_images_;
-bool srvGet3dPointFromROI(rgbd_msgs::Project2DTo3D::Request& req, rgbd_msgs::Project2DTo3D::Response& res)
+bool srvGet3dPointFromROI(rgbd_interfaces::Project2DTo3D::Request& req, rgbd_interfaces::Project2DTo3D::Response& res)
 {
     std::shared_ptr<rgbd::Image> last_image;
 
