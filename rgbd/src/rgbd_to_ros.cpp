@@ -1,26 +1,20 @@
-#include <ros/console.h>
-#include <ros/duration.h>
-#include <ros/init.h>
-#include <ros/master.h>
-#include <ros/names.h>
-#include <ros/node_handle.h>
-#include <ros/rate.h>
-#include <ros/time.h>
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/utilities.hpp>
 
 #include "rgbd/client.h"
 #include "rgbd/image.h"
 #include "rgbd/server_ros.h"
 
+#include <iostream>
 #include <string>
 
 int main(int argc, char **argv)
 {
-    std::vector<std::string> myargv;
-    ros::removeROSArgs(argc, argv, myargv);
+    std::vector<std::string> myargv = rclcpp::remove_ros_arguments(argc, argv);
     bool publish_rgb = false, publish_depth = false, publish_pc = false;
     {
         bool valid_arg_provided = false;
-        for (uint i = 1; i < myargv.size(); ++i)
+        for (size_t i = 1; i < myargv.size(); ++i)
         {
             const std::string& opt = myargv[i];
             if (opt == "-h" || opt == "--help")
@@ -81,48 +75,35 @@ int main(int argc, char **argv)
         }
     }
 
-    ros::init(argc, argv, "rgbd_to_ros");
-    ros::start(); // Required to use ros::names::resolve, without creating a nodehandle
-    
-    ROS_DEBUG_STREAM("publish_rgb: " << publish_rgb);
-    ROS_DEBUG_STREAM("publish_depth: " << publish_depth);
-    ROS_DEBUG_STREAM("publish_pc: " << publish_pc);
+    rclcpp::init(argc, argv);
+    auto node = rclcpp::Node::make_shared("rgbd_to_ros");
 
-    // Listener
-    rgbd::Client client;
-    client.initialize(ros::names::resolve("rgbd"));
+    RCLCPP_DEBUG(node->get_logger(), "publish_rgb: %d", publish_rgb);
+    RCLCPP_DEBUG(node->get_logger(), "publish_depth: %d", publish_depth);
+    RCLCPP_DEBUG(node->get_logger(), "publish_pc: %d", publish_pc);
 
-    // Publishers
-    rgbd::ServerROS server;
+    rgbd::Client client(node);
+    client.initialize("rgbd");
+
+    rgbd::ServerROS server(node);
     server.initialize("", publish_rgb, publish_depth, publish_pc);
 
-    ros::NodeHandle nh_private("~");
-    float rate = 30;
-    nh_private.getParam("rate", rate);
+    double rate = node->declare_parameter<double>("rate", 30.0);
 
     rgbd::Image image;
 
-    ros::WallTime last_master_check = ros::WallTime::now();
-
-    ros::Rate r(rate);
-    while (ros::ok())
+    rclcpp::Rate r(rate);
+    while (rclcpp::ok())
     {
-        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-        {
-            last_master_check = ros::WallTime::now();
-            if (!ros::master::check())
-            {
-                ROS_FATAL("Lost connection to master");
-                return 1;
-            }
-        }
         if (client.nextImage(image))
         {
             server.send(image);
         }
 
+        rclcpp::spin_some(node);
         r.sleep();
     }
 
+    rclcpp::shutdown();
     return 0;
 }

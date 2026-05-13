@@ -1,32 +1,19 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8)
 project(rgbd_interfaces)
 
-find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
-  sensor_msgs
-  message_generation
+find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/RGBD.msg"
+  "srv/GetRGBD.srv"
+  "srv/Project2DTo3D.srv"
+  DEPENDENCIES geometry_msgs sensor_msgs std_msgs
 )
 
-add_message_files(
-  FILES
-    RGBD.msg
-)
+ament_export_dependencies(rosidl_default_runtime)
 
-add_service_files(
-  FILES
-    GetRGBD.srv
-    Project2DTo3D.srv
-)
-
-generate_messages(
-  DEPENDENCIES
-    geometry_msgs
-    sensor_msgs
-)
-
-###################################
-## catkin specific configuration ##
-###################################
-catkin_package(
-  CATKIN_DEPENDS message_runtime geometry_msgs sensor_msgs
-)
+ament_package()

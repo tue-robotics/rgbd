@@ -1,64 +1,36 @@
 #ifndef RGBD_SERVER_RGBD_H_
 #define RGBD_SERVER_RGBD_H_
 
-#include "rgbd/image.h"
-#include "rgbd_interfaces/GetRGBD.h"
+#include <rclcpp/rclcpp.hpp>
 
-#include <ros/callback_queue.h>
-#include <ros/node_handle.h>
-#include <ros/publisher.h>
-#include <ros/service_server.h>
+#include <rgbd_interfaces/msg/rgbd.hpp>
+#include <rgbd_interfaces/srv/get_rgbd.hpp>
+
+#include "rgbd/image.h"
 
 #include <mutex>
 #include <thread>
 
 namespace rgbd {
 
-/**
- * @brief Server which provides RGBD topic and RGBD service
- */
 class ServerRGBD {
-
 public:
-
-    /**
-     * @brief Constructor
-     */
-    ServerRGBD(ros::NodeHandle nh=ros::NodeHandle());
-
-    /**
-     * @brief Destructor
-     *
-     * Nodehandle is shutdown and all threads are joined
-     */
+    explicit ServerRGBD(const rclcpp::Node::SharedPtr& node = nullptr);
     virtual ~ServerRGBD();
 
-    /**
-     * @brief Initialize server
-     * @param name Fully resolved server name
-     * @param rgb_type rgb storage type
-     * @param depth_type depth storage type
-     * @param service_freq frequency of the thread processing service requests
-     */
-    void initialize(const std::string& name, RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS, DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS, const float service_freq = 10);
+    void initialize(const std::string& name,
+                    RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS,
+                    DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS,
+                    float service_freq = 10.0f);
 
-    /**
-     * @brief Write a new image to all interfaces
-     * @param image Image to be written
-     */
     void send(const Image& image);
 
-    /**
-     * @brief version of the RGBD message being used
-     */
-    const static int MESSAGE_VERSION;
+    static const int MESSAGE_VERSION;
 
 protected:
-
-    ros::NodeHandle nh_;
-    ros::Publisher pub_image_;
-    ros::ServiceServer service_server_;
-    ros::CallbackQueue cb_queue_;
+    rclcpp::Node::SharedPtr node_;
+    rclcpp::Publisher<rgbd_interfaces::msg::RGBD>::SharedPtr pub_image_;
+    rclcpp::Service<rgbd_interfaces::srv::GetRGBD>::SharedPtr service_server_;
 
     RGBStorageType rgb_type_;
     DepthStorageType depth_type_;
@@ -66,25 +38,15 @@ protected:
     rgbd::Image image_;
     std::mutex image_mutex_;
 
-    // Service thread
+    std::unique_ptr<rclcpp::executors::SingleThreadedExecutor> executor_;
     std::thread service_thread_;
+    bool stop_service_thread_{false};
 
-    /**
-     * @brief serviceCallback
-     * @param req Service Request
-     * @param resp Service Response
-     * @return success
-     */
-    bool serviceCallback(rgbd_interfaces::GetRGBDRequest& req, rgbd_interfaces::GetRGBDResponse& resp);
-
-    /**
-     * @brief Function to be called in the thread proving the service
-     * @param frequency frequency for checking service requests
-     */
-    void serviceThreadFunc(const float frequency);
-
+    void serviceCallback(const std::shared_ptr<rgbd_interfaces::srv::GetRGBD::Request> req,
+                         std::shared_ptr<rgbd_interfaces::srv::GetRGBD::Response> resp);
+    void serviceThreadFunc(float frequency);
 };
 
-}
+}  // namespace rgbd
 
-#endif // RGBD_SERVER_RGBD_H_
+#endif  // RGBD_SERVER_RGBD_H_

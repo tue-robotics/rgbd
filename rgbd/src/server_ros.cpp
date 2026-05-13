@@ -1,34 +1,20 @@
 #include "rgbd/server_ros.h"
 
-#include <pcl/point_types.h>
-#include <pcl/point_cloud.h>
-#include <pcl_ros/point_cloud.h>
+#include <pcl_ros/point_cloud.hpp>
 
-#include "rgbd/view.h"
 #include "rgbd/ros/conversions.h"
-
-#include <sensor_msgs/Image.h>
-#include <sensor_msgs/CameraInfo.h>
-
+#include "rgbd/view.h"
 
 namespace rgbd {
 
-// ----------------------------------------------------------------------------------------
-
-ServerROS::ServerROS(ros::NodeHandle nh) : nh_(nh)
+ServerROS::ServerROS(const rclcpp::Node::SharedPtr& node)
+    : node_(node ? node : rclcpp::Node::make_shared("rgbd_server_ros"))
 {
 }
 
-// ----------------------------------------------------------------------------------------
+ServerROS::~ServerROS() = default;
 
-ServerROS::~ServerROS()
-{
-    nh_.shutdown();
-}
-
-// ----------------------------------------------------------------------------------------
-
-void ServerROS::initialize(std::string ns, const bool publish_rgb, const bool publish_depth, const bool publish_pc)
+void ServerROS::initialize(std::string ns, bool publish_rgb, bool publish_depth, bool publish_pc)
 {
     if (!ns.empty() && ns.back() != '/')
     {
@@ -36,128 +22,95 @@ void ServerROS::initialize(std::string ns, const bool publish_rgb, const bool pu
     }
     if (publish_rgb)
     {
-        pub_rgb_img_ = std::make_shared<ros::Publisher>(nh_.advertise<sensor_msgs::Image>(ns + "rgb/image", 1));
-        pub_rgb_info_ = std::make_shared<ros::Publisher>(nh_.advertise<sensor_msgs::CameraInfo>(ns + "rgb/camera_info", 1));
-        ROS_DEBUG_STREAM_NAMED("ServerROS", "rgb image topic: " << pub_rgb_img_->getTopic());
-        ROS_DEBUG_STREAM_NAMED("ServerROS", "rgb camera info topic: " << pub_rgb_info_->getTopic());
-    }
-    else
-    {
-        ROS_DEBUG_NAMED("ServerROS", "rgb image publisher not initialized");
-        ROS_DEBUG_NAMED("ServerROS", "rgb camera info publisher not initialized");
+        pub_rgb_img_ = node_->create_publisher<sensor_msgs::msg::Image>(ns + "rgb/image", 1);
+        pub_rgb_info_ = node_->create_publisher<sensor_msgs::msg::CameraInfo>(ns + "rgb/camera_info", 1);
     }
     if (publish_depth)
     {
-        pub_depth_img_ = std::make_shared<ros::Publisher>(nh_.advertise<sensor_msgs::Image>(ns + "depth/image", 1));
-        pub_depth_info_ = std::make_shared<ros::Publisher>(nh_.advertise<sensor_msgs::CameraInfo>(ns + "depth/camera_info", 1));
-        ROS_DEBUG_STREAM_NAMED("ServerROS", "depth image topic: " << pub_depth_img_->getTopic());
-        ROS_DEBUG_STREAM_NAMED("ServerROS", "depth camera info topic: " << pub_depth_info_->getTopic());
-    }
-    else
-    {
-        ROS_DEBUG_NAMED("ServerROS", "depth image publisher not initialized");
-        ROS_DEBUG_NAMED("ServerROS", "depth camera info publisher not initialized");
+        pub_depth_img_ = node_->create_publisher<sensor_msgs::msg::Image>(ns + "depth/image", 1);
+        pub_depth_info_ = node_->create_publisher<sensor_msgs::msg::CameraInfo>(ns + "depth/camera_info", 1);
     }
     if (publish_pc)
     {
-        pub_depth_pc_ = std::make_shared<ros::Publisher>(nh_.advertise<pcl::PointCloud<pcl::PointXYZ> >(ns + "depth/points", 1));
-        ROS_DEBUG_STREAM_NAMED("ServerROS", "pointcloud topic: " << pub_depth_pc_->getTopic());
+        pub_depth_pc_ = node_->create_publisher<pcl::PointCloud<pcl::PointXYZRGB>>(ns + "depth/points", 1);
     }
-    else
-    {
-        ROS_DEBUG_NAMED("ServerROS", "pointcloud publisher not initialized");
-    }
-
 }
-
-// ----------------------------------------------------------------------------------------
 
 void ServerROS::send(const Image& image)
 {
     if ((pub_depth_img_ || pub_depth_pc_) && image.getDepthImage().data)
     {
-        // Convert camera info to message
         rgbd::View view(image, image.getDepthImage().cols);
 
-        if (pub_depth_img_ && (pub_depth_img_->getNumSubscribers() || pub_depth_info_->getNumSubscribers()))
+        if (pub_depth_img_ && (pub_depth_img_->get_subscription_count() || pub_depth_info_->get_subscription_count()))
         {
-            // Convert to image messages
-            sensor_msgs::Image msg;
-            sensor_msgs::CameraInfo info_msg;
+            sensor_msgs::msg::Image msg;
+            sensor_msgs::msg::CameraInfo info_msg;
 
             rgbd::convert(image.getDepthImage(), view.getRasterizer(), msg, info_msg);
 
-            msg.header.stamp.fromSec(image.getTimestamp());
+            msg.header.stamp = rclcpp::Time(static_cast<int64_t>(image.getTimestamp() * 1e9)).to_msg();
             msg.header.frame_id = image.getFrameId();
             info_msg.header = msg.header;
 
-            // Publish
             pub_depth_img_->publish(msg);
             pub_depth_info_->publish(info_msg);
         }
-        if (pub_depth_pc_ && pub_depth_pc_->getNumSubscribers())
+        if (pub_depth_pc_ && pub_depth_pc_->get_subscription_count())
         {
-             // Create point cloud
-             pcl::PointCloud<pcl::PointXYZRGB>::Ptr pc_msg(new pcl::PointCloud<pcl::PointXYZRGB>());
+            pcl::PointCloud<pcl::PointXYZRGB> pc_msg;
 
-             pc_msg->header.stamp = static_cast<uint64_t>(image.getTimestamp() * 1e6);
-             pc_msg->header.frame_id = image.getFrameId();
-             pc_msg->width  = 0;
-             pc_msg->height  = 1;
-             pc_msg->is_dense = true;
+            pc_msg.header.stamp = static_cast<uint64_t>(image.getTimestamp() * 1e6);
+            pc_msg.header.frame_id = image.getFrameId();
+            pc_msg.width  = 0;
+            pc_msg.height  = 1;
+            pc_msg.is_dense = true;
 
-             // Fill point cloud
-             for(int y = 0; y < view.getHeight(); ++y)
-             {
-                 for(int x = 0; x < view.getWidth(); ++x)
-                 {
-                     geo::Vector3 p;
-                     if (view.getPoint3D(x, y, p))
-                     {
-                         const cv::Vec3b& c = view.getColor(x, y);
+            for (int y = 0; y < view.getHeight(); ++y)
+            {
+                for (int x = 0; x < view.getWidth(); ++x)
+                {
+                    geo::Vector3 p;
+                    if (view.getPoint3D(x, y, p))
+                    {
+                        pc_msg.points.push_back(pcl::PointXYZRGB());
+                        pcl::PointXYZRGB& p_pcl = pc_msg.points.back();
+                        p_pcl.x = static_cast<float>(p.x);
+                        p_pcl.y = static_cast<float>(-p.y);
+                        p_pcl.z = static_cast<float>(-p.z);
+                        const cv::Vec3b& c = view.getColor(x, y);
+                        p_pcl.r = c[2];
+                        p_pcl.g = c[1];
+                        p_pcl.b = c[0];
+                        ++pc_msg.width;
+                    }
+                    else
+                    {
+                        pc_msg.is_dense = false;
+                    }
+                }
+            }
 
-                         // Push back and correct for geolib frame
-                         pc_msg->points.push_back(pcl::PointXYZRGB());
-                         pcl::PointXYZRGB& p_pcl = pc_msg->points.back();
-                         p_pcl.x = static_cast<float>(p.x);
-                         p_pcl.y = static_cast<float>(-p.y);
-                         p_pcl.z = static_cast<float>(-p.z);
-                         p_pcl.r = c[2];
-                         p_pcl.g = c[1];
-                         p_pcl.b = c[0];
-                         pc_msg->width++;
-                     }
-                     else
-                     {
-                         pc_msg->is_dense = false;
-                     }
-                 }
-             }
-
-             // Publish
-             pub_depth_pc_->publish(pc_msg);
+            pub_depth_pc_->publish(pc_msg);
         }
     }
 
-    if (pub_rgb_img_ && (pub_rgb_img_->getNumSubscribers() || pub_rgb_info_->getNumSubscribers()) && image.getRGBImage().data)
+    if (pub_rgb_img_ && (pub_rgb_img_->get_subscription_count() || pub_rgb_info_->get_subscription_count()) && image.getRGBImage().data)
     {
-        // Convert camera info to message
         rgbd::View view(image, image.getRGBImage().cols);
 
-        // Convert to image messages
-        sensor_msgs::Image msg;
-        sensor_msgs::CameraInfo info_msg;
+        sensor_msgs::msg::Image msg;
+        sensor_msgs::msg::CameraInfo info_msg;
 
         rgbd::convert(image.getRGBImage(), view.getRasterizer(), msg, info_msg);
 
-        msg.header.stamp.fromSec(image.getTimestamp());
+        msg.header.stamp = rclcpp::Time(static_cast<int64_t>(image.getTimestamp() * 1e9)).to_msg();
         msg.header.frame_id = image.getFrameId();
         info_msg.header = msg.header;
 
-        // Publish
         pub_rgb_img_->publish(msg);
         pub_rgb_info_->publish(info_msg);
     }
 }
 
-}
+}  // namespace rgbd

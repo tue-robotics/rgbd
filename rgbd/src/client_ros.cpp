@@ -1,66 +1,44 @@
 #include "rgbd/client_ros.h"
-#include "rgbd/image.h"
-
-// ROS message serialization
-#include <cv_bridge/cv_bridge.h>
-#include <message_filters/synchronizer.h>
-#include <message_filters/subscriber.h>
-#include <message_filters/sync_policies/approximate_time.h>
-#include <sensor_msgs/Image.h>
-#include <sensor_msgs/image_encodings.h>
-#include <image_geometry/pinhole_camera_model.h>
 
 namespace rgbd {
 
-// ----------------------------------------------------------------------------------------
-
-ClientROS::ClientROS() : ClientROSBase(ros::NodeHandle())
+ClientROS::ClientROS(const rclcpp::Node::SharedPtr& node)
+    : ClientROSBase(node ? node : rclcpp::Node::make_shared("rgbd_client_ros"))
 {
 }
 
-// ----------------------------------------------------------------------------------------
-
-ClientROS::~ClientROS()
-{
-}
-
-// ----------------------------------------------------------------------------------------
+ClientROS::~ClientROS() = default;
 
 bool ClientROS::initialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic)
 {
-    nh_.setCallbackQueue(&cb_queue_);
-
     if (!ClientROSBase::initialize(rgb_image_topic, depth_image_topic, cam_info_topic))
+    {
         return false;
+    }
 
-    sync_->registerCallback(boost::bind(&ClientROS::imageCallback, this, _1, _2));
-
+    sync_->registerCallback(std::bind(&ClientROS::imageCallback, this, std::placeholders::_1, std::placeholders::_2));
     return true;
 }
-
-// ----------------------------------------------------------------------------------------
 
 bool ClientROS::nextImage(Image& image)
 {
     new_image_ = false;
     image_ptr_ = &image;
-    cb_queue_.callAvailable();
+    rclcpp::spin_some(node_);
     return new_image_;
 }
-
-// ----------------------------------------------------------------------------------------
 
 ImagePtr ClientROS::nextImage()
 {
     new_image_ = false;
     image_ptr_ = nullptr;
-    cb_queue_.callAvailable();
+    rclcpp::spin_some(node_);
     if (!new_image_)
     {
-        delete image_ptr_; // Needs to be deleted, because caller doesn't get a shared ptr to this raw pointer.
+        delete image_ptr_;
         return nullptr;
     }
     return ImagePtr(image_ptr_);
 }
 
-}
+}  // namespace rgbd

@@ -1,32 +1,25 @@
-#include <ros/console.h>
-#include <ros/duration.h>
-#include <ros/init.h>
-#include <ros/master.h>
-#include <ros/names.h>
-#include <ros/node_handle.h>
-#include <ros/rate.h>
-#include <ros/time.h>
+#include <rclcpp/rclcpp.hpp>
 
 #include "rgbd/client_rgbd.h"
 #include "rgbd/image.h"
 #include "rgbd/server_shm.h"
-#include "rgbd/types.h"
 #include "rgbd/utility.h"
 
-#include <std_msgs/String.h>
-
-#include <functional>
 #include <memory>
 #include <thread>
-
 
 class Node
 {
 public:
-    Node() : rate_(30), server_name_(ros::names::resolve("rgbd")), host_name_(rgbd::get_hostname())
+    explicit Node(const rclcpp::Node::SharedPtr& node)
+        : node_(node)
+        , client_(node_)
+        , server_(node_)
+        , rate_(30)
+        , server_name_("rgbd")
+        , host_name_(rgbd::get_hostname())
     {
-        ros::NodeHandle nh_private("~");
-        nh_private.getParam("rate", rate_);
+        rate_ = node_->declare_parameter<double>("rate", 30.0);
 
         client_.initialize(server_name_);
         server_.initialize(server_name_);
@@ -34,7 +27,6 @@ public:
 
     virtual ~Node()
     {
-        nh_.shutdown();
         if (pub_hostname_thread_ptr_ && pub_hostname_thread_ptr_->joinable())
             pub_hostname_thread_ptr_->join();
     }
@@ -43,27 +35,17 @@ public:
     {
         rgbd::ImagePtr image_ptr;
 
-        ros::WallTime last_master_check = ros::WallTime::now();
-
-        ros::Rate r(rate_);
-        while (ros::ok())
+        rclcpp::Rate r(rate_);
+        while (rclcpp::ok())
         {
-            if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-            {
-                last_master_check = ros::WallTime::now();
-                if (!ros::master::check())
-                {
-                    ROS_FATAL("Lost connection to master");
-                    return 1;
-                }
-            }
             image_ptr = client_.nextImage();
             if (image_ptr)
             {
                 if (!pub_hostname_thread_ptr_)
-                    pub_hostname_thread_ptr_ = std::make_unique<std::thread>(rgbd::pubHostnameThreadFunc, std::ref(nh_), server_name_, host_name_, 10);
+                    pub_hostname_thread_ptr_ = std::make_unique<std::thread>(rgbd::pubHostnameThreadFunc, node_, server_name_, host_name_, 10.0f);
                 server_.send(*image_ptr);
             }
+            rclcpp::spin_some(node_);
             r.sleep();
         }
 
@@ -71,7 +53,7 @@ public:
     }
 
 private:
-    ros::NodeHandle nh_;
+    rclcpp::Node::SharedPtr node_;
 
     rgbd::ClientRGBD client_;
     rgbd::ServerSHM server_;
@@ -84,14 +66,14 @@ private:
     std::unique_ptr<std::thread> pub_hostname_thread_ptr_;
 };
 
-
-// ----------------------------------------------------------------------------------------
-
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "rgbd_to_shm");
+    rclcpp::init(argc, argv);
 
-    Node node;
+    auto node = rclcpp::Node::make_shared("rgbd_to_shm");
+    Node app(node);
 
-    return node.run();
+    const int rc = app.run();
+    rclcpp::shutdown();
+    return rc;
 }

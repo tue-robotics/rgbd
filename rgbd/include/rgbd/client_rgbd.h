@@ -5,91 +5,37 @@
 #ifndef RGBD_CLIENT_RGBD_H_
 #define RGBD_CLIENT_RGBD_H_
 
-#include <ros/node_handle.h>
-#include <ros/subscriber.h>
-#include <ros/callback_queue.h>
+#include <rclcpp/rclcpp.hpp>
+
+#include <rgbd_interfaces/msg/rgbd.hpp>
 
 #include "rgbd/types.h"
 
-#include "rgbd_interfaces/RGBD.h"
-
-
 namespace rgbd {
 
-/**
- * @brief Client which subscribes to RGBD topic
- */
 class ClientRGBD {
-
 public:
-
-    /**
-     * @brief Constructor
-     */
-    ClientRGBD();
-
-    /**
-     * @brief Destructor
-     *
-     * image_ptr_ is not deleted as the client never owns the image pointer
-     */
+    explicit ClientRGBD(const rclcpp::Node::SharedPtr& node = nullptr);
     virtual ~ClientRGBD();
 
-    /**
-     * @brief Initialize the client
-     * @param server_name Fully resolved server name
-     * @return indicates success
-     */
     bool initialize(const std::string& server_name);
-
-    /**
-     * @brief Clears the subscriber. #initialized will now return false.
-     * @return indicates success
-     */
     bool deinitialize();
 
-    /**
-     * @brief Check if the client is initialized. nextImage will not return an image if client is not initialized.
-     * @return initialized or not
-     */
-    bool initialized() { return !sub_image_.getTopic().empty(); }
+    bool initialized() const { return static_cast<bool>(sub_image_); }
 
-    /**
-     * @brief Get a new Image. If no new image has been received since the last call,
-     * no image will be written and false will be returned.
-     * @param image Image reference which will be written.
-     * @return valid image written
-     */
     bool nextImage(Image& image);
-
-    /**
-     * @brief Get a new Image. If no new image has been received since the last call,
-     * The ImagePtr will be a nullptr
-     * @return ImagePtr to an Image or a nullptr
-     */
     ImagePtr nextImage();
 
 protected:
+    rclcpp::Node::SharedPtr node_;
+    rclcpp::Subscription<rgbd_interfaces::msg::RGBD>::SharedPtr sub_image_;
 
-    ros::Subscriber sub_image_;
-    ros::CallbackQueue cb_queue_;
-
-    /**
-     * @brief Track if image is updated in a callback.
-     */
     bool new_image_;
-    /**
-     * @brief Pointer to the Image being written in the NextImage calls. Either set to the address of the provided reference.
-     * Or being wrapped into a shared pointer. Ownership therefore belongs to the caller of nextImage, which provides the references or receives the SharedPtr.
-     * image_ptr_ should only be accessed inside a NextImage call. Outside it, the image_ptr_ might be invalid/
-     * This is used since you can not pass additional arguments to the callback. A raw pointer is prefered to avoid unnecessary copy operations.
-     */
     Image* image_ptr_;
 
-    void rgbdImageCallback(const rgbd_interfaces::RGBD::ConstPtr& msg);
-
+    void rgbdImageCallback(const rgbd_interfaces::msg::RGBD::ConstSharedPtr& msg);
 };
 
-}
+}  // namespace rgbd
 
-#endif // RGBD_CLIENT_RGBD_H_
+#endif  // RGBD_CLIENT_RGBD_H_

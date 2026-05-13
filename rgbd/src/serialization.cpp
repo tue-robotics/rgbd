@@ -1,7 +1,7 @@
 #include "rgbd/serialization.h"
 #include "rgbd/image.h"
 
-#include <ros/console.h>
+#include <rclcpp/rclcpp.hpp>
 
 #include <tue/serialization/input_archive.h>
 #include <tue/serialization/output_archive.h>
@@ -44,7 +44,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
     }
     else
     {
-        ROS_ERROR_NAMED("serialization", "rgbd::serialize: cam_model not initialized");
+        RCLCPP_ERROR(rclcpp::get_logger("serialization"), "rgbd::serialize: cam_model not initialized");
         return false;
     }
 
@@ -79,7 +79,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
 
         // Compress image
         if (!cv::imencode(".jpg", image.rgb_image_, rgb_data, rgb_params)) {
-            ROS_ERROR_NAMED("serialization", "RGB image compression failed");
+            RCLCPP_ERROR(rclcpp::get_logger("serialization"), "RGB image compression failed");
             return false;
         }
 
@@ -88,7 +88,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
     }
     else
     {
-        ROS_ERROR_STREAM_NAMED("serialization", "Unsupported RGB STORAGE TYPE: " << rgb_type);
+        RCLCPP_ERROR(rclcpp::get_logger("serialization"), "Unsupported RGB STORAGE TYPE: %d", rgb_type);
         return false;
     }
 
@@ -149,7 +149,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
         std::vector<unsigned char> depth_data;
 
         if (!cv::imencode(".png", invDepthImg, depth_data, params)) {
-            ROS_ERROR_NAMED("serialization", "Depth image compression failed");
+            RCLCPP_ERROR(rclcpp::get_logger("serialization"), "Depth image compression failed");
             return false;
         }
 
@@ -158,7 +158,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
     }
     else
     {
-        ROS_ERROR_NAMED("serialization", "Unsupported DEPTH_STORAGE_TYPE");
+        RCLCPP_ERROR(rclcpp::get_logger("serialization"), "Unsupported DEPTH_STORAGE_TYPE");
         return false;
     }
 
@@ -199,29 +199,29 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         if (version >=2)
             a >> width >> height;
 
-        sensor_msgs::CameraInfo cam_info_msg;
+        sensor_msgs::msg::CameraInfo cam_info_msg;
 
-        cam_info_msg.D.resize(5, 0.0);
-        cam_info_msg.K.fill(0.0);
-        cam_info_msg.K[0] = fx;  // fx
-        cam_info_msg.K[2] = cx;  // cx
-        cam_info_msg.K[4] = fy;  // fy
-        cam_info_msg.K[5] = cy;  // cy
-        cam_info_msg.K[8] = 1.0;
+        cam_info_msg.d.resize(5, 0.0);
+        cam_info_msg.k.fill(0.0);
+        cam_info_msg.k[0] = fx;  // fx
+        cam_info_msg.k[2] = cx;  // cx
+        cam_info_msg.k[4] = fy;  // fy
+        cam_info_msg.k[5] = cy;  // cy
+        cam_info_msg.k[8] = 1.0;
 
-        cam_info_msg.R.fill(0.0);
-        cam_info_msg.R[0] = 1.0;
-        cam_info_msg.R[4] = 1.0;
-        cam_info_msg.R[8] = 1.0;
+        cam_info_msg.r.fill(0.0);
+        cam_info_msg.r[0] = 1.0;
+        cam_info_msg.r[4] = 1.0;
+        cam_info_msg.r[8] = 1.0;
 
-        cam_info_msg.P.fill(0.0);
-        cam_info_msg.P[0] = fx;  // fx
-        cam_info_msg.P[2] = cx;  // cx
-        cam_info_msg.P[3] = tx;  // Tx
-        cam_info_msg.P[5] = fy;  // fy
-        cam_info_msg.P[6] = cy;  // cy
-        cam_info_msg.P[7] = ty;  // Ty
-        cam_info_msg.P[10] = 1.0;
+        cam_info_msg.p.fill(0.0);
+        cam_info_msg.p[0] = fx;  // fx
+        cam_info_msg.p[2] = cx;  // cx
+        cam_info_msg.p[3] = tx;  // Tx
+        cam_info_msg.p[5] = fy;  // fy
+        cam_info_msg.p[6] = cy;  // cy
+        cam_info_msg.p[7] = ty;  // Ty
+        cam_info_msg.p[10] = 1.0;
 
         cam_info_msg.distortion_model = "plumb_bob";
         if (version >= 2){
@@ -232,7 +232,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     }
     else
     {
-        ROS_ERROR_STREAM_NAMED("serialization", "rgbd::deserialize: Unsupported camera model: " << cam_type);
+        RCLCPP_ERROR(rclcpp::get_logger("serialization"), "rgbd::deserialize: Unsupported camera model: %d", cam_type);
         return false;
     }
 
@@ -268,7 +268,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     }
     else
     {
-        ROS_ERROR_STREAM_NAMED("serialization", "rgbd::deserialize: Unsupported rgb storage format: " << rgb_type);
+        RCLCPP_ERROR(rclcpp::get_logger("serialization"), "rgbd::deserialize: Unsupported rgb storage format: %d", rgb_type);
         return false;
     }
 
@@ -324,7 +324,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     }
     else
     {
-        ROS_ERROR_STREAM_NAMED("serialization", "rgbd::deserialize: Unsupported depth storage format: " << depth_type);
+        RCLCPP_ERROR(rclcpp::get_logger("serialization"), "rgbd::deserialize: Unsupported depth storage format: %d", depth_type);
         return false;
     }
 

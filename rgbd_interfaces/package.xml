@@ -14,14 +14,18 @@
   <url type="bugtracker">https://github.com/tue-robotics/rgbd/issues</url>
   <url type="repository">https://github.com/tue-robotics/rgbd</url>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>geometry_msgs</depend>
   <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
 
-  <build_depend>message_generation</build_depend>
+  <build_depend>rosidl_default_generators</build_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
 
-  <build_export_depend>message_runtime</build_export_depend>
-  <exec_depend>message_runtime</exec_depend>
+  <member_of_group>rosidl_interface_packages</member_of_group>
 
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>
