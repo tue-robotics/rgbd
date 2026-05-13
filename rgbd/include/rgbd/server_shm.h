@@ -15,13 +15,36 @@
 namespace rgbd
 {
 
+/**
+ * @brief Server which uses shared memory, this only works for clients on the same machine
+ */
 class ServerSHM
 {
 public:
+    /**
+     * @brief Constructor
+     *
+     * buffer_header_ and image_data_ pointers are initialized to nullptr
+     */
     explicit ServerSHM(const rclcpp::Node::SharedPtr& node = nullptr);
+
+    /**
+     * @brief Destructor
+     *
+     * Shared memory object is deleted
+     */
     ~ServerSHM();
 
+    /**
+     * @brief initialize shared memory server
+     * @param name Fully resolved server name
+     */
     void initialize(const std::string& name);
+
+    /**
+     * @brief Write a new image to the shared memory
+     * @param image Image to be written to the shared memory
+     */
     void send(const Image& image);
 
 private:
@@ -41,12 +64,20 @@ private:
 
     rclcpp::Node::SharedPtr node_;
 
+    // SHM check thread
     std::unique_ptr<std::thread> check_shm_thread_ptr_;
     bool stop_check_shm_thread_{false};
 
+    /**
+     * @brief Check if the SHM can be opened
+     * @param frequency Frequency of checking
+     */
     void checkSHMThreadFunc(float frequency);
 };
 
+/**
+ * @brief Publish the host that serves SHM for a server name.
+ */
 void pubHostnameThreadFunc(const rclcpp::Node::SharedPtr& node, const std::string& server_name, const std::string& hostname, float frequency);
 
 } // namespace rgbd
