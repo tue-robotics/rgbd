@@ -35,3 +35,4 @@ jobs:
         with:
           image: ghcr.io/tue-robotics/tue-env-ros-${{ matrix.ros_distro }}
           package: ${{ matrix.package }}
+          default-branch: ros2
