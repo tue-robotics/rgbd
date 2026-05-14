@@ -1,0 +1,84 @@
+#include "rgbd/ros_to_rgbd_component.h"
+
+#include <rclcpp_components/register_node_macro.hpp>
+
+#include <chrono>
+#include <functional>
+#include <stdexcept>
+
+namespace rgbd {
+
+RosToRGBDComponent::RosToRGBDComponent(const rclcpp::NodeOptions& options)
+    : rclcpp::Node("ros_to_rgbd", options)
+    , rgb_type_(parseRGBStorageType(declare_parameter<std::string>("rgb_storage", "lossless")))
+    , depth_type_(parseDepthStorageType(declare_parameter<std::string>("depth_storage", "lossless")))
+    , interfaces_initialized_(false)
+{
+    double rate = declare_parameter<double>("rate", 30.0);
+    if (rate <= 0.0) {
+        RCLCPP_WARN(get_logger(), "Parameter 'rate' must be > 0, defaulting to 30Hz");
+        rate = 30.0;
+    }
+
+    const auto period = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(1.0 / rate));
+    timer_ = create_wall_timer(period, std::bind(&RosToRGBDComponent::runOnce, this));
+}
+
+RGBStorageType RosToRGBDComponent::parseRGBStorageType(const std::string& rgb_type_str)
+{
+    if (rgb_type_str == "none")
+        return RGB_STORAGE_NONE;
+    if (rgb_type_str == "lossless")
+        return RGB_STORAGE_LOSSLESS;
+    if (rgb_type_str == "jpg")
+        return RGB_STORAGE_JPG;
+
+    throw std::invalid_argument("Unknown 'rgb_storage' type: should be 'none', 'lossless', or 'jpg'.");
+}
+
+DepthStorageType RosToRGBDComponent::parseDepthStorageType(const std::string& depth_type_str)
+{
+    if (depth_type_str == "none")
+        return DEPTH_STORAGE_NONE;
+    if (depth_type_str == "lossless")
+        return DEPTH_STORAGE_LOSSLESS;
+    if (depth_type_str == "png")
+        return DEPTH_STORAGE_PNG;
+
+    throw std::invalid_argument("Unknown 'depth_storage' type: should be 'none', 'lossless', or 'png'.");
+}
+
+bool RosToRGBDComponent::initializeInterfaces()
+{
+    auto node = std::dynamic_pointer_cast<rclcpp::Node>(shared_from_this());
+    if (!node)
+        return false;
+
+    client_ = std::make_unique<ClientROS>(node);
+    server_ = std::make_unique<Server>(node);
+
+    if (!client_->initialize("rgb_image", "depth_image", "cam_info")) {
+        RCLCPP_ERROR(get_logger(), "Failed to initialize ClientROS");
+        return false;
+    }
+
+    server_->initialize("rgbd", rgb_type_, depth_type_);
+    return true;
+}
+
+void RosToRGBDComponent::runOnce()
+{
+    if (!interfaces_initialized_) {
+        interfaces_initialized_ = initializeInterfaces();
+        if (!interfaces_initialized_)
+            return;
+    }
+
+    ImagePtr image_ptr = client_->nextImage();
+    if (image_ptr)
+        server_->send(*image_ptr);
+}
+
+}  // namespace rgbd
+
+RCLCPP_COMPONENTS_REGISTER_NODE(rgbd::RosToRGBDComponent)
