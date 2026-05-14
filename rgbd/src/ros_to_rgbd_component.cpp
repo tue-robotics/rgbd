@@ -1,9 +1,11 @@
 #include "rgbd/ros_to_rgbd_component.h"
 
-#include <rclcpp_components/register_node_macro.hpp>
+#include <rcl_interfaces/msg/floating_point_range.hpp>
+#include <rcl_interfaces/msg/parameter_descriptor.hpp>
 
 #include <chrono>
 #include <functional>
+#include <limits>
 #include <stdexcept>
 
 namespace rgbd {
@@ -14,7 +16,15 @@ RosToRGBDComponent::RosToRGBDComponent(const rclcpp::NodeOptions& options)
     , depth_type_(parseDepthStorageType(declare_parameter<std::string>("depth_storage", "lossless")))
     , interfaces_initialized_(false)
 {
-    double rate = declare_parameter<double>("rate", 30.0);
+    rcl_interfaces::msg::ParameterDescriptor rate_descriptor;
+    rate_descriptor.description = "Processing loop rate in Hz";
+    rcl_interfaces::msg::FloatingPointRange rate_range;
+    rate_range.from_value = std::numeric_limits<double>::min();
+    rate_range.to_value = std::numeric_limits<double>::max();
+    rate_range.step = 0.0;
+    rate_descriptor.floating_point_range.push_back(rate_range);
+
+    double rate = declare_parameter<double>("rate", 30.0, rate_descriptor);
     if (rate <= 0.0) {
         RCLCPP_WARN(get_logger(), "Parameter 'rate' must be > 0, defaulting to 30Hz");
         rate = 30.0;
@@ -50,10 +60,7 @@ DepthStorageType RosToRGBDComponent::parseDepthStorageType(const std::string& de
 
 bool RosToRGBDComponent::initializeInterfaces()
 {
-    auto node = std::dynamic_pointer_cast<rclcpp::Node>(shared_from_this());
-    if (!node)
-        return false;
-
+    auto node = shared_from_this();
     client_ = std::make_unique<ClientROS>(node);
     server_ = std::make_unique<Server>(node);
 
@@ -80,5 +87,3 @@ void RosToRGBDComponent::runOnce()
 }
 
 }  // namespace rgbd
-
-RCLCPP_COMPONENTS_REGISTER_NODE(rgbd::RosToRGBDComponent)

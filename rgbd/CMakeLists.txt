@@ -73,19 +73,24 @@ ament_target_dependencies(${PROJECT_NAME}
   tue_serialization
 )
 
-add_executable(ros_to_${PROJECT_NAME} src/ros_to_rgbd.cpp)
+add_executable(ros_to_${PROJECT_NAME}
+  src/ros_to_rgbd.cpp
+  src/ros_to_rgbd_component.cpp
+)
 target_link_libraries(ros_to_${PROJECT_NAME}
   ${PROJECT_NAME}
 )
 
-add_library(ros_to_${PROJECT_NAME}_component SHARED src/ros_to_rgbd_component.cpp)
+add_library(ros_to_${PROJECT_NAME}_component SHARED
+  src/ros_to_rgbd_component.cpp
+  src/ros_to_rgbd_component_registration.cpp
+)
 target_link_libraries(ros_to_${PROJECT_NAME}_component ${PROJECT_NAME})
 ament_target_dependencies(ros_to_${PROJECT_NAME}_component
   rclcpp
   rclcpp_components
 )
 rclcpp_components_register_nodes(ros_to_${PROJECT_NAME}_component "rgbd::RosToRGBDComponent")
-target_link_libraries(ros_to_${PROJECT_NAME} ros_to_${PROJECT_NAME}_component)
 
 add_executable(${PROJECT_NAME}_to_shm src/rgbd_to_shm.cpp)
 target_link_libraries(${PROJECT_NAME}_to_shm ${PROJECT_NAME})
