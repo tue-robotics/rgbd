@@ -19,7 +19,7 @@ RosToRGBDComponent::RosToRGBDComponent(const rclcpp::NodeOptions& options)
     rcl_interfaces::msg::ParameterDescriptor rate_descriptor;
     rate_descriptor.description = "Processing loop rate in Hz";
     rcl_interfaces::msg::FloatingPointRange rate_range;
-    rate_range.from_value = std::numeric_limits<double>::min();
+    rate_range.from_value = 0.01;
     rate_range.to_value = std::numeric_limits<double>::max();
     rate_range.step = 0.0;
     rate_descriptor.floating_point_range.push_back(rate_range);
