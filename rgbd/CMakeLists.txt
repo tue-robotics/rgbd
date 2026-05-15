@@ -52,15 +52,15 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
-  ${OpenCV_LIBRARIES}
-  ${cv_bridge_LIBRARIES}
-  ${geolib2_LIBRARIES}
-  ${image_geometry_LIBRARIES}
-  ${message_filters_LIBRARIES}
-  ${pcl_conversions_LIBRARIES}
+  opencv_core
+  cv_bridge::cv_bridge
+  geolib2::geolib
+  image_geometry::image_geometry
+  message_filters::message_filters
+  pcl_conversions::pcl_conversions
   ${pcl_ros_LIBRARIES}
   rclcpp::rclcpp
-  ${tf2_LIBRARIES}
+  tf2::tf2
   ${tue_serialization_LIBRARIES}
   rgbd_interfaces::rgbd_interfaces__rosidl_typesupport_cpp
   sensor_msgs::sensor_msgs__rosidl_typesupport_cpp
