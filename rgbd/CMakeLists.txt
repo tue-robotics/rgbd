@@ -59,10 +59,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
     ${OpenCV_LIBRARIES}
-    ${cv_bridge_LIBRARIES}
+    cv_bridge::cv_bridge
     ${geolib2_LIBRARIES}
-    ${image_geometry_LIBRARIES}
-    ${message_filters_LIBRARIES}
+    image_geometry::image_geometry
+    message_filters::message_filters
     ${pcl_conversions_LIBRARIES}
     ${pcl_ros_LIBRARIES}
     rclcpp::rclcpp

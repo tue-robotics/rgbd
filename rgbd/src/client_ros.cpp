@@ -1,4 +1,5 @@
 #include "rgbd/client_ros.h"
+#include "rgbd/image.h"
 
 namespace rgbd {
 

@@ -7,9 +7,9 @@ namespace rgbd {
 Client::Client(const rclcpp::Node::SharedPtr& node)
     : node_(node ? node : rclcpp::Node::make_shared("rgbd_client"))
     , client_rgbd_(node_)
-    , client_impl_mode_(ClientImplMode::rgbd)
     , last_time_shm_server_online_(0, 0, RCL_ROS_TIME)
     , stop_sub_hosts_thread_(false)
+    , client_impl_mode_(ClientImplMode::rgbd)
 {
     hostname_ = get_hostname();
 }
