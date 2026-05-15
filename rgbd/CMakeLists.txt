@@ -65,15 +65,11 @@ target_link_libraries(${PROJECT_NAME}
     ${OpenCV_LIBRARIES}
     ${cv_bridge_LIBRARIES}
     ${geolib2_LIBRARIES}
-    ${geometry_msgs_LIBRARIES}
     ${image_geometry_LIBRARIES}
     ${message_filters_LIBRARIES}
     ${pcl_conversions_LIBRARIES}
     ${pcl_ros_LIBRARIES}
     rclcpp::rclcpp
-    ${rgbd_interfaces_LIBRARIES}
-    ${sensor_msgs_LIBRARIES}
-    ${std_msgs_LIBRARIES}
     ${tf2_LIBRARIES}
     ${tue_serialization_LIBRARIES}
     rgbd_interfaces::rgbd_interfaces__rosidl_typesupport_cpp
