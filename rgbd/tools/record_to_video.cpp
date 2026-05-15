@@ -12,7 +12,7 @@
 #include <sensor_msgs/Image.h>
 
 // For converting image messages to OpenCV
-#include <cv_bridge/cv_bridge.h>
+#include <cv_bridge/cv_bridge.hpp>
 #include <sensor_msgs/image_encodings.h>
 
 // Writing video files

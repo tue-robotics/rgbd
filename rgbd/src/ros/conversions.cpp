@@ -5,7 +5,7 @@
 #include <boost/iostreams/filter/zstd.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
 
-#include <cv_bridge/cv_bridge.h>
+#include <cv_bridge/cv_bridge.hpp>
 
 #include <geolib/ros/msg_conversions.h>
 #include <geolib/sensors/DepthCamera.h>

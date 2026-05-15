@@ -1,6 +1,6 @@
 #include "rgbd/view.h"
 
-#include <image_geometry/pinhole_camera_model.h>
+#include <image_geometry/pinhole_camera_model.hpp>
 #include <opencv2/core/mat.hpp>
 
 namespace rgbd {

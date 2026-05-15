@@ -1,7 +1,7 @@
 #include "rgbd/client_ros_base.h"
 #include "rgbd/image.h"
 
-#include <cv_bridge/cv_bridge.h>
+#include <cv_bridge/cv_bridge.hpp>
 #include <rmw/qos_profiles.h>
 #include <sensor_msgs/image_encodings.hpp>
 
