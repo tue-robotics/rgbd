@@ -1,7 +1,7 @@
 #ifndef TEST_SERVER_TEMPL_H_
 #define TEST_SERVER_TEMPL_H_
 
-#include <image_geometry/pinhole_camera_model.hpp>
+#include <image_geometry/pinhole_camera_model.h>
 
 #include "rgbd/image.h"
 
