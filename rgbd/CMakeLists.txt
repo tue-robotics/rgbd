@@ -49,14 +49,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   ${OpenCV_INCLUDE_DIRS}
   ${cv_bridge_INCLUDE_DIRS}
   ${geolib2_INCLUDE_DIRS}
-  ${geometry_msgs_INCLUDE_DIRS}
   ${image_geometry_INCLUDE_DIRS}
   ${message_filters_INCLUDE_DIRS}
   ${pcl_conversions_INCLUDE_DIRS}
   ${pcl_ros_INCLUDE_DIRS}
-  ${rgbd_interfaces_INCLUDE_DIRS}
-  ${sensor_msgs_INCLUDE_DIRS}
-  ${std_msgs_INCLUDE_DIRS}
   ${tf2_INCLUDE_DIRS}
   ${tue_serialization_INCLUDE_DIRS}
 )
