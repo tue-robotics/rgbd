@@ -21,8 +21,6 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tue_serialization REQUIRED)
-find_path(IMAGE_GEOMETRY_INCLUDE_DIR image_geometry/pinhole_camera_model.h REQUIRED)
-find_path(MESSAGE_FILTERS_INCLUDE_DIR message_filters/sync_policies/approximate_time.h REQUIRED)
 
 # to show header files in Qt Creator
 file(GLOB_RECURSE HEADER_FILES include/*.h)
