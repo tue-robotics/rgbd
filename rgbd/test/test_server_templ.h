@@ -1,7 +1,11 @@
 #ifndef TEST_SERVER_TEMPL_H_
 #define TEST_SERVER_TEMPL_H_
 
+#if __has_include(<image_geometry/pinhole_camera_model.hpp>)
 #include <image_geometry/pinhole_camera_model.hpp>
+#else
+#include <image_geometry/pinhole_camera_model.h>
+#endif
 
 #include "rgbd/image.h"
 

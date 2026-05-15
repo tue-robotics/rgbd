@@ -4,7 +4,11 @@
 #include "rgbd/types.h"
 
 #include <opencv2/core.hpp>
+#if __has_include(<image_geometry/pinhole_camera_model.hpp>)
 #include <image_geometry/pinhole_camera_model.hpp>
+#else
+#include <image_geometry/pinhole_camera_model.h>
+#endif
 #include <rgbd_interfaces/msg/rgbd.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 

@@ -1,6 +1,10 @@
 #include "rgbd/view.h"
 
+#if __has_include(<image_geometry/pinhole_camera_model.hpp>)
 #include <image_geometry/pinhole_camera_model.hpp>
+#else
+#include <image_geometry/pinhole_camera_model.h>
+#endif
 #include <opencv2/core/mat.hpp>
 
 namespace rgbd {

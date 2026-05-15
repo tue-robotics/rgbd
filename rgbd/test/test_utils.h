@@ -5,7 +5,11 @@
 
 #include <rgbd/image.h>
 
+#if __has_include(<image_geometry/pinhole_camera_model.hpp>)
 #include <image_geometry/pinhole_camera_model.hpp>
+#else
+#include <image_geometry/pinhole_camera_model.h>
+#endif
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/distortion_models.h>
 

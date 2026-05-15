@@ -10,7 +10,11 @@
 #include <message_filters/sync_policies/approximate_time.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/synchronizer.h>
+#if __has_include(<image_geometry/pinhole_camera_model.hpp>)
 #include <image_geometry/pinhole_camera_model.hpp>
+#else
+#include <image_geometry/pinhole_camera_model.h>
+#endif
 
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
