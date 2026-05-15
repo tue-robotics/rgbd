@@ -47,32 +47,25 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:include>
   ${Boost_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
-  ${cv_bridge_INCLUDE_DIRS}
-  ${geolib2_INCLUDE_DIRS}
-  ${image_geometry_INCLUDE_DIRS}
-  ${message_filters_INCLUDE_DIRS}
-  ${pcl_conversions_INCLUDE_DIRS}
-  ${pcl_ros_INCLUDE_DIRS}
-  ${tf2_INCLUDE_DIRS}
-  ${tue_serialization_INCLUDE_DIRS}
 )
 target_link_libraries(${PROJECT_NAME}
-  PUBLIC
-    ${OpenCV_LIBRARIES}
-    cv_bridge::cv_bridge
-    ${geolib2_LIBRARIES}
-    image_geometry::image_geometry
-    message_filters::message_filters
-    ${pcl_conversions_LIBRARIES}
-    ${pcl_ros_LIBRARIES}
-    rclcpp::rclcpp
-    ${tf2_LIBRARIES}
-    ${tue_serialization_LIBRARIES}
-    rgbd_interfaces::rgbd_interfaces__rosidl_typesupport_cpp
-    sensor_msgs::sensor_msgs__rosidl_typesupport_cpp
-    geometry_msgs::geometry_msgs__rosidl_typesupport_cpp
-    std_msgs::std_msgs__rosidl_typesupport_cpp
-    rt
+  ${OpenCV_LIBRARIES}
+  rt
+)
+ament_target_dependencies(${PROJECT_NAME}
+  cv_bridge
+  geolib2
+  geometry_msgs
+  image_geometry
+  message_filters
+  pcl_conversions
+  pcl_ros
+  rclcpp
+  rgbd_interfaces
+  sensor_msgs
+  std_msgs
+  tf2
+  tue_serialization
 )
 
 add_executable(ros_to_${PROJECT_NAME}
