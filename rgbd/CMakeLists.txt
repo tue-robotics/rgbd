@@ -21,6 +21,10 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tue_serialization REQUIRED)
+find_path(CV_BRIDGE_INCLUDE_DIR cv_bridge/cv_bridge.h REQUIRED)
+find_path(GEOLIB_ROS_INCLUDE_DIR geolib/ros/msg_conversions.h REQUIRED)
+find_path(IMAGE_GEOMETRY_INCLUDE_DIR image_geometry/pinhole_camera_model.h REQUIRED)
+find_path(MESSAGE_FILTERS_INCLUDE_DIR message_filters/sync_policies/approximate_time.h REQUIRED)
 
 # to show header files in Qt Creator
 file(GLOB_RECURSE HEADER_FILES include/*.h)
@@ -47,25 +51,27 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:include>
   ${Boost_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
+  ${CV_BRIDGE_INCLUDE_DIR}
+  ${GEOLIB_ROS_INCLUDE_DIR}
+  ${IMAGE_GEOMETRY_INCLUDE_DIR}
+  ${MESSAGE_FILTERS_INCLUDE_DIR}
 )
 target_link_libraries(${PROJECT_NAME}
   ${OpenCV_LIBRARIES}
+  ${cv_bridge_LIBRARIES}
+  ${geolib2_LIBRARIES}
+  ${image_geometry_LIBRARIES}
+  ${message_filters_LIBRARIES}
+  ${pcl_conversions_LIBRARIES}
+  ${pcl_ros_LIBRARIES}
+  rclcpp::rclcpp
+  ${tf2_LIBRARIES}
+  ${tue_serialization_LIBRARIES}
+  rgbd_interfaces::rgbd_interfaces__rosidl_typesupport_cpp
+  sensor_msgs::sensor_msgs__rosidl_typesupport_cpp
+  geometry_msgs::geometry_msgs__rosidl_typesupport_cpp
+  std_msgs::std_msgs__rosidl_typesupport_cpp
   rt
-)
-ament_target_dependencies(${PROJECT_NAME}
-  cv_bridge
-  geolib2
-  geometry_msgs
-  image_geometry
-  message_filters
-  pcl_conversions
-  pcl_ros
-  rclcpp
-  rgbd_interfaces
-  sensor_msgs
-  std_msgs
-  tf2
-  tue_serialization
 )
 
 add_executable(ros_to_${PROJECT_NAME}
