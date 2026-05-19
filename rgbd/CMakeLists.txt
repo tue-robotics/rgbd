@@ -57,8 +57,6 @@ target_link_libraries(${PROJECT_NAME}
   geolib2::geolib
   image_geometry::image_geometry
   message_filters::message_filters
-  pcl_conversions::pcl_conversions
-  ${pcl_ros_LIBRARIES}
   rclcpp::rclcpp
   tf2::tf2
   ${tue_serialization_LIBRARIES}
@@ -68,6 +66,13 @@ target_link_libraries(${PROJECT_NAME}
   std_msgs::std_msgs__rosidl_typesupport_cpp
   rt
 )
+if(TARGET pcl_conversions::pcl_conversions)
+  target_link_libraries(${PROJECT_NAME} PUBLIC pcl_conversions::pcl_conversions)
+else()
+  target_include_directories(${PROJECT_NAME} PUBLIC ${pcl_conversions_INCLUDE_DIRS})
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${pcl_conversions_LIBRARIES})
+endif()
+target_link_libraries(${PROJECT_NAME} PUBLIC ${pcl_ros_LIBRARIES})
 
 add_executable(ros_to_${PROJECT_NAME}
   src/ros_to_rgbd.cpp
