@@ -49,7 +49,7 @@ void ServerROS::send(const Image& image)
 
             rgbd::convert(image.getDepthImage(), view.getRasterizer(), msg, info_msg);
 
-            msg.header.stamp = rclcpp::Time(static_cast<int64_t>(image.getTimestamp() * 1e9)).to_msg();
+            msg.header.stamp = rclcpp::Time(static_cast<int64_t>(image.getTimestamp() * 1e9));
             msg.header.frame_id = image.getFrameId();
             info_msg.header = msg.header;
 
@@ -93,7 +93,7 @@ void ServerROS::send(const Image& image)
 
             sensor_msgs::msg::PointCloud2 pc2_msg;
             pcl::toROSMsg(pc_msg, pc2_msg);
-            pc2_msg.header.stamp = rclcpp::Time(static_cast<int64_t>(image.getTimestamp() * 1e9)).to_msg();
+            pc2_msg.header.stamp = rclcpp::Time(static_cast<int64_t>(image.getTimestamp() * 1e9));
             pc2_msg.header.frame_id = image.getFrameId();
             pub_depth_pc_->publish(pc2_msg);
         }
@@ -108,7 +108,7 @@ void ServerROS::send(const Image& image)
 
         rgbd::convert(image.getRGBImage(), view.getRasterizer(), msg, info_msg);
 
-        msg.header.stamp = rclcpp::Time(static_cast<int64_t>(image.getTimestamp() * 1e9)).to_msg();
+        msg.header.stamp = rclcpp::Time(static_cast<int64_t>(image.getTimestamp() * 1e9));
         msg.header.frame_id = image.getFrameId();
         info_msg.header = msg.header;
 

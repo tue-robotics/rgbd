@@ -71,7 +71,7 @@ void srvGet3dPointFromROI(const std::shared_ptr<rgbd_interfaces::srv::Project2DT
 
         geometry_msgs::msg::PointStamped point_msg;
         point_msg.header.frame_id = last_image->getFrameId();
-        point_msg.header.stamp = rclcpp::Time(static_cast<int64_t>(last_image->getTimestamp() * 1e9)).to_msg();
+        point_msg.header.stamp = rclcpp::Time(static_cast<int64_t>(last_image->getTimestamp() * 1e9));
         if (depths.empty())
         {
             point_msg.point.x = point_msg.point.y = point_msg.point.z = static_cast<double>(NAN);

@@ -26,7 +26,7 @@ Image::Image(const cv::Mat& rgb_image,
 void Image::setCameraInfo(sensor_msgs::msg::CameraInfo cam_info)
 {
     cam_info.header.frame_id.clear();
-    cam_info.header.stamp = rclcpp::Time(0, 0).to_msg();
+    cam_info.header.stamp = rclcpp::Time(0, 0);
     cam_model_.fromCameraInfo(cam_info);
 }
 
@@ -34,7 +34,7 @@ void Image::setCameraModel(const image_geometry::PinholeCameraModel& cam_model)
 {
     sensor_msgs::msg::CameraInfo cam_info = cam_model.cameraInfo();
     cam_info.header.frame_id.clear();
-    cam_info.header.stamp = rclcpp::Time(0, 0).to_msg();
+    cam_info.header.stamp = rclcpp::Time(0, 0);
     cam_model_.fromCameraInfo(cam_info);
 }
 
