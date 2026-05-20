@@ -36,8 +36,8 @@ bool ClientROSBase::initialize(const std::string& rgb_image_topic, const std::st
     sub_rgb_sync_ = std::make_unique<message_filters::Subscriber<sensor_msgs::msg::Image>>();
     sub_depth_sync_ = std::make_unique<message_filters::Subscriber<sensor_msgs::msg::Image>>();
 
-    sub_rgb_sync_->subscribe(node_.get(), rgb_image_topic, rmw_qos_profile_sensor_data);
-    sub_depth_sync_->subscribe(node_.get(), depth_image_topic, rmw_qos_profile_sensor_data);
+    sub_rgb_sync_->subscribe(node_, rgb_image_topic, rclcpp::SensorDataQoS());
+    sub_depth_sync_->subscribe(node_, depth_image_topic, rclcpp::SensorDataQoS());
 
     sync_ = std::make_unique<message_filters::Synchronizer<RGBDApproxPolicy>>(RGBDApproxPolicy(10), *sub_rgb_sync_, *sub_depth_sync_);
 
