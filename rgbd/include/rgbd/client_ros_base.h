@@ -12,8 +12,16 @@
 #else
 #include <message_filters/sync_policies/approximate_time.h>
 #endif
+#if __has_include(<message_filters/subscriber.hpp>)
+#include <message_filters/subscriber.hpp>
+#else
 #include <message_filters/subscriber.h>
+#endif
+#if __has_include(<message_filters/synchronizer.hpp>)
+#include <message_filters/synchronizer.hpp>
+#else
 #include <message_filters/synchronizer.h>
+#endif
 #if __has_include(<image_geometry/pinhole_camera_model.hpp>)
 #include <image_geometry/pinhole_camera_model.hpp>
 #else

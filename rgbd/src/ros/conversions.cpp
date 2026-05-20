@@ -24,6 +24,7 @@
 #include <tue/serialization/conversions.h>
 
 #include <sstream>
+#include <vector>
 
 #include "rgbd/serialization.h"
 
@@ -88,12 +89,14 @@ bool convert(const rgbd_interfaces::msg::RGBD::ConstSharedPtr& msg, rgbd::Image*
 
     if (msg->version == 1)
     {
-        image->rgb_image_ = cv::imdecode(cv::Mat(msg->rgb), cv::IMREAD_UNCHANGED);
+        std::vector<uint8_t> rgb_data(msg->rgb.begin(), msg->rgb.end());
+        image->rgb_image_ = cv::imdecode(rgb_data, cv::IMREAD_UNCHANGED);
 
         float depthQuantA = static_cast<float>(msg->params[0]);
         float depthQuantB = static_cast<float>(msg->params[1]);
 
-        cv::Mat decompressed = cv::imdecode(msg->depth, cv::IMREAD_UNCHANGED);
+        std::vector<uint8_t> depth_data(msg->depth.begin(), msg->depth.end());
+        cv::Mat decompressed = cv::imdecode(depth_data, cv::IMREAD_UNCHANGED);
         image->depth_image_ = cv::Mat(decompressed.size(), CV_32FC1);
 
         cv::MatIterator_<float> itDepthImg = image->depth_image_.begin<float>(), itDepthImg_end = image->depth_image_.end<float>();
