@@ -7,7 +7,11 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#if __has_include(<message_filters/sync_policies/approximate_time.hpp>)
+#include <message_filters/sync_policies/approximate_time.hpp>
+#else
 #include <message_filters/sync_policies/approximate_time.h>
+#endif
 #include <message_filters/subscriber.h>
 #include <message_filters/synchronizer.h>
 #if __has_include(<image_geometry/pinhole_camera_model.hpp>)

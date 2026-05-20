@@ -115,14 +115,19 @@ install(
 install(
   TARGETS
     ${PROJECT_NAME}
-    get_3d_point_from_image_roi_node
     ros_to_${PROJECT_NAME}_component
-    ${PROJECT_NAME}_to_ros
-    ${PROJECT_NAME}_to_shm
-    ros_to_${PROJECT_NAME}
   EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  TARGETS
+    get_3d_point_from_image_roi_node
+    ${PROJECT_NAME}_to_ros
+    ${PROJECT_NAME}_to_shm
+    ros_to_${PROJECT_NAME}
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
