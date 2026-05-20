@@ -2,6 +2,7 @@
 
 #include <opencv2/core/check.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/camera_info.hpp>
 
 namespace rgbd
 {
@@ -94,7 +95,7 @@ std::ostream& operator<< (std::ostream& out, const rgbd::Image& image)
         << "color: " << image.rgb_image_.size << "@(" << cv::typeToString(image.rgb_image_.type()) << ")" << std::endl
         << "frame_id: " << image.frame_id_ << std::endl
         << "timestamp: " << std::setprecision(32) << image.timestamp_ << std::setprecision(ss) << std::endl
-        << "camera model: " << std::endl << image.cam_model_.cameraInfo();
+        << "camera model: " << std::endl << sensor_msgs::msg::to_yaml(image.cam_model_.cameraInfo());
     return out;
 }
 

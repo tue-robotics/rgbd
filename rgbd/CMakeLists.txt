@@ -59,7 +59,6 @@ target_link_libraries(${PROJECT_NAME}
   message_filters::message_filters
   rclcpp::rclcpp
   tf2::tf2
-  ${tue_serialization_LIBRARIES}
   rgbd_interfaces::rgbd_interfaces__rosidl_typesupport_cpp
   sensor_msgs::sensor_msgs__rosidl_typesupport_cpp
   geometry_msgs::geometry_msgs__rosidl_typesupport_cpp
@@ -73,6 +72,12 @@ else()
   target_link_libraries(${PROJECT_NAME} PUBLIC ${pcl_conversions_LIBRARIES})
 endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC ${pcl_ros_LIBRARIES})
+if(TARGET tue_serialization::tue_serialization)
+  target_link_libraries(${PROJECT_NAME} PUBLIC tue_serialization::tue_serialization)
+else()
+  target_include_directories(${PROJECT_NAME} PUBLIC ${tue_serialization_INCLUDE_DIRS})
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${tue_serialization_LIBRARIES})
+endif()
 
 add_executable(ros_to_${PROJECT_NAME}
   src/ros_to_rgbd.cpp

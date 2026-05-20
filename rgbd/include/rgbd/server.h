@@ -47,10 +47,10 @@ public:
     void send(const Image& image, bool threaded = false);
 
 protected:
+    rclcpp::Node::SharedPtr node_;
+
     ServerRGBD server_rgbd_;
     ServerSHM server_shm_;
-
-    rclcpp::Node::SharedPtr node_;
 
     std::string name_;
     std::string hostname_;
