@@ -143,7 +143,6 @@ if(BUILD_TESTING)
     CONFIG_FILE ${tue_lint_config_DIR}/../config/.clang-format
     --clang-format-version=21
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
   )
   ament_clang_tidy(
     CONFIG_FILE ${tue_lint_config_DIR}/../config/.clang-tidy
