@@ -2,13 +2,12 @@
 
 #include "rgbd/utility.h"
 
-namespace rgbd {
+namespace rgbd
+{
 
 Server::Server(const rclcpp::Node::SharedPtr& node)
-    : node_(node ? node : rclcpp::Node::make_shared("rgbd_server"))
-    , server_rgbd_(node_)
-    , server_shm_(node_)
-    , hostname_(get_hostname())
+    : node_(node ? node : rclcpp::Node::make_shared("rgbd_server")), server_rgbd_(node_), server_shm_(node_),
+      hostname_(get_hostname())
 {
 }
 
@@ -20,7 +19,8 @@ Server::~Server()
     }
 }
 
-void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type, float service_freq)
+void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type,
+                        float service_freq)
 {
     name_ = name;
     server_rgbd_.initialize(name_, rgb_type, depth_type, service_freq);
@@ -31,10 +31,11 @@ void Server::send(const Image& image, bool)
 {
     if (!pub_hostname_thread_ptr_)
     {
-        pub_hostname_thread_ptr_ = std::make_unique<std::thread>(rgbd::pubHostnameThreadFunc, node_, name_, hostname_, 20.0f);
+        pub_hostname_thread_ptr_ =
+            std::make_unique<std::thread>(rgbd::pubHostnameThreadFunc, node_, name_, hostname_, 20.0f);
     }
     server_rgbd_.send(image);
     server_shm_.send(image);
 }
 
-}  // namespace rgbd
+} // namespace rgbd

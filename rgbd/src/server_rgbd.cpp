@@ -12,7 +12,8 @@
 
 #include "rgbd/serialization.h"
 
-namespace rgbd {
+namespace rgbd
+{
 
 const int ServerRGBD::MESSAGE_VERSION = 4;
 
@@ -34,15 +35,15 @@ ServerRGBD::~ServerRGBD()
     }
 }
 
-void ServerRGBD::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type, float service_freq)
+void ServerRGBD::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type,
+                            float service_freq)
 {
     pub_image_ = node_->create_publisher<rgbd_interfaces::msg::RGBD>(name, 1);
     rgb_type_ = rgb_type;
     depth_type_ = depth_type;
 
     service_server_ = node_->create_service<rgbd_interfaces::srv::GetRGBD>(
-        name,
-        std::bind(&ServerRGBD::serviceCallback, this, std::placeholders::_1, std::placeholders::_2));
+        name, std::bind(&ServerRGBD::serviceCallback, this, std::placeholders::_1, std::placeholders::_2));
 
     executor_ = std::make_unique<rclcpp::executors::SingleThreadedExecutor>();
     executor_->add_node(node_);
@@ -89,7 +90,8 @@ void ServerRGBD::serviceCallback(const std::shared_ptr<rgbd_interfaces::srv::Get
     if (req->compression != rgbd_interfaces::srv::GetRGBD::Request::JPEG &&
         req->compression != rgbd_interfaces::srv::GetRGBD::Request::PNG)
     {
-        RCLCPP_ERROR(rclcpp::get_logger("ServerRGBD"), "Invalid compression, only JPEG and PNG are supported (see ENUM in srv definition)");
+        RCLCPP_ERROR(rclcpp::get_logger("ServerRGBD"),
+                     "Invalid compression, only JPEG and PNG are supported (see ENUM in srv definition)");
         return;
     }
 
@@ -99,13 +101,18 @@ void ServerRGBD::serviceCallback(const std::shared_ptr<rgbd_interfaces::srv::Get
     const double ratio_rgb = static_cast<double>(req->width) / static_cast<double>(image.getRGBImage().cols);
     const double ratio_depth = static_cast<double>(req->width) / static_cast<double>(image.getDepthImage().cols);
 
-    cv::resize(image.getRGBImage(), resized_rgb, cv::Size(req->width, static_cast<int>(image.getRGBImage().rows * ratio_rgb)));
-    cv::resize(image.getDepthImage(), resized_depth, cv::Size(req->width, static_cast<int>(image.getDepthImage().rows * ratio_depth)));
+    cv::resize(image.getRGBImage(), resized_rgb,
+               cv::Size(req->width, static_cast<int>(image.getRGBImage().rows * ratio_rgb)));
+    cv::resize(image.getDepthImage(), resized_depth,
+               cv::Size(req->width, static_cast<int>(image.getDepthImage().rows * ratio_depth)));
 
-    const std::string compression_str = req->compression == rgbd_interfaces::srv::GetRGBD::Request::JPEG ? ".jpeg" : ".png";
-    if (!cv::imencode(compression_str, resized_rgb, resp->rgb_data) || !cv::imencode(compression_str, resized_depth, resp->depth_data))
+    const std::string compression_str =
+        req->compression == rgbd_interfaces::srv::GetRGBD::Request::JPEG ? ".jpeg" : ".png";
+    if (!cv::imencode(compression_str, resized_rgb, resp->rgb_data) ||
+        !cv::imencode(compression_str, resized_depth, resp->depth_data))
     {
-        RCLCPP_ERROR(rclcpp::get_logger("ServerRGBD"), "cv::imencode with compression_str %s failed!", compression_str.c_str());
+        RCLCPP_ERROR(rclcpp::get_logger("ServerRGBD"), "cv::imencode with compression_str %s failed!",
+                     compression_str.c_str());
     }
 }
 
@@ -119,4 +126,4 @@ void ServerRGBD::serviceThreadFunc(float frequency)
     }
 }
 
-}  // namespace rgbd
+} // namespace rgbd

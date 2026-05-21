@@ -13,9 +13,7 @@ namespace rgbd
 {
 
 ServerSHM::ServerSHM(const rclcpp::Node::SharedPtr& node)
-    : buffer_header_(nullptr)
-    , image_data_(nullptr)
-    , node_(node ? node : rclcpp::Node::make_shared("rgbd_server_shm"))
+    : buffer_header_(nullptr), image_data_(nullptr), node_(node ? node : rclcpp::Node::make_shared("rgbd_server_shm"))
 {
 }
 
@@ -86,7 +84,8 @@ void ServerSHM::send(const Image& image)
         buffer_header_->width = cam_info.width;
         buffer_header_->binning_x = cam_info.binning_x;
         buffer_header_->binning_y = cam_info.binning_y;
-        memcpy(buffer_header_->distortion_model, cam_info.distortion_model.c_str(), cam_info.distortion_model.size() + 1);
+        memcpy(buffer_header_->distortion_model, cam_info.distortion_model.c_str(),
+               cam_info.distortion_model.size() + 1);
         buffer_header_->size_D = std::min<size_t>(cam_info.d.size(), 5);
         memcpy(buffer_header_->D, cam_info.d.data(), buffer_header_->size_D * sizeof(double));
         memcpy(buffer_header_->K, cam_info.k.data(), 9 * sizeof(double));
@@ -121,9 +120,11 @@ void ServerSHM::checkSHMThreadFunc(float frequency)
         {
             ipc::shared_memory_object(ipc::open_only, shared_mem_name_.c_str(), ipc::read_only);
         }
-        catch (ipc::interprocess_exception &ex)
+        catch (ipc::interprocess_exception& ex)
         {
-            RCLCPP_FATAL(rclcpp::get_logger("ServerSHM"), "ServerSHM::checkSHMThreadFunc: SHM on '%s' is corrupted: '%s'", shared_mem_name_.c_str(), ex.what());
+            RCLCPP_FATAL(rclcpp::get_logger("ServerSHM"),
+                         "ServerSHM::checkSHMThreadFunc: SHM on '%s' is corrupted: '%s'", shared_mem_name_.c_str(),
+                         ex.what());
             rclcpp::shutdown();
             break;
         }
@@ -131,7 +132,8 @@ void ServerSHM::checkSHMThreadFunc(float frequency)
     }
 }
 
-void pubHostnameThreadFunc(const rclcpp::Node::SharedPtr& node, const std::string& server_name, const std::string& hostname, float frequency)
+void pubHostnameThreadFunc(const rclcpp::Node::SharedPtr& node, const std::string& server_name,
+                           const std::string& hostname, float frequency)
 {
     auto pub_shm_hostname = node->create_publisher<std_msgs::msg::String>(server_name + "/hosts", 1);
     rclcpp::WallRate r(frequency);

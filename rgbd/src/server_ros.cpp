@@ -5,7 +5,8 @@
 #include "rgbd/ros/conversions.h"
 #include "rgbd/view.h"
 
-namespace rgbd {
+namespace rgbd
+{
 
 ServerROS::ServerROS(const rclcpp::Node::SharedPtr& node)
     : node_(node ? node : rclcpp::Node::make_shared("rgbd_server_ros"))
@@ -62,8 +63,8 @@ void ServerROS::send(const Image& image)
 
             pc_msg.header.stamp = static_cast<uint64_t>(image.getTimestamp() * 1e6);
             pc_msg.header.frame_id = image.getFrameId();
-            pc_msg.width  = 0;
-            pc_msg.height  = 1;
+            pc_msg.width = 0;
+            pc_msg.height = 1;
             pc_msg.is_dense = true;
 
             for (int y = 0; y < view.getHeight(); ++y)
@@ -99,7 +100,8 @@ void ServerROS::send(const Image& image)
         }
     }
 
-    if (pub_rgb_img_ && (pub_rgb_img_->get_subscription_count() || pub_rgb_info_->get_subscription_count()) && image.getRGBImage().data)
+    if (pub_rgb_img_ && (pub_rgb_img_->get_subscription_count() || pub_rgb_info_->get_subscription_count()) &&
+        image.getRGBImage().data)
     {
         rgbd::View view(image, image.getRGBImage().cols);
 
@@ -117,4 +119,4 @@ void ServerROS::send(const Image& image)
     }
 }
 
-}  // namespace rgbd
+} // namespace rgbd
