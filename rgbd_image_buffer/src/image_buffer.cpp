@@ -8,7 +8,11 @@
 #include <rgbd/client.h>
 #include <rgbd/image.h>
 
+#if __has_include(<tf2/time.hpp>)
+#include <tf2/time.hpp>
+#else
 #include <tf2/time.h>
+#endif
 #include <tf2_ros/transform_listener.h>
 
 namespace rgbd
