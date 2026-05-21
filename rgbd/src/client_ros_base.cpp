@@ -11,6 +11,23 @@
 
 namespace rgbd {
 
+namespace {
+
+template <typename SubscriberT, typename NodeT>
+auto subscribeSensorData(SubscriberT& sub, const NodeT& node, const std::string& topic, int)
+    -> decltype(sub.subscribe(node, topic, rclcpp::SensorDataQoS()), void())
+{
+    sub.subscribe(node, topic, rclcpp::SensorDataQoS());
+}
+
+template <typename SubscriberT, typename NodeT>
+void subscribeSensorData(SubscriberT& sub, const NodeT& node, const std::string& topic, long)
+{
+    sub.subscribe(node, topic, rmw_qos_profile_sensor_data);
+}
+
+}  // namespace
+
 ClientROSBase::ClientROSBase(const rclcpp::Node::SharedPtr& node)
     : node_(node ? node : rclcpp::Node::make_shared("rgbd_client_ros_base"))
     , sync_(nullptr)
@@ -36,13 +53,8 @@ bool ClientROSBase::initialize(const std::string& rgb_image_topic, const std::st
     sub_rgb_sync_ = std::make_unique<message_filters::Subscriber<sensor_msgs::msg::Image>>();
     sub_depth_sync_ = std::make_unique<message_filters::Subscriber<sensor_msgs::msg::Image>>();
 
-#if __has_include(<message_filters/subscriber.hpp>)
-    sub_rgb_sync_->subscribe(node_, rgb_image_topic, rclcpp::SensorDataQoS());
-    sub_depth_sync_->subscribe(node_, depth_image_topic, rclcpp::SensorDataQoS());
-#else
-    sub_rgb_sync_->subscribe(node_, rgb_image_topic, rmw_qos_profile_sensor_data);
-    sub_depth_sync_->subscribe(node_, depth_image_topic, rmw_qos_profile_sensor_data);
-#endif
+    subscribeSensorData(*sub_rgb_sync_, node_, rgb_image_topic, 0);
+    subscribeSensorData(*sub_depth_sync_, node_, depth_image_topic, 0);
 
     sync_ = std::make_unique<message_filters::Synchronizer<RGBDApproxPolicy>>(RGBDApproxPolicy(10), *sub_rgb_sync_, *sub_depth_sync_);
 
