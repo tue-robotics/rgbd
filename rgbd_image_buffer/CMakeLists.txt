@@ -5,7 +5,6 @@ add_compile_options(-Wall -Werror=all)
 add_compile_options(-Wextra -Werror=extra)
 
 find_package(ament_cmake REQUIRED)
-find_package(ament_cmake_target_dependencies REQUIRED)
 find_package(geolib2 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -24,14 +23,23 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-ament_target_dependencies(${PROJECT_NAME}
-  geolib2
-  geometry_msgs
-  rclcpp
-  rgbd
-  tf2
-  tf2_ros
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+  geolib2::geolib
+  rclcpp::rclcpp
+  tf2::tf2
 )
+if(TARGET rgbd::rgbd)
+  target_link_libraries(${PROJECT_NAME} PUBLIC rgbd::rgbd)
+else()
+  target_link_libraries(${PROJECT_NAME} PUBLIC rgbd)
+endif()
+if(TARGET tf2_ros::tf2_ros)
+  target_link_libraries(${PROJECT_NAME} PUBLIC tf2_ros::tf2_ros)
+else()
+  target_include_directories(${PROJECT_NAME} PUBLIC ${tf2_ros_INCLUDE_DIRS})
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${tf2_ros_LIBRARIES})
+endif()
 
 install(
   DIRECTORY include/
