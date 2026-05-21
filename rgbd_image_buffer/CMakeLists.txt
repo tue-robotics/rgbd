@@ -5,6 +5,7 @@ add_compile_options(-Wall -Werror=all)
 add_compile_options(-Wextra -Werror=extra)
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_target_dependencies REQUIRED)
 find_package(geolib2 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
