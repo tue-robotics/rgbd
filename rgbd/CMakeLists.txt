@@ -81,14 +81,6 @@ else()
   target_link_libraries(${PROJECT_NAME} PUBLIC ${tue_serialization_LIBRARIES})
 endif()
 
-add_executable(ros_to_${PROJECT_NAME}
-  src/ros_to_rgbd.cpp
-  src/ros_to_rgbd_component.cpp
-)
-target_link_libraries(ros_to_${PROJECT_NAME}
-  ${PROJECT_NAME}
-)
-
 add_library(ros_to_${PROJECT_NAME}_component SHARED
   src/ros_to_rgbd_component.cpp
   src/ros_to_rgbd_component_registration.cpp
@@ -98,7 +90,10 @@ target_link_libraries(ros_to_${PROJECT_NAME}_component
   rclcpp::rclcpp
   rclcpp_components::component
 )
-rclcpp_components_register_nodes(ros_to_${PROJECT_NAME}_component "rgbd::RosToRGBDComponent")
+rclcpp_components_register_nodes(ros_to_${PROJECT_NAME}_component
+  PLUGIN "rgbd::RosToRGBDComponent"
+  EXECUTABLE ros_to_${PROJECT_NAME}
+)
 
 add_executable(${PROJECT_NAME}_to_shm src/rgbd_to_shm.cpp)
 target_link_libraries(${PROJECT_NAME}_to_shm ${PROJECT_NAME})
@@ -129,7 +124,6 @@ install(
     get_3d_point_from_image_roi_node
     ${PROJECT_NAME}_to_ros
     ${PROJECT_NAME}_to_shm
-    ros_to_${PROJECT_NAME}
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
