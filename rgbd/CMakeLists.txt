@@ -5,8 +5,6 @@ add_compile_options(-Wall -Werror=all)
 add_compile_options(-Wextra -Werror=extra)
 
 find_package(ament_cmake REQUIRED)
-find_package(ament_cmake_gtest REQUIRED)
-find_package(ament_lint_auto REQUIRED)
 find_package(Boost REQUIRED COMPONENTS iostreams)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
