@@ -5,6 +5,8 @@ add_compile_options(-Wall -Werror=all)
 add_compile_options(-Wextra -Werror=extra)
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_gtest REQUIRED)
+find_package(ament_lint_auto REQUIRED)
 find_package(Boost REQUIRED COMPONENTS iostreams)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
@@ -135,6 +137,18 @@ install(
   DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
 )
+
+if(BUILD_TESTING)
+  set(ament_cmake_copyright_FOUND TRUE)
+  set(ament_cmake_cpplint_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+
+  ament_add_gtest(image_gtest test/image_gtest.cpp)
+  target_link_libraries(image_gtest ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
+  ament_add_gtest(serialization_gtest test/serialization_gtest.cpp)
+  target_link_libraries(serialization_gtest ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+endif()
 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(

@@ -10,8 +10,13 @@
 #else
 #include <image_geometry/pinhole_camera_model.h>
 #endif
+#if __has_include(<sensor_msgs/msg/camera_info.hpp>)
+#include <sensor_msgs/msg/camera_info.hpp>
+#include <sensor_msgs/distortion_models.hpp>
+#else
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/distortion_models.h>
+#endif
 
 #include <random>
 #include <string>
@@ -43,7 +48,7 @@ rgbd::Image generateRandomImage()
     cv::randu(rgb_image, 0, 255);
     cv::Mat depth_image(480, 640, CV_32FC1);
     cv::randu(depth_image, 0., 100.);
-    sensor_msgs::CameraInfo cam_info;
+    sensor_msgs::msg::CameraInfo cam_info;
     cam_info.D.resize(5, 0.0);
     cam_info.K = {554.2559327880068, 0.0, 320.5,
                   0.0, 554.2559327880068, 240.5,
