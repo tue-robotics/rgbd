@@ -3,6 +3,7 @@ project(rgbd)
 
 add_compile_options(-Wall -Werror=all)
 add_compile_options(-Wextra -Werror=extra)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(ament_cmake REQUIRED)
 find_package(Boost REQUIRED COMPONENTS iostreams)
@@ -137,7 +138,7 @@ if(BUILD_TESTING)
   find_package(ament_cmake_lint_cmake REQUIRED)
   find_package(ament_cmake_xmllint REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
-  
+
   ament_clang_format(
     CONFIG_FILE ${tue_lint_config_DIR}/../config/.clang-format
     --clang-format-version=21
@@ -163,11 +164,37 @@ if(BUILD_TESTING)
   )
   ament_xmllint(MAX_LINE_LENGTH 120)
 
+  add_library(test_utils OBJECT test/test_utils.h)
+  target_link_libraries(test_utils ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
   ament_add_gtest(image_gtest test/image_gtest.cpp)
-  target_link_libraries(image_gtest ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+  target_link_libraries(image_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${OpenCV_LIBRARIES})
 
   ament_add_gtest(serialization_gtest test/serialization_gtest.cpp)
-  target_link_libraries(serialization_gtest ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+  target_link_libraries(serialization_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
+  find_package(rostest QUIET)
+  if(rostest_FOUND)
+    ament_add_gtest(shm_server_gtest test/shm_server_gtest.cpp)
+    target_link_libraries(shm_server_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+    add_rostest(test/shm_server.test)
+
+    ament_add_gtest(connection_${PROJECT_NAME}_gtest test/connection_rgbd_gtest.cpp)
+    target_link_libraries(connection_${PROJECT_NAME}_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+    add_rostest(test/connection_${PROJECT_NAME}.test)
+
+    ament_add_gtest(connection_ros_gtest test/connection_ros_gtest.cpp)
+    target_link_libraries(connection_ros_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+    add_rostest(test/connection_ros.test)
+
+    ament_add_gtest(connection_shm_gtest test/connection_shm_gtest.cpp)
+    target_link_libraries(connection_shm_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+    add_rostest(test/connection_shm.test)
+
+    ament_add_gtest(connection_gtest test/connection_gtest.cpp)
+    target_link_libraries(connection_gtest $<TARGET_OBJECTS:test_utils> ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+    add_rostest(test/connection.test)
+  endif()
 endif()
 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)

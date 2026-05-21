@@ -3,6 +3,7 @@ project(rgbd_image_buffer)
 
 add_compile_options(-Wall -Werror=all)
 add_compile_options(-Wextra -Werror=extra)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(ament_cmake REQUIRED)
 find_package(ament_lint_auto REQUIRED)
@@ -61,7 +62,7 @@ if(BUILD_TESTING)
   find_package(ament_cmake_clang_tidy REQUIRED)
   find_package(ament_cmake_lint_cmake REQUIRED)
   find_package(ament_cmake_xmllint REQUIRED)
-  
+
   ament_clang_format(
     CONFIG_FILE ${tue_lint_config_DIR}/../config/.clang-format
     --clang-format-version=21

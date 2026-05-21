@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.8)
 project(rgbd_interfaces)
 
 find_package(ament_cmake REQUIRED)
-find_package(ament_lint_auto REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
@@ -14,8 +13,14 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/GetRGBD.srv"
   "srv/Project2DTo3D.srv"
   DEPENDENCIES builtin_interfaces geometry_msgs sensor_msgs std_msgs
-  ADD_LINTER_TESTS
 )
+
+if(BUILD_TESTING)
+  find_package(ament_cmake_lint_cmake REQUIRED)
+  find_package(ament_cmake_xmllint REQUIRED)
+  ament_lint_cmake()
+  ament_xmllint()
+endif()
 
 ament_export_dependencies(rosidl_default_runtime)
 

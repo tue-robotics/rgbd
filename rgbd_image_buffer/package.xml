@@ -31,7 +31,7 @@
   <test_depend>clang-tidy-21</test_depend>
   <test_depend>tue_lint_config</test_depend>
 
-  <doc_depend>doxygen</doc_depend
+  <doc_depend>doxygen</doc_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
