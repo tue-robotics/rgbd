@@ -25,17 +25,20 @@ class Client;
 
 class ImageBuffer
 {
-public:
+  public:
     explicit ImageBuffer(const rclcpp::Node::SharedPtr& node = nullptr);
     ~ImageBuffer();
 
-    void initialize(const std::string& topic, const std::string& root_frame="map", float worker_thread_frequency=20);
+    void initialize(const std::string& topic, const std::string& root_frame = "map",
+                    float worker_thread_frequency = 20);
 
     bool nextImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose);
-    bool waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec, double check_rate);
-    bool waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec, uint timeout_tries = 25u);
+    bool waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec,
+                            double check_rate);
+    bool waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec,
+                            uint timeout_tries = 25u);
 
-private:
+  private:
     rclcpp::Node::SharedPtr node_;
     std::string root_frame_;
 
@@ -52,7 +55,7 @@ private:
     bool shutdown_;
 
     bool getMostRecentImageTF();
-    void workerThreadFunc(float frequency=20);
+    void workerThreadFunc(float frequency = 20);
 };
 
 } // namespace rgbd

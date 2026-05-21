@@ -10,13 +10,15 @@
 #include "rgbd/client_ros_base.h"
 #include "rgbd/types.h"
 
-namespace rgbd {
+namespace rgbd
+{
 
 /**
  * @brief Client which subscribes to regular ROS image topics
  */
-class ClientROS : public ClientROSBase {
-public:
+class ClientROS : public ClientROSBase
+{
+  public:
     /**
      * @brief Constructor
      */
@@ -34,7 +36,8 @@ public:
      * @param cam_info_topic topic name of the camera info; topic will still be resolved.
      * @return indicates success
      */
-    bool initialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic);
+    bool initialize(const std::string& rgb_image_topic, const std::string& depth_image_topic,
+                    const std::string& cam_info_topic);
 
     /**
      * @brief Get a new Image. If no new image has been received since the last call,
@@ -52,6 +55,6 @@ public:
     ImagePtr nextImage();
 };
 
-}  // namespace rgbd
+} // namespace rgbd
 
-#endif  // RGBD_CLIENT_ROS_H_
+#endif // RGBD_CLIENT_ROS_H_

@@ -3,12 +3,13 @@
 
 #include <memory>
 
-namespace rgbd {
+namespace rgbd
+{
 
 class Image;
 typedef std::shared_ptr<Image> ImagePtr;
 typedef std::shared_ptr<const Image> ImageConstPtr;
 
-}
+} // namespace rgbd
 
 #endif // RGBD_TYPES_H_

@@ -20,7 +20,7 @@ namespace rgbd
  */
 class ServerSHM
 {
-public:
+  public:
     /**
      * @brief Constructor
      *
@@ -47,7 +47,7 @@ public:
      */
     void send(const Image& image);
 
-private:
+  private:
     std::string shared_mem_name_;
 
     boost::interprocess::shared_memory_object shm_;
@@ -78,7 +78,8 @@ private:
 /**
  * @brief Publish the host that serves SHM for a server name.
  */
-void pubHostnameThreadFunc(const rclcpp::Node::SharedPtr& node, const std::string& server_name, const std::string& hostname, float frequency);
+void pubHostnameThreadFunc(const rclcpp::Node::SharedPtr& node, const std::string& server_name,
+                           const std::string& hostname, float frequency);
 
 } // namespace rgbd
 

@@ -9,14 +9,16 @@
 #include <memory>
 #include <string>
 
-namespace rgbd {
+namespace rgbd
+{
 
-class RosToRGBDComponent : public rclcpp::Node {
-public:
+class RosToRGBDComponent : public rclcpp::Node
+{
+  public:
     explicit RosToRGBDComponent(const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
     ~RosToRGBDComponent() override = default;
 
-private:
+  private:
     static RGBStorageType parseRGBStorageType(const std::string& rgb_type_str);
     static DepthStorageType parseDepthStorageType(const std::string& depth_type_str);
 
@@ -34,6 +36,6 @@ private:
     rclcpp::TimerBase::SharedPtr timer_;
 };
 
-}  // namespace rgbd
+} // namespace rgbd
 
-#endif  // RGBD_ROS_TO_RGBD_COMPONENT_H_
+#endif // RGBD_ROS_TO_RGBD_COMPONENT_H_

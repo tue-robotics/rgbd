@@ -11,13 +11,15 @@
 #include <mutex>
 #include <thread>
 
-namespace rgbd {
+namespace rgbd
+{
 
 /**
  * @brief Server which provides RGBD topic and RGBD service
  */
-class ServerRGBD {
-public:
+class ServerRGBD
+{
+  public:
     /**
      * @brief Constructor
      */
@@ -37,10 +39,8 @@ public:
      * @param depth_type depth storage type
      * @param service_freq frequency of the thread processing service requests
      */
-    void initialize(const std::string& name,
-                    RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS,
-                    DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS,
-                    float service_freq = 10.0f);
+    void initialize(const std::string& name, RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS,
+                    DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS, float service_freq = 10.0f);
 
     /**
      * @brief Write a new image to all interfaces
@@ -53,7 +53,7 @@ public:
      */
     static const int MESSAGE_VERSION;
 
-protected:
+  protected:
     rclcpp::Node::SharedPtr node_;
     rclcpp::Publisher<rgbd_interfaces::msg::RGBD>::SharedPtr pub_image_;
     rclcpp::Service<rgbd_interfaces::srv::GetRGBD>::SharedPtr service_server_;
@@ -83,6 +83,6 @@ protected:
     void serviceThreadFunc(float frequency);
 };
 
-}  // namespace rgbd
+} // namespace rgbd
 
-#endif  // RGBD_SERVER_RGBD_H_
+#endif // RGBD_SERVER_RGBD_H_

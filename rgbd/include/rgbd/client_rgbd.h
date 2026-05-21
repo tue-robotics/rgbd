@@ -11,13 +11,15 @@
 
 #include "rgbd/types.h"
 
-namespace rgbd {
+namespace rgbd
+{
 
 /**
  * @brief Client which subscribes to RGBD topic
  */
-class ClientRGBD {
-public:
+class ClientRGBD
+{
+  public:
     /**
      * @brief Constructor
      */
@@ -64,7 +66,7 @@ public:
      */
     ImagePtr nextImage();
 
-protected:
+  protected:
     rclcpp::Node::SharedPtr node_;
     rclcpp::Subscription<rgbd_interfaces::msg::RGBD>::SharedPtr sub_image_;
 
@@ -81,6 +83,6 @@ protected:
     void rgbdImageCallback(const rgbd_interfaces::msg::RGBD::ConstSharedPtr& msg);
 };
 
-}  // namespace rgbd
+} // namespace rgbd
 
-#endif  // RGBD_CLIENT_RGBD_H_
+#endif // RGBD_CLIENT_RGBD_H_

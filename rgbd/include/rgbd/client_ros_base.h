@@ -35,15 +35,18 @@
 
 #include <memory>
 
-namespace rgbd {
+namespace rgbd
+{
 
-using RGBDApproxPolicy = message_filters::sync_policies::ApproximateTime<sensor_msgs::msg::Image, sensor_msgs::msg::Image>;
+using RGBDApproxPolicy =
+    message_filters::sync_policies::ApproximateTime<sensor_msgs::msg::Image, sensor_msgs::msg::Image>;
 
 /**
  * @brief Client which subscribes to regular ROS image topics
  */
-class ClientROSBase {
-public:
+class ClientROSBase
+{
+  public:
     /**
      * @brief Constructor
      *
@@ -65,7 +68,8 @@ public:
      * @param cam_info_topic topic name of the camera info; topic will still be resolved.
      * @return indicates success
      */
-    bool initialize(const std::string& rgb_image_topic, const std::string& depth_image_topic, const std::string& cam_info_topic);
+    bool initialize(const std::string& rgb_image_topic, const std::string& depth_image_topic,
+                    const std::string& cam_info_topic);
 
     /**
      * @brief Clears the subscribers. #initialized will now return false.
@@ -79,7 +83,7 @@ public:
      */
     bool initialized() const { return static_cast<bool>(sync_); }
 
-protected:
+  protected:
     rclcpp::Node::SharedPtr node_;
 
     std::unique_ptr<message_filters::Synchronizer<RGBDApproxPolicy>> sync_;
@@ -113,6 +117,6 @@ protected:
                        const sensor_msgs::msg::Image::ConstSharedPtr& depth_image_msg);
 };
 
-}  // namespace rgbd
+} // namespace rgbd
 
-#endif  // RGBD_CLIENT_ROS_BASE_H_
+#endif // RGBD_CLIENT_ROS_BASE_H_

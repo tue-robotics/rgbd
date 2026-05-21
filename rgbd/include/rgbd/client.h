@@ -16,13 +16,15 @@
 #include <mutex>
 #include <thread>
 
-namespace rgbd {
+namespace rgbd
+{
 
 /**
  * @brief Client which uses the interfaces of ClientRGBD and ClientSHM
  */
-class Client {
-public:
+class Client
+{
+  public:
     /**
      * @brief Constructor
      */
@@ -36,13 +38,15 @@ public:
     /**
      * @brief Initialize the client
      * @param server_name Fully resolved server name
-     * @param timeout Timeout used to initialize each interface, currently only the ClientSHM interface requires a timeout
+     * @param timeout Timeout used to initialize each interface, currently only the ClientSHM interface requires a
+     * timeout
      * @return indicates success
      */
     bool initialize(const std::string& server_name, float timeout = 5.0);
 
     /**
-     * @brief Calls deinitialize on implementation clients. Shuts down both implementations. #initialized will now return false.
+     * @brief Calls deinitialize on implementation clients. Shuts down both implementations. #initialized will now
+     * return false.
      * @return indicates success
      */
     bool deinitialize();
@@ -69,8 +73,12 @@ public:
      */
     ImagePtr nextImage();
 
-protected:
-    enum class ClientImplMode { shm, rgbd };
+  protected:
+    enum class ClientImplMode
+    {
+        shm,
+        rgbd
+    };
 
     rclcpp::Node::SharedPtr node_;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_shm_hosts_;
@@ -94,6 +102,6 @@ protected:
     void subHostsThreadFunc(float frequency);
 };
 
-}  // namespace rgbd
+} // namespace rgbd
 
-#endif  // RGBD_CLIENT_H_
+#endif // RGBD_CLIENT_H_

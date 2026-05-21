@@ -13,13 +13,15 @@
 
 #include <memory>
 
-namespace rgbd {
+namespace rgbd
+{
 
 /**
  * @brief Server which publishes ROS rgb image, depth image and pointcloud messages
  */
-class ServerROS {
-public:
+class ServerROS
+{
+  public:
     /**
      * @brief Constructor
      */
@@ -45,7 +47,7 @@ public:
      */
     void send(const Image& image);
 
-protected:
+  protected:
     rclcpp::Node::SharedPtr node_;
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_rgb_img_;
     rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr pub_rgb_info_;
@@ -54,6 +56,6 @@ protected:
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_depth_pc_;
 };
 
-}  // namespace rgbd
+} // namespace rgbd
 
-#endif  // RGBD_SERVER_ROS_H_
+#endif // RGBD_SERVER_ROS_H_
