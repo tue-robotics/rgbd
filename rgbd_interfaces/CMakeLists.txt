@@ -13,6 +13,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/GetRGBD.srv"
   "srv/Project2DTo3D.srv"
   DEPENDENCIES builtin_interfaces geometry_msgs sensor_msgs std_msgs
+  ADD_LINTER_TESTS
 )
 
 ament_export_dependencies(rosidl_default_runtime)
