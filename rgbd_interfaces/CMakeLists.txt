@@ -17,4 +17,25 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 
 ament_export_dependencies(rosidl_default_runtime)
 
+if(BUILD_TESTING)
+  find_package(ament_cmake_lint_cmake REQUIRED)
+  find_package(ament_cmake_xmllint REQUIRED)
+  ament_lint_cmake(MAX_LINE_LENGTH 120 "--filter=
+    +convention/filename,
+    +linelength,
+    +package/consistency,
+    +package/stdargs,
+    +readability/logic,
+    +readability/mixedcase,
+    +readability/wonkycase,
+    +syntax,+whitespace/eol,
+    +whitespace/extra,
+    +whitespace/indent,
+    +whitespace/mismatch,
+    +whitespace/newline,
+    +whitespace/tabs"
+  )
+  ament_xmllint(MAX_LINE_LENGTH 120)
+endif()
+
 ament_package()
