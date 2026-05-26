@@ -18,7 +18,7 @@ namespace rgbd
  */
 class ClientROS : public ClientROSBase
 {
-  public:
+public:
     /**
      * @brief Constructor
      */
@@ -36,7 +36,8 @@ class ClientROS : public ClientROSBase
      * @param cam_info_topic topic name of the camera info; topic will still be resolved.
      * @return indicates success
      */
-    bool initialize(const std::string& rgb_image_topic, const std::string& depth_image_topic,
+    bool initialize(const std::string& rgb_image_topic,
+                    const std::string& depth_image_topic,
                     const std::string& cam_info_topic);
 
     /**

@@ -24,7 +24,7 @@ namespace rgbd
  */
 class Client
 {
-  public:
+public:
     /**
      * @brief Constructor
      */
@@ -73,7 +73,7 @@ class Client
      */
     ImagePtr nextImage();
 
-  protected:
+protected:
     enum class ClientImplMode
     {
         shm,

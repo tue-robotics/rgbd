@@ -103,6 +103,33 @@ target_link_libraries(${PROJECT_NAME}_to_ros ${PROJECT_NAME})
 add_executable(get_3d_point_from_image_roi_node src/get_3d_point_from_image_roi_node.cpp)
 target_link_libraries(get_3d_point_from_image_roi_node ${PROJECT_NAME})
 
+add_executable(analyser tools/analyser.cpp)
+target_link_libraries(analyser ${PROJECT_NAME})
+
+add_executable(full_screen_viewer tools/full_screen_viewer.cpp)
+target_link_libraries(full_screen_viewer ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
+add_executable(multitool tools/multitool.cpp)
+target_link_libraries(multitool ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
+add_executable(record_to_video tools/record_to_video.cpp)
+target_link_libraries(record_to_video ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
+add_executable(${PROJECT_NAME}_to_png tools/rgbd_to_png.cpp)
+target_link_libraries(${PROJECT_NAME}_to_png ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
+add_executable(${PROJECT_NAME}_to_pcd tools/rgbd_to_pcd.cpp)
+target_link_libraries(${PROJECT_NAME}_to_pcd ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
+add_executable(save tools/save.cpp)
+target_link_libraries(save ${PROJECT_NAME})
+
+add_executable(view tools/view.cpp)
+target_link_libraries(view ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
+add_executable(viewer tools/viewer.cpp)
+target_link_libraries(viewer ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
 install(
   DIRECTORY include/${PROJECT_NAME}/
   DESTINATION include/${PROJECT_NAME}
@@ -120,7 +147,16 @@ install(
 
 install(
   TARGETS
+    analyser
+    full_screen_viewer
     get_3d_point_from_image_roi_node
+    multitool
+    record_to_video
+    save
+    view
+    viewer
+    ${PROJECT_NAME}_to_pcd
+    ${PROJECT_NAME}_to_png
     ${PROJECT_NAME}_to_ros
     ${PROJECT_NAME}_to_shm
   RUNTIME DESTINATION lib/${PROJECT_NAME}
@@ -167,6 +203,39 @@ if(BUILD_TESTING)
 
   add_library(test_utils OBJECT test/test_utils.h)
   target_link_libraries(test_utils ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
+  add_library(test_server_templ OBJECT test/test_server_templ.h)
+  target_link_libraries(test_server_templ ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
+  add_executable(${PROJECT_NAME}_test_server test/test_server.cpp)
+  target_link_libraries(${PROJECT_NAME}_test_server $<TARGET_OBJECTS:test_server_templ> ${PROJECT_NAME})
+
+  add_executable(${PROJECT_NAME}_test_server_${PROJECT_NAME} test/test_server_rgbd.cpp)
+  target_link_libraries(${PROJECT_NAME}_test_server_${PROJECT_NAME} $<TARGET_OBJECTS:test_server_templ> ${PROJECT_NAME})
+
+  add_executable(${PROJECT_NAME}_test_server_shm test/test_server_shm.cpp)
+  target_link_libraries(${PROJECT_NAME}_test_server_shm $<TARGET_OBJECTS:test_server_templ> ${PROJECT_NAME})
+
+  add_executable(${PROJECT_NAME}_test_server_ros test/test_server_ros.cpp)
+  target_link_libraries(${PROJECT_NAME}_test_server_ros $<TARGET_OBJECTS:test_server_templ> ${PROJECT_NAME})
+
+  add_library(test_client_templ OBJECT test/test_client_templ.h)
+  target_link_libraries(test_client_templ ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+
+  add_executable(${PROJECT_NAME}_test_client test/test_client.cpp)
+  target_link_libraries(${PROJECT_NAME}_test_client $<TARGET_OBJECTS:test_client_templ> ${PROJECT_NAME})
+
+  add_executable(${PROJECT_NAME}_test_client_${PROJECT_NAME} test/test_client_rgbd.cpp)
+  target_link_libraries(${PROJECT_NAME}_test_client_${PROJECT_NAME} $<TARGET_OBJECTS:test_client_templ> ${PROJECT_NAME})
+
+  add_executable(${PROJECT_NAME}_test_client_shm test/test_client_shm.cpp)
+  target_link_libraries(${PROJECT_NAME}_test_client_shm $<TARGET_OBJECTS:test_client_templ> ${PROJECT_NAME})
+
+  add_executable(${PROJECT_NAME}_test_client_ros test/test_client_ros.cpp)
+  target_link_libraries(${PROJECT_NAME}_test_client_ros $<TARGET_OBJECTS:test_client_templ> ${PROJECT_NAME})
+
+  add_executable(${PROJECT_NAME}_test_serialization test/test_serialization.cpp)
+  target_link_libraries(${PROJECT_NAME}_test_serialization ${PROJECT_NAME} ${OpenCV_LIBRARIES})
 
   ament_add_gtest(image_gtest test/image_gtest.cpp)
   target_link_libraries(image_gtest

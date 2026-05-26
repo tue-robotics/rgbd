@@ -14,11 +14,11 @@ namespace rgbd
 
 class RosToRGBDComponent : public rclcpp::Node
 {
-  public:
+public:
     explicit RosToRGBDComponent(const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
     ~RosToRGBDComponent() override = default;
 
-  private:
+private:
     static RGBStorageType parseRGBStorageType(const std::string& rgb_type_str);
     static DepthStorageType parseDepthStorageType(const std::string& depth_type_str);
 

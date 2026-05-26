@@ -8,21 +8,17 @@
 
 #include "rgbd/image.h"
 
-namespace cv
-{
-class Mat;
-}
-namespace geo
-{
-class DepthCamera;
-}
+namespace cv { class Mat; }
+namespace geo { class DepthCamera; }
 
 namespace rgbd
 {
 
 bool convert(const cv::Mat& image, sensor_msgs::msg::Image& image_msg);
 
-bool convert(const cv::Mat& image, const geo::DepthCamera& cam_model, sensor_msgs::msg::Image& image_msg,
+bool convert(const cv::Mat& image,
+             const geo::DepthCamera& cam_model,
+             sensor_msgs::msg::Image& image_msg,
              sensor_msgs::msg::CameraInfo& cam_model_msg);
 
 bool convert(const rgbd_interfaces::msg::RGBD::ConstSharedPtr& msg, rgbd::Image*& image);

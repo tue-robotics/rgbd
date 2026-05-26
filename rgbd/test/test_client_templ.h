@@ -3,19 +3,12 @@
 
 #include <opencv2/highgui/highgui.hpp>
 
-#include <ros/console.h>
-#include <ros/duration.h>
-#include <ros/init.h>
-#include <ros/master.h>
-#include <ros/names.h>
-#include <ros/node_handle.h>
-#include <ros/rate.h>
-#include <ros/time.h>
+#include <rgbd/ros_compat.h>
 
 #include "rgbd/image.h"
 
+#include <iomanip>
 #include <string>
-
 
 void usage()
 {
@@ -35,14 +28,13 @@ void usage()
  * function.
  * Both the RGB and depth image are shown in seperate windows.
  */
-template<class T>
-int main_templ(int argc, char **argv)
+template <class T> int main_templ(int argc, char** argv)
 {
     ros::init(argc, argv, "rgbd_transport_test_client");
 
     bool headless = false;
     std::string arg;
-    for (int i=1; i<argc; ++i)
+    for (int i = 1; i < argc; ++i)
     {
         arg = argv[i];
         if (arg == "--headless")
@@ -50,7 +42,7 @@ int main_templ(int argc, char **argv)
             headless = true;
             ROS_INFO("Running in headless mode");
         }
-        else if(arg == "--help")
+        else if (arg == "--help")
         {
             usage();
             return 1;
@@ -91,7 +83,8 @@ int main_templ(int argc, char **argv)
         }
         if (client.nextImage(image))
         {
-            std::cout << "Image: t = " << std::fixed << std::setprecision(12) << image.getTimestamp() << ", frame = " << image.getFrameId() << std::endl;
+            std::cout << "Image: t = " << std::fixed << std::setprecision(12) << image.getTimestamp()
+                      << ", frame = " << image.getFrameId() << std::endl;
 
             if (!headless)
             {

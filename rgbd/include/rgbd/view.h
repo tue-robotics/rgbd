@@ -12,7 +12,7 @@ namespace rgbd
 class View
 {
 
-  public:
+public:
     View(const Image& image, int width);
 
     inline const int& getWidth() const { return width_; }
@@ -48,7 +48,7 @@ class View
 
     inline const geo::DepthCamera& getRasterizer() const { return rasterizer_; }
 
-  protected:
+protected:
     const Image& image_;
     int width_;
     int height_;

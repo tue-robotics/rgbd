@@ -19,7 +19,7 @@ namespace rgbd
  */
 class ServerRGBD
 {
-  public:
+public:
     /**
      * @brief Constructor
      */
@@ -39,8 +39,10 @@ class ServerRGBD
      * @param depth_type depth storage type
      * @param service_freq frequency of the thread processing service requests
      */
-    void initialize(const std::string& name, RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS,
-                    DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS, float service_freq = 10.0f);
+    void initialize(const std::string& name,
+                    RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS,
+                    DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS,
+                    float service_freq = 10.0f);
 
     /**
      * @brief Write a new image to all interfaces
@@ -53,7 +55,7 @@ class ServerRGBD
      */
     static const int MESSAGE_VERSION;
 
-  protected:
+protected:
     rclcpp::Node::SharedPtr node_;
     rclcpp::Publisher<rgbd_interfaces::msg::RGBD>::SharedPtr pub_image_;
     rclcpp::Service<rgbd_interfaces::srv::GetRGBD>::SharedPtr service_server_;

@@ -6,7 +6,6 @@ add_compile_options(-Wextra -Werror=extra)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(ament_cmake REQUIRED)
-find_package(ament_lint_auto REQUIRED)
 find_package(geolib2 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)

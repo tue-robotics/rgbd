@@ -21,7 +21,7 @@ namespace rgbd
  */
 class ServerROS
 {
-  public:
+public:
     /**
      * @brief Constructor
      */
@@ -47,7 +47,7 @@ class ServerROS
      */
     void send(const Image& image);
 
-  protected:
+protected:
     rclcpp::Node::SharedPtr node_;
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_rgb_img_;
     rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr pub_rgb_info_;

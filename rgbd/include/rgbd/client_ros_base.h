@@ -46,7 +46,7 @@ using RGBDApproxPolicy =
  */
 class ClientROSBase
 {
-  public:
+public:
     /**
      * @brief Constructor
      *
@@ -68,7 +68,8 @@ class ClientROSBase
      * @param cam_info_topic topic name of the camera info; topic will still be resolved.
      * @return indicates success
      */
-    bool initialize(const std::string& rgb_image_topic, const std::string& depth_image_topic,
+    bool initialize(const std::string& rgb_image_topic,
+                    const std::string& depth_image_topic,
                     const std::string& cam_info_topic);
 
     /**
@@ -83,7 +84,7 @@ class ClientROSBase
      */
     bool initialized() const { return static_cast<bool>(sync_); }
 
-  protected:
+protected:
     rclcpp::Node::SharedPtr node_;
 
     std::unique_ptr<message_filters::Synchronizer<RGBDApproxPolicy>> sync_;

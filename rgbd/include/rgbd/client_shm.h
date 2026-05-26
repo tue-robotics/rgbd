@@ -16,7 +16,7 @@ namespace rgbd
 class ClientSHM
 {
 
-  public:
+public:
     /**
      * @brief Constructor
      *
@@ -66,7 +66,7 @@ class ClientSHM
      */
     ImagePtr nextImage();
 
-  private:
+private:
     boost::interprocess::shared_memory_object shm_;
 
     boost::interprocess::mapped_region mem_buffer_header_;

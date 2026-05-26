@@ -19,7 +19,7 @@ namespace rgbd
  */
 class ClientRGBD
 {
-  public:
+public:
     /**
      * @brief Constructor
      */
@@ -66,7 +66,7 @@ class ClientRGBD
      */
     ImagePtr nextImage();
 
-  protected:
+protected:
     rclcpp::Node::SharedPtr node_;
     rclcpp::Subscription<rgbd_interfaces::msg::RGBD>::SharedPtr sub_image_;
 

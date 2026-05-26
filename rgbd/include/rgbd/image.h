@@ -48,11 +48,14 @@ class Image
 {
     friend class ClientSHM;
 
-  public:
+public:
     Image();
 
-    Image(const cv::Mat& rgb_image, const cv::Mat& depth_image, const image_geometry::PinholeCameraModel& cam_model,
-          const std::string& frame_id, double timestamp);
+    Image(const cv::Mat& rgb_image,
+          const cv::Mat& depth_image,
+          const image_geometry::PinholeCameraModel& cam_model,
+          const std::string& frame_id,
+          double timestamp);
 
     inline const cv::Mat& getDepthImage() const { return depth_image_; }
     inline const cv::Mat& getRGBImage() const { return rgb_image_; }
@@ -75,14 +78,16 @@ class Image
 
     friend std::ostream& operator<<(std::ostream& out, const rgbd::Image& image);
 
-    friend bool serialize(const Image& image, tue::serialization::OutputArchive& a, RGBStorageType rgb_type,
+    friend bool serialize(const Image& image,
+                          tue::serialization::OutputArchive& a,
+                          RGBStorageType rgb_type,
                           DepthStorageType depth_type);
 
     friend bool deserialize(tue::serialization::InputArchive& a, Image& image);
 
     friend bool convert(const rgbd_interfaces::msg::RGBD::ConstSharedPtr& msg, rgbd::Image*& image);
 
-  protected:
+protected:
     cv::Mat rgb_image_; // BGR format
     cv::Mat depth_image_;
 
