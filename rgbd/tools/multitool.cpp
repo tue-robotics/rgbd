@@ -1,9 +1,8 @@
-#include "rgbd/ros_compat.h"
-
 #include "rgbd/client.h"
 #include "rgbd/view.h"
 
 #include <opencv2/highgui/highgui.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 #include <memory>
 
@@ -46,8 +45,10 @@ void CallBackFunc(int event, int x, int y, int /*flags*/, void* /*userdata*/)
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "rgbd_multitool", ros::init_options::AnonymousName);
-    ros::start();
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<rclcpp::Node>(
+        "rgbd_multitool", rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
+    const auto logger = node->get_logger();
 
     std::unique_ptr<rgbd::Client> client(nullptr);
 
@@ -70,7 +71,7 @@ int main(int argc, char** argv)
         if (opt == "--rgbd")
         {
             client = std::unique_ptr<rgbd::Client>(new rgbd::Client);
-            client->initialize(ros::names::resolve(arg));
+            client->initialize(arg);
         }
         else
         {
@@ -105,25 +106,17 @@ int main(int argc, char** argv)
     float max_view_distance = 10;
 
     rgbd::ImagePtr image;
-    ros::NodeHandle nh_private("~");
 
-    float rate = 30;
-    nh_private.getParam("rate", rate);
-
-    ros::WallTime last_master_check = ros::WallTime::now();
-
-    ros::Rate r(rate);
-    while (ros::ok())
+    double rate = 30.0;
+    if (!node->has_parameter("rate"))
     {
-        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-        {
-            last_master_check = ros::WallTime::now();
-            if (!ros::master::check())
-            {
-                ROS_FATAL("Lost connection to master");
-                return 1;
-            }
-        }
+        node->declare_parameter<double>("rate", rate);
+    }
+    node->get_parameter("rate", rate);
+
+    rclcpp::Rate r(rate);
+    while (rclcpp::ok())
+    {
         if (!PAUSE && client)
         {
             rgbd::ImagePtr image_tmp = client->nextImage();
@@ -274,5 +267,7 @@ int main(int argc, char** argv)
         r.sleep();
     }
 
+    RCLCPP_INFO(logger, "Shutting down");
+    rclcpp::shutdown();
     return 0;
 }

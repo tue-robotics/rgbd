@@ -1,41 +1,59 @@
 #include "rgbd/client.h"
-#include "rgbd/ros_compat.h"
+#include "rgbd/image.h"
 
 // Writing video files
 #include <opencv2/highgui/highgui.hpp>
 
 #include <opencv2/imgproc/imgproc.hpp>
+#include <memory>
+#include <rclcpp/rclcpp.hpp>
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "rgbd_transport_server");
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<rclcpp::Node>(
+        "rgbd_transport_server", rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
+    const auto logger = node->get_logger();
 
     // Read parameters
-    ros::NodeHandle nh_private("~");
-
-    float rate = 30;
-    nh_private.getParam("rate", rate);
+    double rate = 30.0;
+    if (!node->has_parameter("rate"))
+    {
+        node->declare_parameter<double>("rate", rate);
+    }
+    node->get_parameter("rate", rate);
 
     std::string filename;
-    nh_private.getParam("filename", filename);
+    if (!node->has_parameter("filename"))
+    {
+        node->declare_parameter<std::string>("filename", filename);
+    }
+    node->get_parameter("filename", filename);
 
     std::string format = "DIVX";
-    nh_private.getParam("format", format);
+    if (!node->has_parameter("format"))
+    {
+        node->declare_parameter<std::string>("format", format);
+    }
+    node->get_parameter("format", format);
 
     double size = 1;
-    nh_private.getParam("size", size);
+    if (!node->has_parameter("size"))
+    {
+        node->declare_parameter<double>("size", size);
+    }
+    node->get_parameter("size", size);
 
     if (format.size() != 4)
     {
-        ROS_ERROR("Parameter 'format' should be string of size 4 (e.g., MJPG, "
-                  "DIVX, MPG4, etc)");
+        RCLCPP_ERROR(logger, "Parameter 'format' should be string of size 4 (e.g., MJPG, DIVX, MPG4, etc)");
         return 1;
     }
 
     rgbd::Client client;
     if (!client.initialize("rgbd"))
     {
-        ROS_ERROR("Could not initialize rgbd client");
+        RCLCPP_ERROR(logger, "Could not initialize rgbd client");
         return 1;
     }
 
@@ -45,22 +63,11 @@ int main(int argc, char** argv)
     // video size
     cv::Size2i video_size;
 
-    ros::WallTime last_master_check = ros::WallTime::now();
-
     // Start loop at given frequency
-    ros::Rate r(rate);
+    rclcpp::Rate r(rate);
     rgbd::Image image;
-    while (ros::ok())
+    while (rclcpp::ok())
     {
-        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-        {
-            last_master_check = ros::WallTime::now();
-            if (!ros::master::check())
-            {
-                ROS_FATAL("Lost connection to master");
-                return 1;
-            }
-        }
         if (!client.nextImage(image) || !image.getRGBImage().data)
         {
             r.sleep();
@@ -111,5 +118,6 @@ int main(int argc, char** argv)
 
     video_writer.release();
 
+    rclcpp::shutdown();
     return 0;
 }

@@ -1,37 +1,32 @@
 #include <opencv2/highgui/highgui.hpp>
-
-#include "rgbd/ros_compat.h"
+#include <rclcpp/rclcpp.hpp>
 
 #include "rgbd/client.h"
 #include "rgbd/view.h"
 
+#include <memory>
+
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "rgbd_viewer");
-    ros::NodeHandle nh_private("~");
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<rclcpp::Node>(
+        "rgbd_viewer", rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
 
-    float rate = 30;
-    nh_private.getParam("rate", rate);
+    double rate = 30.0;
+    if (!node->has_parameter("rate"))
+    {
+        node->declare_parameter<double>("rate", rate);
+    }
+    node->get_parameter("rate", rate);
 
     rgbd::Client client;
-    client.initialize(ros::names::resolve("rgbd"));
+    client.initialize("rgbd");
 
     rgbd::Image image;
 
-    ros::WallTime last_master_check = ros::WallTime::now();
-
-    ros::Rate r(rate);
-    while (ros::ok())
+    rclcpp::Rate r(rate);
+    while (rclcpp::ok())
     {
-        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-        {
-            last_master_check = ros::WallTime::now();
-            if (!ros::master::check())
-            {
-                ROS_FATAL("Lost connection to master");
-                return 1;
-            }
-        }
         if (client.nextImage(image))
         {
             // Show depth image
@@ -77,5 +72,6 @@ int main(int argc, char** argv)
         r.sleep();
     }
 
+    rclcpp::shutdown();
     return 0;
 }

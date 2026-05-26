@@ -9,8 +9,8 @@
 
 #include "rgbd/image.h"
 
-#include <rgbd/ros_compat.h>
-
+#include <memory>
+#include <rclcpp/rclcpp.hpp>
 #if __has_include(<sensor_msgs/msg/camera_info.hpp>)
 #include <sensor_msgs/msg/camera_info.hpp>
 using CameraInfoMsg = sensor_msgs::msg::CameraInfo;
@@ -39,16 +39,22 @@ using CameraInfoMsg = sensor_msgs::CameraInfo;
  */
 template <class T> int main_templ(int argc, char** argv)
 {
-    ros::init(argc, argv, "rgbd_transport_test_server");
-    ros::NodeHandle nh_private("~");
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<rclcpp::Node>(
+        "rgbd_transport_test_server", rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
+    const auto logger = node->get_logger();
 
-    float rate = 30;
-    nh_private.getParam("rate", rate);
+    double rate = 30.0;
+    if (!node->has_parameter("rate"))
+    {
+        node->declare_parameter<double>("rate", rate);
+    }
+    node->get_parameter("rate", rate);
 
     T server;
-    server.initialize(ros::names::resolve("test"));
+    server.initialize("test");
 
-    ros::Rate r(rate);
+    rclcpp::Rate r(rate);
     cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0, 0, 255));
     cv::Mat depth_image(480, 640, CV_32FC1, 5.0);
     CameraInfoMsg cam_info;
@@ -60,22 +66,11 @@ template <class T> int main_templ(int argc, char** argv)
     image_geometry::PinholeCameraModel cam_model;
     cam_model.fromCameraInfo(cam_info);
 
-    rgbd::Image image(rgb_image, depth_image, cam_model, "test_frame_id", ros::Time::now().toSec());
-
-    ros::WallTime last_master_check = ros::WallTime::now();
+    rgbd::Image image(rgb_image, depth_image, cam_model, "test_frame_id", node->now().seconds());
 
     int x = 0;
-    while (ros::ok())
+    while (rclcpp::ok())
     {
-        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-        {
-            last_master_check = ros::WallTime::now();
-            if (!ros::master::check())
-            {
-                ROS_FATAL("Lost connection to master");
-                return 1;
-            }
-        }
         cv::line(rgb_image, cv::Point(x, 0), cv::Point(x, rgb_image.rows - 1), cv::Scalar(0, 0, 255));
         cv::line(depth_image, cv::Point(x, 0), cv::Point(x, depth_image.rows - 1), 5.0);
         x = (x + 10) % rgb_image.cols;
@@ -84,13 +79,15 @@ template <class T> int main_templ(int argc, char** argv)
 
         image.setRGBImage(rgb_image);
         image.setDepthImage(depth_image);
-        image.setTimestamp(ros::Time::now().toSec());
+        image.setTimestamp(node->now().seconds());
 
         server.send(image);
 
         r.sleep();
     }
 
+    RCLCPP_INFO(logger, "Shutting down");
+    rclcpp::shutdown();
     return 0;
 }
 

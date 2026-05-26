@@ -3,11 +3,11 @@
 
 #include <opencv2/highgui/highgui.hpp>
 
-#include <rgbd/ros_compat.h>
-
 #include "rgbd/image.h"
 
 #include <iomanip>
+#include <memory>
+#include <rclcpp/rclcpp.hpp>
 #include <string>
 
 void usage()
@@ -30,7 +30,10 @@ void usage()
  */
 template <class T> int main_templ(int argc, char** argv)
 {
-    ros::init(argc, argv, "rgbd_transport_test_client");
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<rclcpp::Node>(
+        "rgbd_transport_test_client", rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
+    const auto logger = node->get_logger();
 
     bool headless = false;
     std::string arg;
@@ -40,7 +43,7 @@ template <class T> int main_templ(int argc, char** argv)
         if (arg == "--headless")
         {
             headless = true;
-            ROS_INFO("Running in headless mode");
+            RCLCPP_INFO(logger, "Running in headless mode");
         }
         else if (arg == "--help")
         {
@@ -49,38 +52,29 @@ template <class T> int main_templ(int argc, char** argv)
         }
         else
         {
-            ROS_WARN_STREAM("Incorrect argument: '" << arg);
+            RCLCPP_WARN_STREAM(logger, "Incorrect argument: '" << arg);
         }
     }
 
-    ros::NodeHandle nh_private("~");
-
-    float rate = 30;
-    nh_private.getParam("rate", rate);
+    double rate = 30.0;
+    if (!node->has_parameter("rate"))
+    {
+        node->declare_parameter<double>("rate", rate);
+    }
+    node->get_parameter("rate", rate);
 
     T client;
-    if (!client.initialize(ros::names::resolve("test")))
+    if (!client.initialize("test"))
     {
-        ROS_FATAL("Could not initialize the client");
+        RCLCPP_FATAL(logger, "Could not initialize the client");
         return 1;
     }
 
     rgbd::Image image;
 
-    ros::WallTime last_master_check = ros::WallTime::now();
-
-    ros::Rate r(rate);
-    while (ros::ok())
+    rclcpp::Rate r(rate);
+    while (rclcpp::ok())
     {
-        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-        {
-            last_master_check = ros::WallTime::now();
-            if (!ros::master::check())
-            {
-                ROS_FATAL("Lost connection to master");
-                return 1;
-            }
-        }
         if (client.nextImage(image))
         {
             std::cout << "Image: t = " << std::fixed << std::setprecision(12) << image.getTimestamp()
@@ -101,6 +95,7 @@ template <class T> int main_templ(int argc, char** argv)
         cv::destroyAllWindows();
     }
 
+    rclcpp::shutdown();
     return 0;
 }
 

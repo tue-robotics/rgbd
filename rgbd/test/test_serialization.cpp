@@ -1,5 +1,4 @@
 #include <rgbd/image.h>
-#include <rgbd/ros_compat.h>
 #include <rgbd/serialization.h>
 #include <rgbd/view.h>
 
@@ -67,7 +66,7 @@ int main(int /*argc*/, char** /*argv*/)
     std::cout << "Image loaded from disk." << std::endl;
     //    std::cout << "    size:  " << image.getWidth() << " x " << image.getHeight() << std::endl;
     std::cout << "    frame: " << image.getFrameId() << std::endl;
-    std::cout << "    time:  " << ros::Time(image.getTimestamp()) << std::endl;
+    std::cout << "    time:  " << image.getTimestamp() << std::endl;
 
     if (image.getRGBImage().data)
         cv::imshow("rgb", image.getRGBImage());

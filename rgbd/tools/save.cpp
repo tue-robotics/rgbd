@@ -1,5 +1,3 @@
-#include "rgbd/ros_compat.h"
-
 #include "rgbd/client.h"
 #include "rgbd/image.h"
 #include "rgbd/serialization.h"
@@ -10,38 +8,34 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <memory>
+#include <rclcpp/rclcpp.hpp>
 #include <sstream>
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "rgbd_saver");
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<rclcpp::Node>(
+        "rgbd_saver", rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
+    const auto logger = node->get_logger();
 
-    ros::NodeHandle nh_private("~");
-
-    float rate = 30;
-    nh_private.getParam("rate", rate);
+    double rate = 30.0;
+    if (!node->has_parameter("rate"))
+    {
+        node->declare_parameter<double>("rate", rate);
+    }
+    node->get_parameter("rate", rate);
 
     rgbd::Client client;
-    client.initialize(ros::names::resolve("rgbd"));
+    client.initialize("rgbd");
 
     rgbd::Image image;
 
-    ros::WallTime last_master_check = ros::WallTime::now();
-
-    ros::Rate r(rate);
+    rclcpp::Rate r(rate);
     char key_pressed;
-    while (ros::ok())
+    while (rclcpp::ok())
     {
-        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-        {
-            last_master_check = ros::WallTime::now();
-            if (!ros::master::check())
-            {
-                ROS_FATAL("Lost connection to master");
-                return 1;
-            }
-        }
-        ROS_INFO("Press s to save and q to exit.");
+        RCLCPP_INFO(logger, "Press s to save and q to exit.");
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-result"
@@ -70,24 +64,26 @@ int main(int argc, char** argv)
                 {
                     tue::serialization::OutputArchive a_out(f_out);
                     rgbd::serialize(image, a_out);
-                    ROS_INFO_STREAM("Written image to '" << file_name << "'");
+                    RCLCPP_INFO_STREAM(logger, "Written image to '" << file_name << "'");
                 }
                 catch (const std::exception& e) // caught by reference to base
                 {
-                    ROS_ERROR_STREAM("Error while writing to '" << file_name << "':\n" << e.what());
+                    RCLCPP_ERROR_STREAM(logger, "Error while writing to '" << file_name << "':\n" << e.what());
                 }
                 f_out.close();
             }
         }
         else if (key_pressed == 'q')
         {
-            ROS_INFO("Exiting");
+            RCLCPP_INFO(logger, "Exiting");
+            rclcpp::shutdown();
             return 0;
         }
         r.sleep();
     }
 
-    ROS_INFO("No image stored.");
+    RCLCPP_INFO(logger, "No image stored.");
 
+    rclcpp::shutdown();
     return 0;
 }
