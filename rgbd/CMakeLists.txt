@@ -26,7 +26,7 @@ find_package(tue_serialization REQUIRED)
 # to show header files in Qt Creator
 file(GLOB_RECURSE HEADER_FILES include/*.h)
 
-add_library(${PROJECT_NAME}
+add_library(${PROJECT_NAME} SHARED
   ${HEADER_FILES}
   src/client.cpp
   src/client_${PROJECT_NAME}.cpp
