@@ -32,10 +32,12 @@ public:
 
     bool nextImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose);
     bool waitForRecentImage(rgbd::ImageConstPtr& image,
-                            geo::Pose3D& sensor_pose, double timeout_sec,
+                            geo::Pose3D& sensor_pose,
+                            double timeout_sec,
                             double check_rate);
     bool waitForRecentImage(rgbd::ImageConstPtr& image,
-                            geo::Pose3D& sensor_pose, double timeout_sec,
+                            geo::Pose3D& sensor_pose,
+                            double timeout_sec,
                             uint timeout_tries = 25u);
 
 private:

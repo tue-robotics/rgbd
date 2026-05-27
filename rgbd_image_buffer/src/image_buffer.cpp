@@ -46,7 +46,9 @@ void ImageBuffer::initialize(const std::string& topic, const std::string& root_f
     worker_thread_ptr_ = std::make_unique<std::thread>(&ImageBuffer::workerThreadFunc, this, worker_thread_frequency);
 }
 
-bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec,
+bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image,
+                                     geo::Pose3D& sensor_pose,
+                                     double timeout_sec,
                                      double check_rate)
 {
     if (!rgbd_client_)
@@ -84,7 +86,9 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& se
     const rclcpp::Time image_stamp = rclcpp::Time(static_cast<int64_t>(rgbd_image->getTimestamp() * 1e9));
     if (!tf_buffer_.canTransform(root_frame_, rgbd_image->getFrameId(), image_stamp))
     {
-        if (!tf_buffer_.canTransform(root_frame_, rgbd_image->getFrameId(), image_stamp,
+        if (!tf_buffer_.canTransform(root_frame_,
+                                     rgbd_image->getFrameId(),
+                                     image_stamp,
                                      tf2::durationFromSec(std::max(0.0, (t_end - node_->now()).seconds()))))
         {
             RCLCPP_ERROR(rclcpp::get_logger("image_buffer"), "[IMAGE_BUFFER] timeout waiting for tf");
@@ -111,7 +115,9 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& se
     return true;
 }
 
-bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec,
+bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image,
+                                     geo::Pose3D& sensor_pose,
+                                     double timeout_sec,
                                      uint timeout_tries)
 {
     if (timeout_tries <= 0)
