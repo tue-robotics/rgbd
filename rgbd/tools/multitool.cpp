@@ -71,7 +71,7 @@ int main(int argc, char** argv)
         if (opt == "--rgbd")
         {
             client = std::unique_ptr<rgbd::Client>(new rgbd::Client);
-            client->initialize(arg);
+            client->initialize(node->get_node_topics_interface()->resolve_topic_name(arg));
         }
         else
         {

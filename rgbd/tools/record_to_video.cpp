@@ -51,7 +51,7 @@ int main(int argc, char** argv)
     }
 
     rgbd::Client client;
-    if (!client.initialize("rgbd"))
+    if (!client.initialize(node->get_node_topics_interface()->resolve_topic_name("rgbd")))
     {
         RCLCPP_ERROR(logger, "Could not initialize rgbd client");
         return 1;

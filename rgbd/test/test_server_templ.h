@@ -52,7 +52,7 @@ template <class T> int main_templ(int argc, char** argv)
     node->get_parameter("rate", rate);
 
     T server;
-    server.initialize("test");
+    server.initialize(node->get_node_topics_interface()->resolve_topic_name("test"));
 
     rclcpp::Rate r(rate);
     cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0, 0, 255));

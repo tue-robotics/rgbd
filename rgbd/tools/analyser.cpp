@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     node->get_parameter("rate", rate);
 
     rgbd::Client client;
-    client.initialize(argv[1]);
+    client.initialize(node->get_node_topics_interface()->resolve_topic_name(argv[1]));
 
     rgbd::Image image;
 

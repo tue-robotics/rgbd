@@ -64,7 +64,7 @@ template <class T> int main_templ(int argc, char** argv)
     node->get_parameter("rate", rate);
 
     T client;
-    if (!client.initialize("test"))
+    if (!client.initialize(node->get_node_topics_interface()->resolve_topic_name("test")))
     {
         RCLCPP_FATAL(logger, "Could not initialize the client");
         return 1;

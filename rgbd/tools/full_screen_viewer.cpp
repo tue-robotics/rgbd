@@ -19,7 +19,7 @@ int main(int argc, char** argv)
     node->get_parameter("rate", rate);
 
     rgbd::Client client;
-    client.initialize("rgbd");
+    client.initialize(node->get_node_topics_interface()->resolve_topic_name("rgbd"));
 
     const std::string window_name = "RGBD_VIEW";
     cv::namedWindow(window_name, cv::WINDOW_NORMAL);
