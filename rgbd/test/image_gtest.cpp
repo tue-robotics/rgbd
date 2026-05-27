@@ -6,11 +6,7 @@
 
 #include <rgbd/image.h>
 
-#if __has_include(<sensor_msgs/msg/camera_info.hpp>)
 #include <sensor_msgs/msg/camera_info.hpp>
-#else
-#include <sensor_msgs/CameraInfo.h>
-#endif
 
 
 TEST(Image, EmptyClone)

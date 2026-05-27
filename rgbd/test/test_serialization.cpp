@@ -6,25 +6,15 @@
 
 #include <opencv2/highgui/highgui.hpp>
 
-#if __has_include(<sensor_msgs/msg/camera_info.hpp>)
-#include <sensor_msgs/msg/camera_info.hpp>
-using CameraInfoMsg = sensor_msgs::msg::CameraInfo;
-#else
-#include <sensor_msgs/CameraInfo.h>
-using CameraInfoMsg = sensor_msgs::CameraInfo;
-#endif
-#if __has_include(<sensor_msgs/distortion_models.hpp>)
 #include <sensor_msgs/distortion_models.hpp>
-#else
-#include <sensor_msgs/distortion_models.h>
-#endif
+#include <sensor_msgs/msg/camera_info.hpp>
 
 int main(int /*argc*/, char** /*argv*/)
 {
     std::string test_filename = "/tmp/rgbd_test_image";
 
     {
-        CameraInfoMsg cam_info;
+        sensor_msgs::msg::CameraInfo cam_info;
         cam_info.distortion_model = sensor_msgs::distortion_models::PLUMB_BOB;
         image_geometry::PinholeCameraModel cam_model;
         cam_model.fromCameraInfo(cam_info);

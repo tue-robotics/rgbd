@@ -10,13 +10,8 @@
 #else
 #include <image_geometry/pinhole_camera_model.h>
 #endif
-#if __has_include(<sensor_msgs/msg/camera_info.hpp>)
-#include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/distortion_models.hpp>
-#else
-#include <sensor_msgs/CameraInfo.h>
-#include <sensor_msgs/distortion_models.h>
-#endif
+#include <sensor_msgs/msg/camera_info.hpp>
 
 #include <random>
 #include <string>
