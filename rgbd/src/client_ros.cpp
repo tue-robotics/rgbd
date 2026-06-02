@@ -14,16 +14,22 @@ namespace rgbd {
 namespace {
 
 template <typename SubscriberT, typename NodeT>
-auto subscribeSensorData(SubscriberT& sub, const NodeT& node, const std::string& topic, rclcpp::SubscriptionOptions options)
+auto subscribeSensorDataImpl(SubscriberT& sub, const NodeT& node, const std::string& topic, rclcpp::SubscriptionOptions options, int)
     -> decltype(sub.subscribe(node, topic, rclcpp::SensorDataQoS(), options), void())
 {
     sub.subscribe(node, topic, rclcpp::SensorDataQoS(), options);
 }
 
 template <typename SubscriberT, typename NodeT>
-void subscribeSensorData(SubscriberT& sub, const NodeT& node, const std::string& topic, rclcpp::SubscriptionOptions options)
+void subscribeSensorDataImpl(SubscriberT& sub, const NodeT& node, const std::string& topic, rclcpp::SubscriptionOptions options, long)
 {
     sub.subscribe(node, topic, rmw_qos_profile_sensor_data, options);
+}
+
+template <typename SubscriberT, typename NodeT>
+void subscribeSensorData(SubscriberT& sub, const NodeT& node, const std::string& topic, rclcpp::SubscriptionOptions options)
+{
+    subscribeSensorDataImpl(sub, node, topic, options, 0);
 }
 
 }  // namespace
