@@ -64,7 +64,8 @@ bool RosToRGBDComponent::initializeInterfaces()
     client_ = std::make_unique<ClientROS>(node);
     server_ = std::make_unique<Server>(node);
 
-    if (!client_->initialize("rgb_image", "depth_image", "cam_info")) {
+    if (!client_->initialize("rgb_image", "depth_image", "cam_info"))
+    {
         RCLCPP_ERROR(get_logger(), "Failed to initialize ClientROS");
         return false;
     }
@@ -75,7 +76,8 @@ bool RosToRGBDComponent::initializeInterfaces()
 
 void RosToRGBDComponent::runOnce()
 {
-    if (!interfaces_initialized_) {
+    if (!interfaces_initialized_)
+    {
         interfaces_initialized_ = initializeInterfaces();
         if (!interfaces_initialized_)
             return;
