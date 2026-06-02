@@ -1,7 +1,6 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include "rgbd/client_rgbd.h"
-#include "rgbd/image.h"
 #include "rgbd/server_shm.h"
 #include "rgbd/utility.h"
 
@@ -45,7 +44,6 @@ public:
                     pub_hostname_thread_ptr_ = std::make_unique<std::thread>(rgbd::pubHostnameThreadFunc, node_, server_name_, host_name_, 10.0f);
                 server_.send(*image_ptr);
             }
-            rclcpp::spin_some(node_);
             r.sleep();
         }
 

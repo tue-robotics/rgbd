@@ -100,7 +100,6 @@ int main(int argc, char **argv)
             server.send(image);
         }
 
-        rclcpp::spin_some(node);
         r.sleep();
     }
 

@@ -31,7 +31,6 @@ add_library(${PROJECT_NAME} SHARED
   src/client.cpp
   src/client_${PROJECT_NAME}.cpp
   src/client_ros.cpp
-  src/client_ros_base.cpp
   src/client_shm.cpp
   src/image.cpp
   src/ros/conversions.cpp

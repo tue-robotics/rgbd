@@ -69,6 +69,8 @@ public:
 protected:
     rclcpp::Node::SharedPtr node_;
     rclcpp::Subscription<rgbd_interfaces::msg::RGBD>::SharedPtr sub_image_;
+    rclcpp::CallbackGroup::SharedPtr cb_group_image_;
+    rclcpp::executors::SingleThreadedExecutor executor_image_;
 
     /**
      * @brief Track if image is updated in a callback.

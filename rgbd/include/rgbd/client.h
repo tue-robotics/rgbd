@@ -82,6 +82,7 @@ protected:
 
     rclcpp::Node::SharedPtr node_;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_shm_hosts_;
+    rclcpp::CallbackGroup::SharedPtr cb_group_shm_hosts_;
 
     ClientRGBD client_rgbd_;
     ClientSHM client_shm_;

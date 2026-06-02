@@ -6,6 +6,8 @@ namespace rgbd {
 
 Client::Client(const rclcpp::Node::SharedPtr& node)
     : node_(node ? node : rclcpp::Node::make_shared("rgbd_client"))
+    , sub_shm_hosts_(nullptr)
+    , cb_group_shm_hosts_(nullptr)
     , client_rgbd_(node_)
     , last_time_shm_server_online_(0, 0, RCL_ROS_TIME)
     , stop_sub_hosts_thread_(false)
@@ -30,10 +32,14 @@ bool Client::initialize(const std::string& server_name, float)
         deinitialize();
     }
 
+    cb_group_shm_hosts_ = node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+    auto sub_options = rclcpp::SubscriptionOptions();
+    sub_options.callback_group = cb_group_shm_hosts_;
+
     sub_shm_hosts_ = node_->create_subscription<std_msgs::msg::String>(
         server_name + "/hosts",
         10,
-        std::bind(&Client::hostsCallback, this, std::placeholders::_1));
+        std::bind(&Client::hostsCallback, this, std::placeholders::_1), sub_options);
 
     stop_sub_hosts_thread_ = false;
     sub_hosts_thread_ = std::thread(&Client::subHostsThreadFunc, this, 20.0f);
@@ -105,12 +111,15 @@ void Client::hostsCallback(const std_msgs::msg::String::ConstSharedPtr& msg)
 
 void Client::subHostsThreadFunc(float frequency)
 {
+    rclcpp::executors::SingleThreadedExecutor executor;
     rclcpp::Rate r(frequency);
     const double timeout = 3.0 / static_cast<double>(frequency);
 
+    executor.add_callback_group(cb_group_shm_hosts_, node_->get_node_base_interface());
+
     while (rclcpp::ok() && !stop_sub_hosts_thread_)
     {
-        rclcpp::spin_some(node_);
+        executor.spin_some();
 
         if (node_->now() > (last_time_shm_server_online_ + rclcpp::Duration::from_seconds(timeout)))
         {
@@ -142,6 +151,7 @@ void Client::subHostsThreadFunc(float frequency)
         }
         r.sleep();
     }
+    executor.remove_callback_group(cb_group_shm_hosts_);
 }
 
 }  // namespace rgbd
