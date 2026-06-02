@@ -136,7 +136,7 @@ void Client::subHostsThreadFunc(float frequency)
             if (!client_shm_.initialized())
             {
                 RCLCPP_DEBUG(rclcpp::get_logger("Client"), "Switching to ClientSHM");
-                client_shm_.initialize(server_name_, 0);
+                client_shm_.initialize(server_name_, 0.001);
             }
             client_impl_mode_ = ClientImplMode::shm;
         }
