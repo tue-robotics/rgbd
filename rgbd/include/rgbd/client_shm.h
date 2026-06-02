@@ -1,8 +1,8 @@
 #ifndef RGBD_CLIENT_SHM_H_
 #define RGBD_CLIENT_SHM_H_
 
-#include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/mapped_region.hpp>
+#include <boost/interprocess/shared_memory_object.hpp>
 
 #include "rgbd/image_header.h"
 #include "rgbd/types.h"
@@ -17,7 +17,6 @@ class ClientSHM
 {
 
 public:
-
     /**
      * @brief Constructor
      *
@@ -53,22 +52,21 @@ public:
     bool initialized() { return (buffer_header_ != nullptr); }
 
     /**
-     * @brief Get a new Image. If no new image has been received, the sequence nummer is still the same as the previous call,
-     * no image will be written and false will be returned.
+     * @brief Get a new Image. If no new image has been received, the sequence nummer is still the same as the previous
+     * call, no image will be written and false will be returned.
      * @param image Image reference which will be written.
      * @return valid image written
      */
     bool nextImage(Image& image);
 
     /**
-     * @brief Get a new Image. If no new image has been received, the sequence nummer is still the same as the previous call,
-     * The ImagePtr will be a nullptr
+     * @brief Get a new Image. If no new image has been received, the sequence nummer is still the same as the previous
+     * call, The ImagePtr will be a nullptr
      * @return ImagePtr to an Image or a nullptr
      */
     ImagePtr nextImage();
 
 private:
-
     boost::interprocess::shared_memory_object shm_;
 
     boost::interprocess::mapped_region mem_buffer_header_;
@@ -84,7 +82,6 @@ private:
      * @brief sequence_nr Contains the sequence nummer of the last NextImage call
      */
     uint64_t sequence_nr_;
-
 };
 
 } // end namespace rgbd

@@ -1,14 +1,18 @@
 #include "rgbd/view.h"
 
+#if __has_include(<image_geometry/pinhole_camera_model.hpp>)
+#include <image_geometry/pinhole_camera_model.hpp>
+#else
 #include <image_geometry/pinhole_camera_model.h>
+#endif
 #include <opencv2/core/mat.hpp>
 
-namespace rgbd {
+namespace rgbd
+{
 
 // ----------------------------------------------------------------------------------------
 
-View::View(const Image& image, int width) :
-    image_(image), width_(width)
+View::View(const Image& image, int width) : image_(image), width_(width)
 {
     const cv::Mat& rgb_image = image.getRGBImage();
     const cv::Mat& depth_image = image.getDepthImage();
@@ -23,4 +27,4 @@ View::View(const Image& image, int width) :
     rasterizer_.initFromCamModel(image.getCameraModel());
 }
 
-}
+} // namespace rgbd

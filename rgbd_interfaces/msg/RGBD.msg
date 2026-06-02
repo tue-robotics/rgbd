@@ -1,4 +1,4 @@
-Header header
+std_msgs/Header header
 uint16 version
 float64[] params
 uint8[] rgb

@@ -1,45 +1,39 @@
 #include <geolib/datatypes.h>
 #include <geolib/ros/msg_conversions.h>
+#include <algorithm>
+#include <cmath>
 
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/types.hpp>
 
-#include <rgbd/view.h>
 #include <rgbd/client.h>
+#include <rgbd/view.h>
 
-#include <rgbd_interfaces/Project2DTo3D.h>
+#include <rgbd_interfaces/srv/project2_d_to3_d.hpp>
 
-#include <ros/console.h>
-#include <ros/duration.h>
-#include <ros/init.h>
-#include <ros/master.h>
-#include <ros/names.h>
-#include <ros/node_handle.h>
-#include <ros/service_client.h>
-#include <ros/time.h>
-
-#include <sensor_msgs/RegionOfInterest.h>
+#include <rclcpp/rclcpp.hpp>
 
 #include <memory>
+#include <vector>
 
 #include <boost/circular_buffer.hpp>
 
-// ----------------------------------------------------------------------------------------------------
+boost::circular_buffer<std::shared_ptr<rgbd::Image>> g_last_images_;
 
-boost::circular_buffer<std::shared_ptr<rgbd::Image> > g_last_images_;
-bool srvGet3dPointFromROI(rgbd_interfaces::Project2DTo3D::Request& req, rgbd_interfaces::Project2DTo3D::Response& res)
+void srvGet3dPointFromROI(const std::shared_ptr<rgbd_interfaces::srv::Project2DTo3D::Request> req,
+                          std::shared_ptr<rgbd_interfaces::srv::Project2DTo3D::Response> res)
 {
     std::shared_ptr<rgbd::Image> last_image;
 
     if (!g_last_images_.empty())
     {
-        if (req.stamp == ros::Time(0))
+        if (rclcpp::Time(req->stamp).nanoseconds() == 0)
             last_image = g_last_images_.back();
         else
         {
             for (auto it = g_last_images_.rbegin(); it != g_last_images_.rend(); ++it)
             {
-                if ( (*it)->getTimestamp() <= req.stamp.toSec())
+                if ((*it)->getTimestamp() <= rclcpp::Time(req->stamp).seconds())
                     last_image = *it;
             }
         }
@@ -47,11 +41,10 @@ bool srvGet3dPointFromROI(rgbd_interfaces::Project2DTo3D::Request& req, rgbd_int
 
     if (!last_image)
     {
-        ROS_ERROR("I could not find an images in my image buffer for timestamp %.2f", req.stamp.toSec());
-        return false;
+        return;
     }
 
-    for (const sensor_msgs::RegionOfInterest& roi : req.rois)
+    for (const sensor_msgs::msg::RegionOfInterest& roi : req->rois)
     {
         const cv::Mat& depth = last_image->getDepthImage();
 
@@ -68,23 +61,19 @@ bool srvGet3dPointFromROI(rgbd_interfaces::Project2DTo3D::Request& req, rgbd_int
 
         cv::Mat depth_roi_capped = depth(roi_depth_capped);
 
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        // Get median depth of ROI
-
         std::vector<float> depths;
         for (int j = 0; j < depth_roi_capped.cols * depth_roi_capped.rows; ++j)
         {
             float d = depth_roi_capped.at<float>(j);
-            if (d > 0 && d == d) // filters NaN
+            if (d > 0 && d == d)
                 depths.push_back(d);
         }
 
-        geometry_msgs::PointStamped point_msg;
+        geometry_msgs::msg::PointStamped point_msg;
         point_msg.header.frame_id = last_image->getFrameId();
-        point_msg.header.stamp.fromSec(last_image->getTimestamp());
+        point_msg.header.stamp = rclcpp::Time(static_cast<int64_t>(last_image->getTimestamp() * 1e9));
         if (depths.empty())
         {
-            ROS_ERROR("All depths within ROI are invalid! We will send a NAN point");
             point_msg.point.x = point_msg.point.y = point_msg.point.z = static_cast<double>(NAN);
         }
         else
@@ -92,73 +81,51 @@ bool srvGet3dPointFromROI(rgbd_interfaces::Project2DTo3D::Request& req, rgbd_int
             std::sort(depths.begin(), depths.end());
             float median_depth = depths[depths.size() / 2];
 
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // Determine roi location
-
             rgbd::View view(*last_image, last_image->getDepthImage().cols);
             geo::Vec3 pos = view.getRasterizer().project2Dto3D(roi_depth_center.x, roi_depth_center.y) * static_cast<double>(median_depth);
             pos.y = -pos.y;
             pos.z = -pos.z;
-
-            ROS_INFO("Pose (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
             geo::convert(pos, point_msg.point);
         }
 
-        res.points.push_back(point_msg);
+        res->points.push_back(point_msg);
     }
 
-    return true;
+    return;
 }
-
-// ----------------------------------------------------------------------------------------------------
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "get_3d_point_from_image_roi");
-    ros::NodeHandle nh;
-    ros::NodeHandle nh_private("~");
+    rclcpp::init(argc, argv);
+    auto node = rclcpp::Node::make_shared("get_3d_point_from_image_roi");
 
-    float rate = 30;
-    nh_private.getParam("rate", rate);
+    double rate = node->declare_parameter<double>("rate", 30.0);
 
-    // Listener
-    rgbd::Client client;
-
-    client.initialize(ros::names::resolve("rgbd"));
+    rgbd::Client client(node);
+    client.initialize("rgbd");
 
     g_last_images_.set_capacity(100);
 
-    // srv
-    ros::ServiceServer srv_project_2d_to_3d = nh.advertiseService("project_2d_to_3d", srvGet3dPointFromROI);
-    ros::Time last_image_stamp;
+    auto srv_project_2d_to_3d = node->create_service<rgbd_interfaces::srv::Project2DTo3D>(
+        "project_2d_to_3d", &srvGet3dPointFromROI);
+
+    (void)srv_project_2d_to_3d;
 
     rgbd::Image image;
 
-    ros::WallTime last_master_check = ros::WallTime::now();
-
-    ros::Rate r(rate);
-    while (ros::ok())
+    rclcpp::Rate r(rate);
+    while (rclcpp::ok())
     {
-        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-        {
-            last_master_check = ros::WallTime::now();
-            if (!ros::master::check())
-            {
-                ROS_FATAL("Lost connection to master");
-                return 1;
-            }
-        }
         if (client.nextImage(image))
         {
             if (image.getDepthImage().data)
             {
-                last_image_stamp.fromSec(image.getTimestamp());
-
                 g_last_images_.push_back(std::make_shared<rgbd::Image>(image));
-                ROS_DEBUG("New image added to buffer");
             }
         }
-        ros::spinOnce(); // Process service request after getting a new image
         r.sleep();
     }
+
+    rclcpp::shutdown();
+    return 0;
 }

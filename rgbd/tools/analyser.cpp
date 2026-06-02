@@ -1,16 +1,10 @@
-#include <ros/console.h>
-#include <ros/duration.h>
-#include <ros/init.h>
-#include <ros/master.h>
-#include <ros/names.h>
-#include <ros/node_handle.h>
-#include <ros/rate.h>
-#include <ros/time.h>
-
 #include "rgbd/client.h"
 #include "rgbd/view.h"
 
-int main(int argc, char **argv)
+#include <memory>
+#include <rclcpp/rclcpp.hpp>
+
+int main(int argc, char** argv)
 {
     if (argc <= 1)
     {
@@ -18,31 +12,26 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    ros::init(argc, argv, "rgbd_viewer");
-    ros::NodeHandle nh_private("~");
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<rclcpp::Node>(
+        "rgbd_viewer", rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
+    const auto logger = node->get_logger();
 
-    float rate = 30;
-    nh_private.getParam("rate", rate);
+    double rate = 30.0;
+    if (!node->has_parameter("rate"))
+    {
+        node->declare_parameter<double>("rate", rate);
+    }
+    node->get_parameter("rate", rate);
 
     rgbd::Client client;
-    client.initialize(ros::names::resolve(argv[1]));
+    client.initialize(node->get_node_topics_interface()->resolve_topic_name(argv[1]));
 
     rgbd::Image image;
 
-    ros::WallTime last_master_check = ros::WallTime::now();
-
-    ros::Rate r(rate);
-    while (ros::ok())
+    rclcpp::Rate r(rate);
+    while (rclcpp::ok())
     {
-        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-        {
-            last_master_check = ros::WallTime::now();
-            if (!ros::master::check())
-            {
-                ROS_FATAL("Lost connection to master");
-                return 1;
-            }
-        }
         if (!client.nextImage(image))
         {
             r.sleep();
@@ -53,7 +42,7 @@ int main(int argc, char **argv)
         const cv::Mat& rgb = image.getRGBImage();
 
         std::cout << "------------------------------------------------" << std::endl;
-        std::cout << "time: " << ros::Time(image.getTimestamp()) << std::endl;
+        std::cout << "time: " << image.getTimestamp() << std::endl;
 
         if (depth.data)
         {
@@ -62,9 +51,12 @@ int main(int argc, char **argv)
 
             std::cout << "depth:" << std::endl;
             std::cout << "    camera model:" << std::endl;
-            std::cout << "        fx, fy = " << cam_model.getFocalLengthX() << ", " << cam_model.getFocalLengthY() << std::endl;
-            std::cout << "        cx, cy = " << cam_model.getOpticalCenterX() << ", " << cam_model.getOpticalCenterY() << std::endl;
-            std::cout << "        Tx, Ty = " << cam_model.getOpticalTranslationX() << ", " << cam_model.getOpticalTranslationY() << std::endl;
+            std::cout << "        fx, fy = " << cam_model.getFocalLengthX() << ", " << cam_model.getFocalLengthY()
+                      << std::endl;
+            std::cout << "        cx, cy = " << cam_model.getOpticalCenterX() << ", " << cam_model.getOpticalCenterY()
+                      << std::endl;
+            std::cout << "        Tx, Ty = " << cam_model.getOpticalTranslationX() << ", "
+                      << cam_model.getOpticalTranslationY() << std::endl;
             std::cout << "    size = " << depth.cols << " x " << depth.rows << std::endl;
         }
         else
@@ -85,5 +77,7 @@ int main(int argc, char **argv)
         r.sleep();
     }
 
+    RCLCPP_INFO(logger, "Shutting down");
+    rclcpp::shutdown();
     return 0;
 }

@@ -1,44 +1,32 @@
 #include <opencv2/highgui/highgui.hpp>
-
-#include <ros/console.h>
-#include <ros/duration.h>
-#include <ros/init.h>
-#include <ros/master.h>
-#include <ros/names.h>
-#include <ros/node_handle.h>
-#include <ros/rate.h>
-#include <ros/time.h>
+#include <rclcpp/rclcpp.hpp>
 
 #include "rgbd/client.h"
 #include "rgbd/view.h"
 
-int main(int argc, char **argv)
-{
-    ros::init(argc, argv, "rgbd_viewer");
-    ros::NodeHandle nh_private("~");
+#include <memory>
 
-    float rate = 30;
-    nh_private.getParam("rate", rate);
+int main(int argc, char** argv)
+{
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<rclcpp::Node>(
+        "rgbd_viewer", rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
+
+    double rate = 30.0;
+    if (!node->has_parameter("rate"))
+    {
+        node->declare_parameter<double>("rate", rate);
+    }
+    node->get_parameter("rate", rate);
 
     rgbd::Client client;
-    client.initialize(ros::names::resolve("rgbd"));
+    client.initialize(node->get_node_topics_interface()->resolve_topic_name("rgbd"));
 
     rgbd::Image image;
 
-    ros::WallTime last_master_check = ros::WallTime::now();
-
-    ros::Rate r(rate);
-    while (ros::ok())
+    rclcpp::Rate r(rate);
+    while (rclcpp::ok())
     {
-        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-        {
-            last_master_check = ros::WallTime::now();
-            if (!ros::master::check())
-            {
-                ROS_FATAL("Lost connection to master");
-                return 1;
-            }
-        }
         if (client.nextImage(image))
         {
             // Show depth image
@@ -59,9 +47,9 @@ int main(int argc, char **argv)
 
                 cv::Mat canvas_hsv(view.getHeight(), view.getWidth(), CV_8UC3, cv::Scalar(0, 0, 0));
 
-                for(int y = 0; y < view.getHeight(); ++y)
+                for (int y = 0; y < view.getHeight(); ++y)
                 {
-                    for(int x = 0; x < view.getWidth(); ++x)
+                    for (int x = 0; x < view.getWidth(); ++x)
                     {
                         float d = view.getDepth(x, y);
                         if (d == d)
@@ -84,5 +72,6 @@ int main(int argc, char **argv)
         r.sleep();
     }
 
+    rclcpp::shutdown();
     return 0;
 }

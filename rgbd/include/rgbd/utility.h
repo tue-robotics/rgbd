@@ -3,7 +3,8 @@
 
 #include <string>
 
-namespace rgbd {
+namespace rgbd
+{
 
 /**
  * @brief Get the hostname of the current machine
@@ -11,6 +12,6 @@ namespace rgbd {
  */
 std::string get_hostname();
 
-}
+} // namespace rgbd
 
 #endif // RGBD_UTILITY_H_

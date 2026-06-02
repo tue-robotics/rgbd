@@ -1,4 +1,4 @@
-time stamp
+builtin_interfaces/Time stamp
 sensor_msgs/RegionOfInterest[] rois
 ---
 geometry_msgs/PointStamped[] points

@@ -28,7 +28,7 @@ Shown the most important nodes and their structure
 This package contains a number of nodes and tools. The most important ones are:
 
 * `rgbd_to_shm`: contains an instance of `ClientRGBD` that listens to RGBD data received over a `rgbd_interfaces::RGBD` topic and writes this to shared memory using an instance of a `ServerSHM`. By running this node, only one incoming connection for the `rgbd` messages is setup since all clients can subsequently use the shared memory. If your robot contains multiple computers, it is advised to run this node on each computer where (more than 1) `Client` instances are used.
-* `ros_to_rgbd`: converts 'standard' ROS messages (`sensor_msgs::Image` (color image and depth image) and `sensor_msgs::CameraInfo`) to the `rgbd_interfaces::RGBD` format. Hereto, it uses instances of the `ClientROS` and the `Server` classes.
+* `ros_to_rgbd`: converts 'standard' ROS messages (`sensor_msgs::Image` (color image and depth image) and `sensor_msgs::CameraInfo`) to the `rgbd_interfaces::RGBD` format. Hereto, it uses instances of the `ClientROS` and the `Server` classes. In ROS2 this is available both as standalone executable (`ros_to_rgbd`) and as composable component (`rgbd::RosToRGBDComponent`).
 * `rgbd_to_ros`: converts `rgbd_interfaces::RGBD` messages to the 'standard' ROS format (`sensor_msgs::Image` (color image and depth image) and `sensor_msgs::CameraInfo`). Hereto, it uses an instance of the `Client` class as well as publishers for the RGB image, RGB camera info, depth image, depth camera info and pointcloud.
 
 ## Notes

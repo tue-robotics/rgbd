@@ -1,17 +1,16 @@
 #ifndef RGBD_SERVER_SHM_H_
 #define RGBD_SERVER_SHM_H_
 
-#include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/mapped_region.hpp>
+#include <boost/interprocess/shared_memory_object.hpp>
 
-#include <ros/node_handle.h>
+#include <rclcpp/rclcpp.hpp>
 
 #include "rgbd/image_header.h"
 #include "rgbd/types.h"
 
 #include <memory>
 #include <thread>
-
 
 namespace rgbd
 {
@@ -21,37 +20,34 @@ namespace rgbd
  */
 class ServerSHM
 {
-
 public:
-
     /**
      * @brief Constructor
      *
      * buffer_header_ and image_data_ pointers are initialized to nullptr
      */
-    ServerSHM();
+    explicit ServerSHM(const rclcpp::Node::SharedPtr& node = nullptr);
 
     /**
      * @brief Destructor
      *
-     * Shared memory object is deleted, buffer_header_ and image_data_ are also deleted
+     * Shared memory object is deleted
      */
     ~ServerSHM();
 
     /**
-     * @brief initialize Initialize shared memory server
+     * @brief initialize shared memory server
      * @param name Fully resolved server name
      */
     void initialize(const std::string& name);
 
     /**
-     * @brief send Write a new image to the shared memory
+     * @brief Write a new image to the shared memory
      * @param image Image to be written to the shared memory
      */
     void send(const Image& image);
 
 private:
-
     std::string shared_mem_name_;
 
     boost::interprocess::shared_memory_object shm_;
@@ -66,20 +62,27 @@ private:
     uint64_t depth_data_size_;
     uint64_t image_data_size_;
 
-    ros::NodeHandle nh_; // Nodehandle to stop the SHM check thread
+    rclcpp::Node::SharedPtr node_;
 
     // SHM check thread
     std::unique_ptr<std::thread> check_shm_thread_ptr_;
+    bool stop_check_shm_thread_{false};
 
     /**
      * @brief Check if the SHM can be opened
      * @param frequency Frequency of checking
      */
-    void checkSHMThreadFunc(const float frequency);
+    void checkSHMThreadFunc(float frequency);
 };
 
-void pubHostnameThreadFunc(ros::NodeHandle& nh, const std::string server_name, const std::string hostname, const float frequency);
+/**
+ * @brief Publish the host that serves SHM for a server name.
+ */
+void pubHostnameThreadFunc(const rclcpp::Node::SharedPtr& node,
+                           const std::string& server_name,
+                           const std::string& hostname,
+                           float frequency);
 
-} // end namespace rgbd
+} // namespace rgbd
 
 #endif // RGBD_SERVER_SHM_H_
