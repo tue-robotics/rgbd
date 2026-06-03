@@ -14,11 +14,48 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include <boost/circular_buffer.hpp>
 
 boost::circular_buffer<std::shared_ptr<rgbd::Image>> g_last_images_;
+
+template<typename NodeT, typename CallbackT>
+auto createProject2DTo3DService(NodeT& node,
+                                CallbackT&& callback,
+                                const rclcpp::CallbackGroup::SharedPtr& callback_group,
+                                int) -> decltype(node->template create_service<rgbd_interfaces::srv::Project2DTo3D>(
+                 "project_2d_to_3d",
+                 std::forward<CallbackT>(callback),
+                 rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_services_default),
+                             rmw_qos_profile_services_default),
+                 callback_group))
+{
+    return node->template create_service<rgbd_interfaces::srv::Project2DTo3D>(
+        "project_2d_to_3d",
+        std::forward<CallbackT>(callback),
+        rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_services_default),
+                    rmw_qos_profile_services_default),
+        callback_group);
+}
+
+template<typename NodeT, typename CallbackT>
+auto createProject2DTo3DService(NodeT& node,
+                                CallbackT&& callback,
+                                const rclcpp::CallbackGroup::SharedPtr& callback_group,
+                                long) -> decltype(node->template create_service<rgbd_interfaces::srv::Project2DTo3D>(
+                  "project_2d_to_3d",
+                  std::forward<CallbackT>(callback),
+                  rmw_qos_profile_services_default,
+                  callback_group))
+{
+    return node->template create_service<rgbd_interfaces::srv::Project2DTo3D>(
+        "project_2d_to_3d",
+        std::forward<CallbackT>(callback),
+        rmw_qos_profile_services_default,
+        callback_group);
+}
 
 void srvGet3dPointFromROI(const std::shared_ptr<rgbd_interfaces::srv::Project2DTo3D::Request> req,
                           std::shared_ptr<rgbd_interfaces::srv::Project2DTo3D::Response> res)
@@ -106,12 +143,14 @@ int main(int argc, char **argv)
 
     g_last_images_.set_capacity(100);
 
-    auto srv_project_2d_to_3d = node->create_service<rgbd_interfaces::srv::Project2DTo3D>(
-        "project_2d_to_3d", &srvGet3dPointFromROI);
+    auto cb_group_srv = node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+    auto srv_project_2d_to_3d = createProject2DTo3DService(node, &srvGet3dPointFromROI, cb_group_srv, 0);
 
     (void)srv_project_2d_to_3d;
 
     rgbd::Image image;
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_callback_group(cb_group_srv, node->get_node_base_interface());
 
     rclcpp::Rate r(rate);
     while (rclcpp::ok())
@@ -123,9 +162,11 @@ int main(int argc, char **argv)
                 g_last_images_.push_back(std::make_shared<rgbd::Image>(image));
             }
         }
+        executor.spin_some();
         r.sleep();
     }
 
+    executor.remove_callback_group(cb_group_srv);
     rclcpp::shutdown();
     return 0;
 }
