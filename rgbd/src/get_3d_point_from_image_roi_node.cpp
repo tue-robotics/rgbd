@@ -106,12 +106,18 @@ int main(int argc, char **argv)
 
     g_last_images_.set_capacity(100);
 
+    auto cb_group_srv = node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     auto srv_project_2d_to_3d = node->create_service<rgbd_interfaces::srv::Project2DTo3D>(
-        "project_2d_to_3d", &srvGet3dPointFromROI);
+        "project_2d_to_3d",
+        &srvGet3dPointFromROI,
+        rmw_qos_profile_services_default,
+        cb_group_srv);
 
     (void)srv_project_2d_to_3d;
 
     rgbd::Image image;
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_callback_group(cb_group_srv, node->get_node_base_interface());
 
     rclcpp::Rate r(rate);
     while (rclcpp::ok())
@@ -123,10 +129,11 @@ int main(int argc, char **argv)
                 g_last_images_.push_back(std::make_shared<rgbd::Image>(image));
             }
         }
-        rclcpp::spin_some(node);
+        executor.spin_some();
         r.sleep();
     }
 
+    executor.remove_callback_group(cb_group_srv);
     rclcpp::shutdown();
     return 0;
 }
