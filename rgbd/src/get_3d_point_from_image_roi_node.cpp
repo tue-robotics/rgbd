@@ -123,6 +123,7 @@ int main(int argc, char **argv)
                 g_last_images_.push_back(std::make_shared<rgbd::Image>(image));
             }
         }
+        rclcpp::spin_some(node);
         r.sleep();
     }
 
