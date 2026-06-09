@@ -1,226 +1,226 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="786.25px" height="1002px" viewBox="-0.62 -0.5 786.25 1002">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="786.25px" height="1252.5px" viewBox="-0.62 -0.62 786.25 1252.5">
   <defs />
   <g>
     <!--Client side-->
-    <rect x="285" y="0" width="200" height="40" fill="none" stroke="none" pointer-events="all" />
+    <rect x="285" y="0" width="200" height="50" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="24px">
-      <text x="384.38" y="30.5">Client side</text>
+      <text x="384.38" y="38.12">Client side</text>
     </g>
 
     <!--Client-->
     <!--Input arrow-->
-    <path d="M 10 210 L 149.7 210" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 157.2 210 L 147.2 214 L 149.7 210 L 147.2 206 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
-    <rect x="10" y="160" width="150" height="20" fill="none" stroke="none" pointer-events="all" />
+    <path d="M 10 262.5 L 149.7 262.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 157.2 262.5 L 147.2 267.5 L 149.7 262.5 L 147.2 257.5 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <rect x="10" y="200" width="150" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="84.38" y="174">Shared memory</text>
+      <text x="84.38" y="217.5">Shared memory</text>
     </g>
-    <rect x="10" y="170" width="150" height="20" fill="none" stroke="none" pointer-events="all" />
+    <rect x="10" y="212.5" width="150" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="84.38" y="184">or</text>
+      <text x="84.38" y="230">or</text>
     </g>
-    <rect x="10" y="180" width="150" height="20" fill="none" stroke="none" pointer-events="all" />
+    <rect x="10" y="225" width="150" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="84.38" y="194">rgbd_interfaces::msg::RGBD</text>
+      <text x="84.38" y="242.5">rgbd_interfaces::msg::RGBD</text>
     </g>
     <!--Output arrow-->
-    <path d="M 610 210 L 749.7 210" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 757.2 210 L 747.2 214 L 749.7 210 L 747.2 206 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <path d="M 610 262.5 L 749.7 262.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 757.2 262.5 L 747.2 267.5 L 749.7 262.5 L 747.2 257.5 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
-      <text x="684.38" y="194.5">rgbd::Image</text>
+      <text x="684.38" y="243.12">rgbd::Image</text>
     </g>
     <!--Body-->
-    <rect x="160" y="60" width="450" height="300" fill="none" stroke="#000000" pointer-events="all" />
+    <rect x="160" y="75" width="450" height="375" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
       <a xlink:href="classrgbd_1_1Client.html" target="_parent">
-        <text x="384.38" y="85.5">Client</text>
+        <text x="384.38" y="106.88">Client</text>
       </a>
     </g>
 
     <!--ClientSHM-->
     <!--Input arrow-->
-    <path d="M 197.5 150 L 312.2 150" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 319.7 150 L 309.7 154 L 312.2 150 L 309.7 146 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <path d="M 197.5 187.5 L 312.2 187.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 319.7 187.5 L 309.7 192.5 L 312.2 187.5 L 309.7 182.5 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="253.55" y="134">Shared memory</text>
+      <text x="253.55" y="167.5">Shared memory</text>
     </g>
     <!--Output arrow-->
-    <path d="M 447.5 150 L 562.2 150" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 569.7 150 L 559.7 154 L 562.2 150 L 559.7 146 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <path d="M 447.5 187.5 L 562.2 187.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 569.7 187.5 L 559.7 192.5 L 562.2 187.5 L 559.7 182.5 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="509.8" y="134">rgbd::Image</text>
+      <text x="509.8" y="167.5">rgbd::Image</text>
     </g>
     <!--Body-->
-    <rect x="322.5" y="100" width="125" height="100" fill="none" stroke="#000000" pointer-events="all" />
+    <rect x="322.5" y="125" width="125" height="125" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
       <a xlink:href="classrgbd_1_1ClientSHM.html" target="_parent">
-        <text x="384.38" y="155.5">ClientSHM</text>
+        <text x="384.38" y="194.38">ClientSHM</text>
       </a>
     </g>
 
     <!--ClientRGBD-->
     <!--Input arrow-->
-    <path d="M 197.5 280 L 312.2 280" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 319.7 280 L 309.7 284 L 312.2 280 L 309.7 276 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <path d="M 197.5 350 L 312.2 350" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 319.7 350 L 309.7 355 L 312.2 350 L 309.7 345 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="253.55" y="264">rgbd_interfaces::msg::RGBD</text>
+      <text x="253.55" y="330">rgbd_interfaces::msg::RGBD</text>
     </g>
     <!--Output arrow-->
-    <path d="M 447.5 280 L 562.2 280" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 569.7 280 L 559.7 284 L 562.2 280 L 559.7 276 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <path d="M 447.5 350 L 562.2 350" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 569.7 350 L 559.7 355 L 562.2 350 L 559.7 345 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="509.8" y="264">rgbd::Image</text>
+      <text x="509.8" y="330">rgbd::Image</text>
     </g>
     <!--Body-->
-    <rect x="322.5" y="230" width="125" height="100" fill="none" stroke="#000000" pointer-events="all" />
+    <rect x="322.5" y="287.5" width="125" height="125" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
       <a xlink:href="classrgbd_1_1ClientRGBD.html" target="_parent">
-        <text x="384.38" y="285.5">ClientRGBD</text>
+        <text x="384.38" y="356.88">ClientRGBD</text>
       </a>
     </g>
 
     <!--ClientROS-->
     <!--Input arrow-->
-    <path d="M 197.5 430 L 312.2 430" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 319.7 430 L 309.7 434 L 312.2 430 L 309.7 426 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
-    <rect x="35" y="380" width="287.5" height="20" fill="none" stroke="none" pointer-events="all" />
+    <path d="M 197.5 537.5 L 312.2 537.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 319.7 537.5 L 309.7 542.5 L 312.2 537.5 L 309.7 532.5 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <rect x="35" y="475" width="287.5" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="178.12" y="394">sensor_msgs::msg::Image color_image</text>
+      <text x="178.12" y="492.5">sensor_msgs::msg::Image color_image</text>
     </g>
-    <rect x="35" y="390" width="287.5" height="20" fill="none" stroke="none" pointer-events="all" />
+    <rect x="35" y="487.5" width="287.5" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="178.12" y="404">sensor_msgs::msg::Image depth_image</text>
+      <text x="178.12" y="505">sensor_msgs::msg::Image depth_image</text>
     </g>
-    <rect x="35" y="400" width="287.5" height="20" fill="none" stroke="none" pointer-events="all" />
+    <rect x="35" y="500" width="287.5" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="178.12" y="414">sensor_msgs::msg:CameraInfo camera_info</text>
+      <text x="178.12" y="517.5">sensor_msgs::msg:CameraInfo camera_info</text>
     </g>
     <!--Output arrow-->
-    <path d="M 447.5 430 L 562.2 430" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 569.7 430 L 559.7 434 L 562.2 430 L 559.7 426 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <path d="M 447.5 537.5 L 562.2 537.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 569.7 537.5 L 559.7 542.5 L 562.2 537.5 L 559.7 532.5 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="509.8" y="414">rgbd::Image</text>
+      <text x="509.8" y="517.5">rgbd::Image</text>
     </g>
     <!--Body-->
-    <rect x="322.5" y="380" width="125" height="100" fill="none" stroke="#000000" pointer-events="all" />
+    <rect x="322.5" y="475" width="125" height="125" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
       <a xlink:href="classrgbd_1_1ClientROS.html" target="_parent">
-        <text x="384.38" y="435.5">ClientROS</text>
+        <text x="384.38" y="544.38">ClientROS</text>
       </a>
     </g>
 
     <!--Server side-->
-    <rect x="285" y="520" width="200" height="40" fill="none" stroke="none" pointer-events="all" />
+    <rect x="285" y="650" width="200" height="50" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="24px">
-      <text x="384.38" y="550.5">Server side</text>
+      <text x="384.38" y="688.12">Server side</text>
     </g>
 
     <!--Server-->
     <!--Input arrow-->
-    <path d="M 10 730 L 149.7 730" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 157.2 730 L 147.2 734 L 149.7 730 L 147.2 726 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <path d="M 10 912.5 L 149.7 912.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 157.2 912.5 L 147.2 917.5 L 149.7 912.5 L 147.2 907.5 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="84.38" y="714">rgbd::Image</text>
+      <text x="84.38" y="892.5">rgbd::Image</text>
     </g>
     <!--Output arrow-->
-    <path d="M 610 730 L 749.7 730" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 757.2 730 L 747.2 734 L 749.7 730 L 747.2 726 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
-    <rect x="610" y="680" width="175" height="20" fill="none" stroke="none" pointer-events="all" />
+    <path d="M 610 912.5 L 749.7 912.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 757.2 912.5 L 747.2 917.5 L 749.7 912.5 L 747.2 907.5 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <rect x="610" y="850" width="175" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="696.88" y="694">Shared memory</text>
+      <text x="696.88" y="867.5">Shared memory</text>
     </g>
-    <rect x="610" y="690" width="175" height="20" fill="none" stroke="none" pointer-events="all" />
+    <rect x="610" y="862.5" width="175" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="696.88" y="704">rgbd_interfaces::msg::RGBD</text>
+      <text x="696.88" y="880">rgbd_interfaces::msg::RGBD</text>
     </g>
-    <rect x="610" y="700" width="175" height="20" fill="none" stroke="none" pointer-events="all" />
+    <rect x="610" y="875" width="175" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="696.88" y="714">rgbd_interfaces::srv::GetRGBD</text>
+      <text x="696.88" y="892.5">rgbd_interfaces::srv::GetRGBD</text>
     </g>
     <!--Body-->
-    <rect x="160" y="580" width="450" height="300" fill="none" stroke="#000000" pointer-events="all" />
+    <rect x="160" y="725" width="450" height="375" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
       <a xlink:href="classrgbd_1_1Server.html" target="_parent">
-        <text x="384.38" y="605.5">Server</text>
+        <text x="384.38" y="756.88">Server</text>
       </a>
     </g>
 
     <!--ServerSHM-->
     <!--Input arrow-->
-    <path d="M 197.5 670 L 312.2 670" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 319.7 670 L 309.7 674 L 312.2 670 L 309.7 666 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <path d="M 197.5 837.5 L 312.2 837.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 319.7 837.5 L 309.7 842.5 L 312.2 837.5 L 309.7 832.5 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="253.55" y="654">rgbd::Image</text>
+      <text x="253.55" y="817.5">rgbd::Image</text>
     </g>
     <!--Output arrow-->
-    <path d="M 447.5 670 L 562.2 670" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 569.7 670 L 559.7 674 L 562.2 670 L 559.7 666 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <path d="M 447.5 837.5 L 562.2 837.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 569.7 837.5 L 559.7 842.5 L 562.2 837.5 L 559.7 832.5 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="509.8" y="654">Shared memory</text>
+      <text x="509.8" y="817.5">Shared memory</text>
     </g>
     <!--Body-->
-    <rect x="322.5" y="620" width="125" height="100" fill="none" stroke="#000000" pointer-events="all" />
+    <rect x="322.5" y="775" width="125" height="125" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
       <a xlink:href="classrgbd_1_1ServerSHM.html" target="_parent">
-        <text x="384.38" y="675.5">ServerSHM</text>
+        <text x="384.38" y="844.38">ServerSHM</text>
       </a>
     </g>
 
     <!--ServerRGBD-->
     <!--Input arrow-->
-    <path d="M 197.5 800 L 312.2 800" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 319.7 800 L 309.7 804 L 312.2 800 L 309.7 796 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <path d="M 197.5 1000 L 312.2 1000" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 319.7 1000 L 309.7 1005 L 312.2 1000 L 309.7 995 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="253.55" y="784">rgbd::Image</text>
+      <text x="253.55" y="980">rgbd::Image</text>
     </g>
     <!--Output arrow-->
-    <path d="M 447.5 800 L 562.2 800" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 569.7 800 L 559.7 804 L 562.2 800 L 559.7 796 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
-    <rect x="447.5" y="765" width="162.5" height="20" fill="none" stroke="none" pointer-events="all" />
+    <path d="M 447.5 1000 L 562.2 1000" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 569.7 1000 L 559.7 1005 L 562.2 1000 L 559.7 995 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <rect x="447.5" y="956.25" width="162.5" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="528.12" y="779">rgbd_interfaces::msg::RGBD</text>
+      <text x="528.12" y="973.75">rgbd_interfaces::msg::RGBD</text>
     </g>
-    <rect x="447.5" y="775" width="162.5" height="20" fill="none" stroke="none" pointer-events="all" />
+    <rect x="447.5" y="968.75" width="162.5" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="528.12" y="789">rgbd_interfaces::srv::GetRGBD</text>
+      <text x="528.12" y="986.25">rgbd_interfaces::srv::GetRGBD</text>
     </g>
     <!--Body-->
-    <rect x="322.5" y="750" width="125" height="100" fill="none" stroke="#000000" pointer-events="all" />
+    <rect x="322.5" y="937.5" width="125" height="125" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
       <a xlink:href="classrgbd_1_1ServerRGBD.html" target="_parent">
-        <text x="384.38" y="805.5">ServerRGBD</text>
+        <text x="384.38" y="1006.88">ServerRGBD</text>
       </a>
     </g>
 
     <!--ServerROS-->
     <!--Input arrow-->
-    <path d="M 197.5 950 L 312.2 950" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 319.7 950 L 309.7 954 L 312.2 950 L 309.7 946 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <path d="M 197.5 1187.5 L 312.2 1187.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 319.7 1187.5 L 309.7 1192.5 L 312.2 1187.5 L 309.7 1182.5 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="253.55" y="934">rgbd::Image</text>
+      <text x="253.55" y="1167.5">rgbd::Image</text>
     </g>
     <!--Output arrow-->
-    <path d="M 447.5 950 L 562.2 950" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
-    <path d="M 569.7 950 L 559.7 954 L 562.2 950 L 559.7 946 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
-    <rect x="447.5" y="900" width="287.5" height="20" fill="none" stroke="none" pointer-events="all" />
+    <path d="M 447.5 1187.5 L 562.2 1187.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke" />
+    <path d="M 569.7 1187.5 L 559.7 1192.5 L 562.2 1187.5 L 559.7 1182.5 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all" />
+    <rect x="447.5" y="1125" width="287.5" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="590.62" y="914">sensor_msgs::msg::Image color_image</text>
+      <text x="590.62" y="1142.5">sensor_msgs::msg::Image color_image</text>
     </g>
-    <rect x="447.5" y="910" width="287.5" height="20" fill="none" stroke="none" pointer-events="all" />
+    <rect x="447.5" y="1137.5" width="287.5" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="590.62" y="924">sensor_msgs::msg::Image depth_image</text>
+      <text x="590.62" y="1155">sensor_msgs::msg::Image depth_image</text>
     </g>
-    <rect x="447.5" y="920" width="287.5" height="20" fill="none" stroke="none" pointer-events="all" />
+    <rect x="447.5" y="1150" width="287.5" height="25" fill="none" stroke="none" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <text x="590.62" y="934">sensor_msgs::msg::CameraInfo camera_info</text>
+      <text x="590.62" y="1167.5">sensor_msgs::msg::CameraInfo camera_info</text>
     </g>
     <!--Body-->
-    <rect x="322.5" y="900" width="125" height="100" fill="none" stroke="#000000" pointer-events="all" />
+    <rect x="322.5" y="1125" width="125" height="125" fill="none" stroke="#000000" pointer-events="all" />
     <g fill="#000000" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="14px">
       <a xlink:href="classrgbd_1_1ServerROS.html" target="_parent">
-        <text x="384.38" y="955.5">ServerROS</text>
+        <text x="384.38" y="1194.38">ServerROS</text>
       </a>
     </g>
   </g>
