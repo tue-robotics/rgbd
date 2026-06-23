@@ -6,23 +6,18 @@
 #include <geolib/datatypes.h>
 #include <geolib/sensors/DepthCamera.h>
 
-namespace rgbd {
+namespace rgbd
+{
 
-class View {
+class View
+{
 
 public:
-
     View(const Image& image, int width);
 
-    inline const int& getWidth() const
-    {
-        return width_;
-    }
+    inline const int& getWidth() const { return width_; }
 
-    inline const int& getHeight() const
-    {
-        return height_;
-    }
+    inline const int& getHeight() const { return height_; }
 
     inline const cv::Vec3b& getColor(int x, int y) const
     {
@@ -62,9 +57,8 @@ protected:
     float depth_factor_;
 
     geo::DepthCamera rasterizer_;
-
 };
 
-}
+} // namespace rgbd
 
 #endif // RGBD_VIEW_H_

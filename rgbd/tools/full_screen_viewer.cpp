@@ -1,28 +1,27 @@
-#include <ros/console.h>
-#include <ros/duration.h>
-#include <ros/init.h>
-#include <ros/master.h>
-#include <ros/names.h>
-#include <ros/node_handle.h>
-#include <ros/rate.h>
-#include <ros/time.h>
-
 #include "rgbd/client.h"
 #include "rgbd/view.h"
 #include <opencv2/highgui/highgui.hpp>
 
-int main(int argc, char **argv)
-{
-    ros::init(argc, argv, "rgbd_viewer");
-    ros::NodeHandle nh_private("~");
+#include <memory>
+#include <rclcpp/rclcpp.hpp>
 
-    float rate = 30;
-    nh_private.getParam("rate", rate);
+int main(int argc, char** argv)
+{
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<rclcpp::Node>(
+        "rgbd_viewer", rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
+
+    double rate = 30.0;
+    if (!node->has_parameter("rate"))
+    {
+        node->declare_parameter<double>("rate", rate);
+    }
+    node->get_parameter("rate", rate);
 
     rgbd::Client client;
-    client.initialize(ros::names::resolve("rgbd"));
+    client.initialize(node->get_node_topics_interface()->resolve_topic_name("rgbd"));
 
-    const std::string  window_name = "RGBD_VIEW";
+    const std::string window_name = "RGBD_VIEW";
     cv::namedWindow(window_name, cv::WINDOW_NORMAL);
     cv::setWindowProperty(window_name, cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
 
@@ -32,20 +31,9 @@ int main(int argc, char **argv)
 
     rgbd::Image image;
 
-    ros::WallTime last_master_check = ros::WallTime::now();
-
-    ros::Rate r(rate);
-    while (ros::ok())
+    rclcpp::Rate r(rate);
+    while (rclcpp::ok())
     {
-        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-        {
-            last_master_check = ros::WallTime::now();
-            if (!ros::master::check())
-            {
-                ROS_FATAL("Lost connection to master");
-                return 1;
-            }
-        }
         if (!PAUSE && client.nextImage(image))
         {
             // Show rgb image
@@ -54,7 +42,13 @@ int main(int argc, char **argv)
         }
 
         if (PAUSE)
-            cv::putText(canvas, "PAUSED", cv::Point(10, canvas.rows - 25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
+            cv::putText(canvas,
+                        "PAUSED",
+                        cv::Point(10, canvas.rows - 25),
+                        cv::FONT_HERSHEY_COMPLEX_SMALL,
+                        1,
+                        cv::Scalar(255, 255, 255),
+                        1);
 
         cv::imshow(window_name, canvas);
 
@@ -72,5 +66,6 @@ int main(int argc, char **argv)
         r.sleep();
     }
 
+    rclcpp::shutdown();
     return 0;
 }

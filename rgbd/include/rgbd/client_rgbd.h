@@ -5,28 +5,25 @@
 #ifndef RGBD_CLIENT_RGBD_H_
 #define RGBD_CLIENT_RGBD_H_
 
-#include <ros/node_handle.h>
-#include <ros/subscriber.h>
-#include <ros/callback_queue.h>
+#include <rclcpp/rclcpp.hpp>
+
+#include <rgbd_interfaces/msg/rgbd.hpp>
 
 #include "rgbd/types.h"
 
-#include "rgbd_msgs/RGBD.h"
-
-
-namespace rgbd {
+namespace rgbd
+{
 
 /**
  * @brief Client which subscribes to RGBD topic
  */
-class ClientRGBD {
-
+class ClientRGBD
+{
 public:
-
     /**
      * @brief Constructor
      */
-    ClientRGBD();
+    explicit ClientRGBD(const rclcpp::Node::SharedPtr& node = nullptr);
 
     /**
      * @brief Destructor
@@ -52,7 +49,7 @@ public:
      * @brief Check if the client is initialized. nextImage will not return an image if client is not initialized.
      * @return initialized or not
      */
-    bool initialized() { return !sub_image_.getTopic().empty(); }
+    bool initialized() const { return static_cast<bool>(sub_image_); }
 
     /**
      * @brief Get a new Image. If no new image has been received since the last call,
@@ -70,26 +67,24 @@ public:
     ImagePtr nextImage();
 
 protected:
-
-    ros::Subscriber sub_image_;
-    ros::CallbackQueue cb_queue_;
+    rclcpp::Node::SharedPtr node_;
+    rclcpp::Subscription<rgbd_interfaces::msg::RGBD>::SharedPtr sub_image_;
+    rclcpp::CallbackGroup::SharedPtr cb_group_image_;
+    rclcpp::executors::SingleThreadedExecutor executor_image_;
 
     /**
      * @brief Track if image is updated in a callback.
      */
     bool new_image_;
     /**
-     * @brief Pointer to the Image being written in the NextImage calls. Either set to the address of the provided reference.
-     * Or being wrapped into a shared pointer. Ownership therefore belongs to the caller of nextImage, which provides the references or receives the SharedPtr.
-     * image_ptr_ should only be accessed inside a NextImage call. Outside it, the image_ptr_ might be invalid/
-     * This is used since you can not pass additional arguments to the callback. A raw pointer is prefered to avoid unnecessary copy operations.
+     * @brief Pointer to the Image being written in the NextImage calls.
+     * Ownership belongs to the caller of nextImage.
      */
     Image* image_ptr_;
 
-    void rgbdImageCallback(const rgbd_msgs::RGBD::ConstPtr& msg);
-
+    void rgbdImageCallback(const rgbd_interfaces::msg::RGBD::ConstSharedPtr& msg);
 };
 
-}
+} // namespace rgbd
 
 #endif // RGBD_CLIENT_RGBD_H_

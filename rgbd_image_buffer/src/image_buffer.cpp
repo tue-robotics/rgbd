@@ -1,27 +1,28 @@
 #include "rgbd/image_buffer/image_buffer.h"
+#include <algorithm>
 
 #include <geolib/ros/msg_conversions.h>
 
-#include <geometry_msgs/TransformStamped.h>
+#include <geometry_msgs/msg/transform_stamped.hpp>
 
 #include <rgbd/client.h>
 #include <rgbd/image.h>
 
-#include <ros/rate.h>
-#include <ros/time.h>
-
+#if __has_include(<tf2/time.hpp>)
+#include <tf2/time.hpp>
+#else
+#include <tf2/time.h>
+#endif
 #include <tf2_ros/transform_listener.h>
 
 namespace rgbd
 {
 
-// ----------------------------------------------------------------------------------------------------
-
-ImageBuffer::ImageBuffer() : rgbd_client_(nullptr), tf_buffer_(), tf_listener_(nullptr), shutdown_(false)
+ImageBuffer::ImageBuffer(const rclcpp::Node::SharedPtr& node) :
+    node_(node ? node : rclcpp::Node::make_shared("rgbd_image_buffer")), rgbd_client_(nullptr),
+    tf_buffer_(node_->get_clock()), tf_listener_(nullptr), shutdown_(false)
 {
 }
-
-// ----------------------------------------------------------------------------------------------------
 
 ImageBuffer::~ImageBuffer()
 {
@@ -30,14 +31,12 @@ ImageBuffer::~ImageBuffer()
         worker_thread_ptr_->join();
 }
 
-// ----------------------------------------------------------------------------------------------------
-
-void ImageBuffer::initialize(const std::string& topic, const std::string& root_frame, const float worker_thread_frequency)
+void ImageBuffer::initialize(const std::string& topic, const std::string& root_frame, float worker_thread_frequency)
 {
     root_frame_ = root_frame;
 
     if (!rgbd_client_)
-        rgbd_client_ = std::make_unique<rgbd::Client>();
+        rgbd_client_ = std::make_unique<rgbd::Client>(node_);
 
     rgbd_client_->initialize(topic);
 
@@ -47,26 +46,24 @@ void ImageBuffer::initialize(const std::string& topic, const std::string& root_f
     worker_thread_ptr_ = std::make_unique<std::thread>(&ImageBuffer::workerThreadFunc, this, worker_thread_frequency);
 }
 
-// ----------------------------------------------------------------------------------------------------
-
-bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec, double check_rate)
+bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image,
+                                     geo::Pose3D& sensor_pose,
+                                     double timeout_sec,
+                                     double check_rate)
 {
     if (!rgbd_client_)
     {
-        ROS_ERROR_NAMED("image_buffer", "[IMAGE_BUFFER] No RGBD client");
+        RCLCPP_ERROR(rclcpp::get_logger("image_buffer"), "[IMAGE_BUFFER] No RGBD client");
         return false;
     }
 
-    // - - - - - - - - - - - - - - - - - -
-    // Wait until we get a new image
-    ros::Time t_start = ros::Time::now();
-    ros::Time t_end = t_start + ros::Duration(timeout_sec);
+    const rclcpp::Time t_start = node_->now();
+    const rclcpp::Time t_end = t_start + rclcpp::Duration::from_seconds(timeout_sec);
     if (check_rate <= 0)
     {
-        ROS_DEBUG_STREAM_NAMED("iamge_buffer", "[IMAGE_BUFFER](waitForRecentImage) defaulting to 10Hz instead of '" << check_rate << "'");
         check_rate = 10.;
     }
-    ros::Rate r(check_rate);
+    rclcpp::Rate r(check_rate);
 
     rgbd::ImageConstPtr rgbd_image;
     do
@@ -77,41 +74,40 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& se
         {
             break;
         }
-        else if (ros::Time::now() > t_end)
+        else if (node_->now() > t_end)
         {
-            ROS_ERROR_NAMED("image_buffer", "[IMAGE_BUFFER] timeout waiting for rgbd image");
+            RCLCPP_ERROR(rclcpp::get_logger("image_buffer"), "[IMAGE_BUFFER] timeout waiting for rgbd image");
             return false;
         }
         else
             r.sleep();
-    }
-    while(ros::ok()); // Give it minimal one go
+    } while (rclcpp::ok());
 
-
-    // - - - - - - - - - - - - - - - - - -
-    // Wait until we have a tf
-    if (!tf_buffer_.canTransform(root_frame_, rgbd_image->getFrameId(), ros::Time(rgbd_image->getTimestamp()))) // Get the TF when it is available now
-        if (!tf_buffer_.canTransform(root_frame_, rgbd_image->getFrameId(), ros::Time(rgbd_image->getTimestamp()), t_end - ros::Time::now()))
+    const rclcpp::Time image_stamp = rclcpp::Time(static_cast<int64_t>(rgbd_image->getTimestamp() * 1e9));
+    if (!tf_buffer_.canTransform(root_frame_, rgbd_image->getFrameId(), image_stamp))
+    {
+        if (!tf_buffer_.canTransform(root_frame_,
+                                     rgbd_image->getFrameId(),
+                                     image_stamp,
+                                     tf2::durationFromSec(std::max(0.0, (t_end - node_->now()).seconds()))))
         {
-            ROS_ERROR_THROTTLE_NAMED(5, "image_buffer", "[IMAGE_BUFFER] timeout waiting for tf");
+            RCLCPP_ERROR(rclcpp::get_logger("image_buffer"), "[IMAGE_BUFFER] timeout waiting for tf");
             return false;
         }
-
-    // - - - - - - - - - - - - - - - - - -
-    // Calculate tf
+    }
 
     try
     {
-        geometry_msgs::TransformStamped t_sensor_pose = tf_buffer_.lookupTransform(root_frame_, rgbd_image->getFrameId(), ros::Time(rgbd_image->getTimestamp()));
+        geometry_msgs::msg::TransformStamped t_sensor_pose =
+            tf_buffer_.lookupTransform(root_frame_, rgbd_image->getFrameId(), image_stamp);
         geo::convert(t_sensor_pose.transform, sensor_pose);
     }
-    catch(tf2::TransformException& ex)
+    catch (tf2::TransformException& ex)
     {
-        ROS_ERROR_NAMED("image_buffer", "[IMAGE_BUFFER] Could not get sensor pose: %s", ex.what());
+        RCLCPP_ERROR(rclcpp::get_logger("image_buffer"), "[IMAGE_BUFFER] Could not get sensor pose: %s", ex.what());
         return false;
     }
 
-    // Convert from ROS coordinate frame to geolib coordinate frame
     sensor_pose.R = sensor_pose.R * geo::Matrix3(1, 0, 0, 0, -1, 0, 0, 0, -1);
 
     image = rgbd_image;
@@ -119,114 +115,93 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& se
     return true;
 }
 
-// ----------------------------------------------------------------------------------------------------
-
-bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose, double timeout_sec, uint timeout_tries)
+bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image,
+                                     geo::Pose3D& sensor_pose,
+                                     double timeout_sec,
+                                     uint timeout_tries)
 {
     if (timeout_tries <= 0)
     {
-        ROS_DEBUG_STREAM_NAMED("iamge_buffer", "[IMAGE_BUFFER](waitForRecentImage) defaulting to 25 tries instead of '" << timeout_tries << "'");
         timeout_tries = 25;
     }
-    double freq = timeout_sec > 0 ? timeout_tries/timeout_sec : 1000; // In case of no timeout, there will be no sleeping, so arbitrary number
+    double freq = timeout_sec > 0 ? timeout_tries / timeout_sec : 1000;
 
     return waitForRecentImage(image, sensor_pose, timeout_sec, freq);
 }
 
-// ----------------------------------------------------------------------------------------------------
-
 bool ImageBuffer::nextImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose)
 {
     std::lock_guard<std::mutex> lg(recent_image_mutex_);
-    if(!recent_image_.first)
+    if (!recent_image_.first)
     {
-        ROS_DEBUG("[IMAGE_BUFFER] No new image");
         return false;
     }
 
     image = recent_image_.first;
     sensor_pose = recent_image_.second;
 
-    recent_image_.first.reset(); // Invalidate the most recent image
+    recent_image_.first.reset();
 
     return true;
 }
-
-// ----------------------------------------------------------------------------------------------------
 
 bool ImageBuffer::getMostRecentImageTF()
 {
     if (!rgbd_client_)
     {
-        ROS_ERROR_NAMED("image_buffer", "[IMAGE_BUFFER] No RGBD client");
+        RCLCPP_ERROR(rclcpp::get_logger("image_buffer"), "[IMAGE_BUFFER] No RGBD client");
         return false;
     }
-
-    // - - - - - - - - - - - - - - - - - -
-    // Fetch kinect image and place in image buffer
 
     {
         rgbd::ImageConstPtr new_image = rgbd_client_->nextImage();
         if (new_image)
         {
             image_buffer_.push_front(new_image);
-            ROS_DEBUG_STREAM_NAMED("image_buffer", "[IMAGE_BUFFER] New image from the RGBD client with timestamp: " << std::fixed << std::setprecision(12) << new_image->getTimestamp());
-        }
-        else
-        {
-            ROS_DEBUG_NAMED("image_buffer", "[IMAGE_BUFFER] No new image from the RGBD client");
         }
     }
 
     geo::Pose3D sensor_pose;
 
-    for (std::forward_list<rgbd::ImageConstPtr>::iterator it = image_buffer_.begin(); it != image_buffer_.end(); ++it)
+    for (auto it = image_buffer_.begin(); it != image_buffer_.end(); ++it)
     {
         rgbd::ImageConstPtr& rgbd_image = *it;
         try
         {
-            geometry_msgs::TransformStamped t_sensor_pose = tf_buffer_.lookupTransform(root_frame_, rgbd_image->getFrameId(), ros::Time(rgbd_image->getTimestamp()));
+            geometry_msgs::msg::TransformStamped t_sensor_pose =
+                tf_buffer_.lookupTransform(root_frame_,
+                                           rgbd_image->getFrameId(),
+                                           rclcpp::Time(static_cast<int64_t>(rgbd_image->getTimestamp() * 1e9)));
             geo::convert(t_sensor_pose.transform, sensor_pose);
         }
         catch (tf2::ExtrapolationException& ex)
         {
             try
             {
-                // Now we have to check if the error was an interpolation or extrapolation error (i.e., the image is too old or
-                // to new, respectively). If it is too old, discard it.
-                geometry_msgs::TransformStamped latest_sensor_pose = tf_buffer_.lookupTransform(root_frame_, rgbd_image->getFrameId(), ros::Time(0));
-                // If image time stamp is older than latest transform, the image is too old and the tf data is not available anymore
-                if ( latest_sensor_pose.header.stamp > ros::Time(rgbd_image->getTimestamp()) )
+                geometry_msgs::msg::TransformStamped latest_sensor_pose =
+                    tf_buffer_.lookupTransform(root_frame_, rgbd_image->getFrameId(), tf2::TimePointZero);
+                if (rclcpp::Time(latest_sensor_pose.header.stamp) >
+                    rclcpp::Time(static_cast<int64_t>(rgbd_image->getTimestamp() * 1e9)))
                 {
-
-                    ROS_DEBUG_STREAM_NAMED("image_buffer", "[IMAGE_BUFFER] Image too old to look-up tf. Deleting all images older than timestamp: " << std::fixed
-                                           << ros::Time(rgbd_image->getTimestamp()));
-                    // Deleting this image and all older images
                     image_buffer_.erase_after(it, image_buffer_.end());
                     return false;
                 }
                 else
                 {
-                    // Image is too new; continue to next image, which is older
-                    ROS_DEBUG_STREAM_DELAYED_THROTTLE_NAMED(10, "image_buffer", "[IMAGE_BUFFER] Image too new to look-up tf: image timestamp: " << std::fixed << ros::Time(rgbd_image->getTimestamp()) << ", what: " << ex.what());
+                    (void)ex;
                     continue;
                 }
             }
-            catch (tf2::TransformException& ex)
+            catch (tf2::TransformException&)
             {
-                ROS_ERROR_DELAYED_THROTTLE_NAMED(10, "image_buffer", "[IMAGE_BUFFER] Could not get latest sensor pose (probably because tf is still initializing): %s", ex.what());
-                ROS_DEBUG_NAMED("image_buffer", "[IMAGE_BUFFER] Could not get latest sensor pose (probably because tf is still initializing): %s", ex.what());
                 continue;
             }
         }
-        catch (tf2::TransformException& ex)
+        catch (tf2::TransformException&)
         {
-            ROS_ERROR_DELAYED_THROTTLE_NAMED(10, "image_buffer", "[IMAGE_BUFFER] Could not get sensor pose: %s", ex.what());
-            ROS_WARN_NAMED("image_buffer", "[IMAGE_BUFFER] Could not get sensor pose: %s", ex.what());
             continue;
         }
 
-        // Convert from ROS coordinate frame to geolib coordinate frame
         sensor_pose.R = sensor_pose.R * geo::Matrix3(1, 0, 0, 0, -1, 0, 0, 0, -1);
 
         {
@@ -235,29 +210,22 @@ bool ImageBuffer::getMostRecentImageTF()
             recent_image_.second = sensor_pose;
         }
 
-        // Deleting this image and all older images
         image_buffer_.erase_after(it, image_buffer_.end());
 
         return true;
     }
 
-    // Not been able to update the most recent image/TF combo
     return false;
 }
 
-// ----------------------------------------------------------------------------------------------------
-
-void ImageBuffer::workerThreadFunc(const float frequency)
+void ImageBuffer::workerThreadFunc(float frequency)
 {
-    ros::Rate r(frequency);
-    while(!shutdown_)
+    rclcpp::Rate r(frequency);
+    while (!shutdown_)
     {
-        if (!getMostRecentImageTF())
-            ROS_ERROR_DELAYED_THROTTLE_NAMED(5, "image_buffer", "[IMAGE_BUFFER] Could not get a pose for any image in the buffer");
+        getMostRecentImageTF();
         r.sleep();
     }
 }
-
-// ----------------------------------------------------------------------------------------------------
 
 } // namespace rgbd

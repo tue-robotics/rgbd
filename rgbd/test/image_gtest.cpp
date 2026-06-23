@@ -6,7 +6,7 @@
 
 #include <rgbd/image.h>
 
-#include <sensor_msgs/CameraInfo.h>
+#include <sensor_msgs/msg/camera_info.hpp>
 
 
 TEST(Image, EmptyClone)
@@ -50,7 +50,7 @@ TEST(Image, NotEqual)
 
     // Different camera model
     image2 = image1.clone();
-    sensor_msgs::CameraInfo cam_info = image2.getCameraModel().cameraInfo();
+    sensor_msgs::msg::CameraInfo cam_info = image2.getCameraModel().cameraInfo();
     cam_info.width += 10;
     image2.setCameraInfo(cam_info);
     EXPECT_FALSE(image1 == image2);

@@ -14,42 +14,45 @@
   <url type="bugtracker">https://github.com/tue-robotics/rgbd/issues</url>
   <url type="repository">https://github.com/tue-robotics/rgbd</url>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>libboost-dev</depend>
   <depend>geolib2</depend>
   <depend>image_geometry</depend>
   <depend>libopencv-dev</depend>
   <depend>message_filters</depend>
+  <depend>pcl_conversions</depend>
   <depend>pcl_ros</depend>
-  <depend>rgbd_msgs</depend>
-  <depend>roscpp</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+  <depend>rgbd_interfaces</depend>
   <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf2</depend>
   <depend>tue_serialization</depend>
 
   <build_depend>cv_bridge</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>libboost-iostreams-dev</build_depend>
-  <build_depend>nodelet</build_depend>
-  <build_depend>pluginlib</build_depend>
-  <build_depend>rosconsole_bridge</build_depend>
 
   <exec_depend>cv_bridge</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
   <exec_depend>libboost-iostreams-dev</exec_depend>
-  <exec_depend>nodelet</exec_depend>
-  <exec_depend>pluginlib</exec_depend>
-  <exec_depend>rosconsole_bridge</exec_depend>
 
-  <test_depend>catkin_lint_cmake</test_depend>
-  <test_depend>rospy</test_depend>
-  <test_depend>rostest</test_depend>
-  <test_depend>std_msgs</test_depend>
+  <test_depend>ament_cmake_clang_format</test_depend>
+  <test_depend>ament_cmake_clang_tidy</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>ament_cmake_lint_cmake</test_depend>
+  <test_depend>ament_cmake_xmllint</test_depend>
+  <test_depend>clang-format-21</test_depend>
+  <test_depend>clang-tidy-21</test_depend>
+  <test_depend>tue_lint_config</test_depend>
 
   <doc_depend>doxygen</doc_depend>
 
   <export>
-    <nodelet plugin="${prefix}/nodelet_plugins.xml" />
+    <build_type>ament_cmake</build_type>
     <rosdoc config="rosdoc.yaml" />
   </export>
 

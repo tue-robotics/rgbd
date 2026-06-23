@@ -1,25 +1,25 @@
+#include <rgbd/image.h>
 #include <rgbd/serialization.h>
 #include <rgbd/view.h>
-#include <rgbd/image.h>
 
 #include <fstream>
 
 #include <opencv2/highgui/highgui.hpp>
 
-#include <sensor_msgs/CameraInfo.h>
-#include <sensor_msgs/distortion_models.h>
+#include <sensor_msgs/distortion_models.hpp>
+#include <sensor_msgs/msg/camera_info.hpp>
 
-int main(int /*argc*/, char **/*argv*/)
+int main(int /*argc*/, char** /*argv*/)
 {
     std::string test_filename = "/tmp/rgbd_test_image";
 
     {
-        sensor_msgs::CameraInfo cam_info;
+        sensor_msgs::msg::CameraInfo cam_info;
         cam_info.distortion_model = sensor_msgs::distortion_models::PLUMB_BOB;
         image_geometry::PinholeCameraModel cam_model;
         cam_model.fromCameraInfo(cam_info);
 
-        cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0,0,255));
+        cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0, 0, 255));
         cv::line(rgb_image, cv::Point2i(100, 100), cv::Point2i(200, 300), cv::Scalar(255, 0, 0), 3);
         cv::Mat depth_image(480, 640, CV_32FC1, 3);
         cv::line(depth_image, cv::Point2i(100, 100), cv::Point2i(200, 300), cv::Scalar(1), 3);
@@ -54,9 +54,9 @@ int main(int /*argc*/, char **/*argv*/)
     }
 
     std::cout << "Image loaded from disk." << std::endl;
-//    std::cout << "    size:  " << image.getWidth() << " x " << image.getHeight() << std::endl;
+    //    std::cout << "    size:  " << image.getWidth() << " x " << image.getHeight() << std::endl;
     std::cout << "    frame: " << image.getFrameId() << std::endl;
-    std::cout << "    time:  " << ros::Time(image.getTimestamp()) << std::endl;
+    std::cout << "    time:  " << image.getTimestamp() << std::endl;
 
     if (image.getRGBImage().data)
         cv::imshow("rgb", image.getRGBImage());

@@ -1,21 +1,18 @@
 #ifndef TEST_SERVER_TEMPL_H_
 #define TEST_SERVER_TEMPL_H_
 
+#if __has_include(<image_geometry/pinhole_camera_model.hpp>)
+#include <image_geometry/pinhole_camera_model.hpp>
+#else
 #include <image_geometry/pinhole_camera_model.h>
+#endif
 
 #include "rgbd/image.h"
 
-#include <ros/console.h>
-#include <ros/duration.h>
-#include <ros/init.h>
-#include <ros/master.h>
-#include <ros/names.h>
-#include <ros/node_handle.h>
-#include <ros/rate.h>
-#include <ros/time.h>
-
-#include <sensor_msgs/CameraInfo.h>
-#include <sensor_msgs/distortion_models.h>
+#include <memory>
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/distortion_models.hpp>
+#include <sensor_msgs/msg/camera_info.hpp>
 
 /**
  * Template function to test the communication provide by a server.
@@ -30,51 +27,42 @@
  * @endcode
  * function.
  */
-template<class T>
-int main_templ(int argc, char **argv)
+template <class T> int main_templ(int argc, char** argv)
 {
-    ros::init(argc, argv, "rgbd_transport_test_server");
-    ros::NodeHandle nh_private("~");
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<rclcpp::Node>(
+        "rgbd_transport_test_server", rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
+    const auto logger = node->get_logger();
 
-    float rate = 30;
-    nh_private.getParam("rate", rate);
+    double rate = 30.0;
+    if (!node->has_parameter("rate"))
+    {
+        node->declare_parameter<double>("rate", rate);
+    }
+    node->get_parameter("rate", rate);
 
     T server;
-    server.initialize(ros::names::resolve("test"));
+    server.initialize(node->get_node_topics_interface()->resolve_topic_name("test"));
 
-    ros::Rate r(rate);
-    cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0,0,255));
+    rclcpp::Rate r(rate);
+    cv::Mat rgb_image(480, 640, CV_8UC3, cv::Scalar(0, 0, 255));
     cv::Mat depth_image(480, 640, CV_32FC1, 5.0);
-    sensor_msgs::CameraInfo cam_info;
-    cam_info.K = {554.2559327880068, 0.0, 320.5,
-                  0.0, 554.2559327880068, 240.5,
-                  0.0, 0.0, 1.0};
-    cam_info.P = {554.2559327880068, 0.0, 320.5, 0.0,
-                  0.0, 554.2559327880068, 240.5, 0.0,
-                  0.0, 0.0, 1.0, 0.0};
+    sensor_msgs::msg::CameraInfo cam_info;
+    cam_info.k = {554.2559327880068, 0.0, 320.5, 0.0, 554.2559327880068, 240.5, 0.0, 0.0, 1.0};
+    cam_info.p = {
+        554.2559327880068, 0.0, 320.5, 0.0, 0.0, 554.2559327880068, 240.5, 0.0, 0.0, 0.0, 1.0, 0.0};
     cam_info.distortion_model = sensor_msgs::distortion_models::PLUMB_BOB;
     cam_info.width = 640;
     cam_info.height = 480;
     image_geometry::PinholeCameraModel cam_model;
     cam_model.fromCameraInfo(cam_info);
 
-    rgbd::Image image(rgb_image, depth_image, cam_model, "test_frame_id", ros::Time::now().toSec());
-
-    ros::WallTime last_master_check = ros::WallTime::now();
+    rgbd::Image image(rgb_image, depth_image, cam_model, "test_frame_id", node->now().seconds());
 
     int x = 0;
-    while (ros::ok())
+    while (rclcpp::ok())
     {
-        if (ros::WallTime::now() >= last_master_check + ros::WallDuration(1))
-        {
-            last_master_check = ros::WallTime::now();
-            if (!ros::master::check())
-            {
-                ROS_FATAL("Lost connection to master");
-                return 1;
-            }
-        }
-        cv::line(rgb_image, cv::Point(x, 0), cv::Point(x, rgb_image.rows - 1), cv::Scalar(0,0,255));
+        cv::line(rgb_image, cv::Point(x, 0), cv::Point(x, rgb_image.rows - 1), cv::Scalar(0, 0, 255));
         cv::line(depth_image, cv::Point(x, 0), cv::Point(x, depth_image.rows - 1), 5.0);
         x = (x + 10) % rgb_image.cols;
         cv::line(rgb_image, cv::Point(x, 0), cv::Point(x, rgb_image.rows - 1), cv::Scalar(255, 0, 0));
@@ -82,15 +70,19 @@ int main_templ(int argc, char **argv)
 
         image.setRGBImage(rgb_image);
         image.setDepthImage(depth_image);
-        image.setTimestamp(ros::Time::now().toSec());
+        image.setTimestamp(node->now().seconds());
 
         server.send(image);
 
         r.sleep();
     }
 
+    RCLCPP_INFO(logger, "Shutting down");
+    rclcpp::shutdown();
     return 0;
 }
 
+#undef RGBD_CAMERA_INFO_K
+#undef RGBD_CAMERA_INFO_P
 
 #endif // TEST_SERVER_TEMPL_H_

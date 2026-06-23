@@ -1,26 +1,31 @@
 #ifndef RGBD_SERVER_ROS_H_
 #define RGBD_SERVER_ROS_H_
 
-#include "rgbd/types.h"
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/camera_info.hpp>
+#include <sensor_msgs/msg/image.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <ros/node_handle.h>
-#include <ros/publisher.h>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+
+#include "rgbd/types.h"
 
 #include <memory>
 
-namespace rgbd {
+namespace rgbd
+{
 
 /**
  * @brief Server which publishes ROS rgb image, depth image and pointcloud messages
  */
-class ServerROS {
-
+class ServerROS
+{
 public:
-
     /**
      * @brief Constructor
      */
-    ServerROS(ros::NodeHandle nh=ros::NodeHandle());
+    explicit ServerROS(const rclcpp::Node::SharedPtr& node = nullptr);
 
     /**
      * @brief Destructor
@@ -34,7 +39,7 @@ public:
      * @param publish_depth Publish depth image and camera info
      * @param publish_pc Publish point cloud
      */
-    void initialize(std::string ns = "", const bool publish_rgb = false, const bool publish_depth = false, const bool publish_pc = false);
+    void initialize(std::string ns = "", bool publish_rgb = false, bool publish_depth = false, bool publish_pc = false);
 
     /**
      * @brief Publish a new image to the selected ROS topics
@@ -43,16 +48,14 @@ public:
     void send(const Image& image);
 
 protected:
-
-    ros::NodeHandle nh_;
-    std::shared_ptr<ros::Publisher> pub_rgb_img_;
-    std::shared_ptr<ros::Publisher> pub_rgb_info_;
-    std::shared_ptr<ros::Publisher> pub_depth_img_;
-    std::shared_ptr<ros::Publisher> pub_depth_info_;
-    std::shared_ptr<ros::Publisher> pub_depth_pc_;
-
+    rclcpp::Node::SharedPtr node_;
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_rgb_img_;
+    rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr pub_rgb_info_;
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_depth_img_;
+    rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr pub_depth_info_;
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_depth_pc_;
 };
 
-}
+} // namespace rgbd
 
 #endif // RGBD_SERVER_ROS_H_

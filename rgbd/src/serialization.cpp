@@ -1,7 +1,7 @@
 #include "rgbd/serialization.h"
 #include "rgbd/image.h"
 
-#include <ros/console.h>
+#include <rclcpp/rclcpp.hpp>
 
 #include <tue/serialization/input_archive.h>
 #include <tue/serialization/output_archive.h>
@@ -20,8 +20,8 @@ const static int SERIALIZATION_VERSION = 2;
 //
 // ----------------------------------------------------------------------------------------------------
 
-bool serialize(const Image& image, tue::serialization::OutputArchive& a,
-               RGBStorageType rgb_type, DepthStorageType depth_type)
+bool serialize(const Image& image, tue::serialization::OutputArchive& a, RGBStorageType rgb_type,
+               DepthStorageType depth_type)
 {
     // - - - - - - - - - - - - - - - - GENERAL INFO - - - - - - - - - - - - - - - -
 
@@ -44,7 +44,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
     }
     else
     {
-        ROS_ERROR_NAMED("serialization", "rgbd::serialize: cam_model not initialized");
+        RCLCPP_ERROR(rclcpp::get_logger("serialization"), "rgbd::serialize: cam_model not initialized");
         return false;
     }
 
@@ -78,8 +78,9 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
         std::vector<unsigned char> rgb_data;
 
         // Compress image
-        if (!cv::imencode(".jpg", image.rgb_image_, rgb_data, rgb_params)) {
-            ROS_ERROR_NAMED("serialization", "RGB image compression failed");
+        if (!cv::imencode(".jpg", image.rgb_image_, rgb_data, rgb_params))
+        {
+            RCLCPP_ERROR(rclcpp::get_logger("serialization"), "RGB image compression failed");
             return false;
         }
 
@@ -88,7 +89,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
     }
     else
     {
-        ROS_ERROR_STREAM_NAMED("serialization", "Unsupported RGB STORAGE TYPE: " << rgb_type);
+        RCLCPP_ERROR(rclcpp::get_logger("serialization"), "Unsupported RGB STORAGE TYPE: %d", rgb_type);
         return false;
     }
 
@@ -112,8 +113,8 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
     }
     else if (depth_type == DEPTH_STORAGE_PNG)
     {
-        float depthZ0 = 100; //config_.depth_quantization;
-        float depthMax = 10; //config_.depth_max;
+        float depthZ0 = 100; // config_.depth_quantization;
+        float depthMax = 10; // config_.depth_max;
 
         float depthQuantA = depthZ0 * (depthZ0 + 1.0f);
         float depthQuantB = 1.0f - depthQuantA / depthMax;
@@ -124,17 +125,20 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
         cv::Mat invDepthImg(depth_image.size(), CV_16UC1);
 
         // Matrix iterators
-        cv::MatConstIterator_<float> itDepthImg = depth_image.begin<float>(),
-                                 itDepthImg_end = depth_image.end<float>();
+        cv::MatConstIterator_<float> itDepthImg = depth_image.begin<float>(), itDepthImg_end = depth_image.end<float>();
         cv::MatIterator_<unsigned short> itInvDepthImg = invDepthImg.begin<unsigned short>(),
-                                     itInvDepthImg_end = invDepthImg.end<unsigned short>();
+                                         itInvDepthImg_end = invDepthImg.end<unsigned short>();
 
         // Quantization
-        for (; (itDepthImg != itDepthImg_end) && (itInvDepthImg != itInvDepthImg_end); ++itDepthImg, ++itInvDepthImg) {
+        for (; (itDepthImg != itDepthImg_end) && (itInvDepthImg != itInvDepthImg_end); ++itDepthImg, ++itInvDepthImg)
+        {
             // check for NaN & max depth
-            if (*itDepthImg < depthMax){
+            if (*itDepthImg < depthMax)
+            {
                 *itInvDepthImg = depthQuantA / *itDepthImg + depthQuantB;
-            } else{
+            }
+            else
+            {
                 *itInvDepthImg = 0;
             }
         }
@@ -148,8 +152,9 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
 
         std::vector<unsigned char> depth_data;
 
-        if (!cv::imencode(".png", invDepthImg, depth_data, params)) {
-            ROS_ERROR_NAMED("serialization", "Depth image compression failed");
+        if (!cv::imencode(".png", invDepthImg, depth_data, params))
+        {
+            RCLCPP_ERROR(rclcpp::get_logger("serialization"), "Depth image compression failed");
             return false;
         }
 
@@ -158,7 +163,7 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
     }
     else
     {
-        ROS_ERROR_NAMED("serialization", "Unsupported DEPTH_STORAGE_TYPE");
+        RCLCPP_ERROR(rclcpp::get_logger("serialization"), "Unsupported DEPTH_STORAGE_TYPE");
         return false;
     }
 
@@ -196,35 +201,36 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         a >> fx >> fy;
         a >> cx >> cy;
         a >> tx >> ty;
-        if (version >=2)
+        if (version >= 2)
             a >> width >> height;
 
-        sensor_msgs::CameraInfo cam_info_msg;
+        sensor_msgs::msg::CameraInfo cam_info_msg;
 
-        cam_info_msg.D.resize(5, 0.0);
-        cam_info_msg.K.fill(0.0);
-        cam_info_msg.K[0] = fx;  // fx
-        cam_info_msg.K[2] = cx;  // cx
-        cam_info_msg.K[4] = fy;  // fy
-        cam_info_msg.K[5] = cy;  // cy
-        cam_info_msg.K[8] = 1.0;
+        cam_info_msg.d.resize(5, 0.0);
+        cam_info_msg.k.fill(0.0);
+        cam_info_msg.k[0] = fx; // fx
+        cam_info_msg.k[2] = cx; // cx
+        cam_info_msg.k[4] = fy; // fy
+        cam_info_msg.k[5] = cy; // cy
+        cam_info_msg.k[8] = 1.0;
 
-        cam_info_msg.R.fill(0.0);
-        cam_info_msg.R[0] = 1.0;
-        cam_info_msg.R[4] = 1.0;
-        cam_info_msg.R[8] = 1.0;
+        cam_info_msg.r.fill(0.0);
+        cam_info_msg.r[0] = 1.0;
+        cam_info_msg.r[4] = 1.0;
+        cam_info_msg.r[8] = 1.0;
 
-        cam_info_msg.P.fill(0.0);
-        cam_info_msg.P[0] = fx;  // fx
-        cam_info_msg.P[2] = cx;  // cx
-        cam_info_msg.P[3] = tx;  // Tx
-        cam_info_msg.P[5] = fy;  // fy
-        cam_info_msg.P[6] = cy;  // cy
-        cam_info_msg.P[7] = ty;  // Ty
-        cam_info_msg.P[10] = 1.0;
+        cam_info_msg.p.fill(0.0);
+        cam_info_msg.p[0] = fx; // fx
+        cam_info_msg.p[2] = cx; // cx
+        cam_info_msg.p[3] = tx; // Tx
+        cam_info_msg.p[5] = fy; // fy
+        cam_info_msg.p[6] = cy; // cy
+        cam_info_msg.p[7] = ty; // Ty
+        cam_info_msg.p[10] = 1.0;
 
         cam_info_msg.distortion_model = "plumb_bob";
-        if (version >= 2){
+        if (version >= 2)
+        {
             cam_info_msg.width = width;
             cam_info_msg.height = height;
         }
@@ -232,7 +238,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
     }
     else
     {
-        ROS_ERROR_STREAM_NAMED("serialization", "rgbd::deserialize: Unsupported camera model: " << cam_type);
+        RCLCPP_ERROR(rclcpp::get_logger("serialization"), "rgbd::deserialize: Unsupported camera model: %d", cam_type);
         return false;
     }
 
@@ -252,7 +258,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
 
         int size = width * height * 3;
         image.rgb_image_ = cv::Mat(height, width, CV_8UC3);
-        for(int i = 0; i < size; ++i)
+        for (int i = 0; i < size; ++i)
             a >> image.rgb_image_.data[i];
     }
     else if (rgb_type == RGB_STORAGE_JPG)
@@ -261,14 +267,15 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         a >> rgb_size;
 
         std::vector<unsigned char> rgb_data(rgb_size);
-        for(int i = 0; i < rgb_size; ++i)
+        for (int i = 0; i < rgb_size; ++i)
             a >> rgb_data[i];
 
         image.rgb_image_ = cv::imdecode(rgb_data, cv::IMREAD_UNCHANGED);
     }
     else
     {
-        ROS_ERROR_STREAM_NAMED("serialization", "rgbd::deserialize: Unsupported rgb storage format: " << rgb_type);
+        RCLCPP_ERROR(rclcpp::get_logger("serialization"), "rgbd::deserialize: Unsupported rgb storage format: %d",
+                     rgb_type);
         return false;
     }
 
@@ -288,7 +295,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
 
         int size = width * height * 4;
         image.depth_image_ = cv::Mat(height, width, CV_32FC1);
-        for(int i = 0; i < size; ++i)
+        for (int i = 0; i < size; ++i)
             a >> image.depth_image_.data[i];
     }
     else if (depth_type == DEPTH_STORAGE_PNG)
@@ -300,7 +307,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         a >> depth_size;
 
         std::vector<unsigned char> depth_data(depth_size);
-        for(int i = 0; i < depth_size; ++i)
+        for (int i = 0; i < depth_size; ++i)
             a >> depth_data[i];
 
         cv::Mat decompressed = cv::imdecode(depth_data, cv::IMREAD_UNCHANGED);
@@ -308,27 +315,31 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         depth_image = cv::Mat(decompressed.size(), CV_32FC1);
 
         // Depth conversion
-        cv::MatIterator_<float> itDepthImg = depth_image.begin<float>(),
-                itDepthImg_end = depth_image.end<float>();
+        cv::MatIterator_<float> itDepthImg = depth_image.begin<float>(), itDepthImg_end = depth_image.end<float>();
         cv::MatConstIterator_<unsigned short> itInvDepthImg = decompressed.begin<unsigned short>(),
-                itInvDepthImg_end = decompressed.end<unsigned short>();
+                                              itInvDepthImg_end = decompressed.end<unsigned short>();
 
-        for (; (itDepthImg != itDepthImg_end) && (itInvDepthImg != itInvDepthImg_end); ++itDepthImg, ++itInvDepthImg) {
+        for (; (itDepthImg != itDepthImg_end) && (itInvDepthImg != itInvDepthImg_end); ++itDepthImg, ++itInvDepthImg)
+        {
             // check for NaN & max depth
-            if (*itInvDepthImg) {
+            if (*itInvDepthImg)
+            {
                 *itDepthImg = depthQuantA / ((float)*itInvDepthImg - depthQuantB);
-            } else {
+            }
+            else
+            {
                 *itDepthImg = std::numeric_limits<float>::quiet_NaN();
             }
         }
     }
     else
     {
-        ROS_ERROR_STREAM_NAMED("serialization", "rgbd::deserialize: Unsupported depth storage format: " << depth_type);
+        RCLCPP_ERROR(rclcpp::get_logger("serialization"), "rgbd::deserialize: Unsupported depth storage format: %d",
+                     depth_type);
         return false;
     }
 
     return true;
 }
 
-}
+} // namespace rgbd

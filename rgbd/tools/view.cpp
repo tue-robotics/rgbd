@@ -1,11 +1,12 @@
-#include <rgbd/serialization.h>
 #include <rgbd/image.h>
+#include <rgbd/serialization.h>
 
 #include <fstream>
 
 #include <opencv2/highgui/highgui.hpp>
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
 
     if (argc != 2)
     {
@@ -30,9 +31,10 @@ int main(int argc, char **argv) {
 
     std::cout << "Image loaded from disk." << std::endl;
     std::cout << "    name:  " << argv[1] << std::endl;
-//    std::cout << "    size:  " << image.getWidth() << " x " << image.getHeight() << std::endl;
+    //    std::cout << "    size:  " << image.getWidth() << " x " <<
+    //    image.getHeight() << std::endl;
     std::cout << "    frame: " << image.getFrameId() << std::endl;
-    std::cout << "    time:  " << ros::Time(image.getTimestamp()) << std::endl;
+    std::cout << "    time:  " << image.getTimestamp() << std::endl;
 
     cv::imshow("rgb", image.getRGBImage());
     cv::imshow("depth", image.getDepthImage() / 8);

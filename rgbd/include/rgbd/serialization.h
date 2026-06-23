@@ -13,7 +13,8 @@ class Image;
 
 // SERIALIZATION
 
-bool serialize(const Image& image, tue::serialization::OutputArchive& a,
+bool serialize(const Image& image,
+               tue::serialization::OutputArchive& a,
                RGBStorageType rgb_type = RGB_STORAGE_JPG,
                DepthStorageType depth_type = DEPTH_STORAGE_PNG);
 
@@ -21,6 +22,6 @@ bool serialize(const Image& image, tue::serialization::OutputArchive& a,
 
 bool deserialize(tue::serialization::InputArchive& a, Image& image);
 
-}
+} // namespace rgbd
 
 #endif // RGBD_SERIALIZATION_H_
