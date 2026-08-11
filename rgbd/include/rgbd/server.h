@@ -37,8 +37,8 @@ public:
      * @param service_freq frequency of the thread processing service requests in ServerRGBD
      */
     void initialize(const std::string& name,
-                    RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS,
-                    DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS,
+                    RGBStorageType rgb_type = RGBStorageType::RGB_STORAGE_LOSSLESS,
+                    DepthStorageType depth_type = DepthStorageType::DEPTH_STORAGE_LOSSLESS,
                     float service_freq = 10.0f);
 
     /**

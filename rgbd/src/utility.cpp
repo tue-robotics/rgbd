@@ -1,14 +1,18 @@
 #include "rgbd/utility.h"
 
-#include <rclcpp/rclcpp.hpp>
+#include <bits/posix1_lim.h>
+#include <rclcpp/logger.hpp>
+#include <rclcpp/logging.hpp>
 
-#include <limits.h>
+#include <climits>
+#include <stdexcept>
+#include <string>
 #include <unistd.h>
 
 namespace rgbd
 {
 
-std::string get_hostname()
+std::string getHostname()
 {
     char hostname[HOST_NAME_MAX];
     if (gethostname(hostname, HOST_NAME_MAX) != 0)
@@ -17,7 +21,7 @@ std::string get_hostname()
         throw std::runtime_error("Can't determine hostname");
     }
 
-    return std::string(hostname);
+    return {hostname};
 }
 
 } // namespace rgbd

@@ -1,45 +1,54 @@
 #include "rgbd/client.h"
+#include "rgbd/types.h"
 #include "rgbd/view.h"
 
-#include <opencv2/highgui/highgui.hpp>
-#include <rclcpp/rclcpp.hpp>
-
+#include <algorithm>
+#include <geolib/datatypes.h>
+#include <iostream>
 #include <memory>
+#include <opencv2/core/hal/interface.h>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/core/matx.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <ostream>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/rate.hpp>
 
-bool PAUSE = false;
-std::string MODE;
+#include <rclcpp/utilities.hpp>
+#include <string>
+#include <vector>
 
-int IMAGE_WIDTH, IMAGE_HEIGHT;
+namespace
+{
 
-std::vector<cv::Vec2i> mouse_points;
-cv::Vec2i mouse_pos;
+struct MultitoolState
+{
+    bool paused = false;
+    std::string mode;
+    int image_width = 0;
+    int image_height = 0;
+    std::vector<cv::Vec2i> mouse_points;
+    cv::Vec2i mouse_pos;
+};
 
 // ----------------------------------------------------------------------------------------------------
 
-void CallBackFunc(int event, int x, int y, int /*flags*/, void* /*userdata*/)
+void callBackFunc(int event, int x, int y, int /*flags*/, void* userdata)
 {
-    x = x % IMAGE_WIDTH;
-    mouse_pos = cv::Vec2i(x, y);
+    auto* state = static_cast<MultitoolState*>(userdata);
+    x = x % state->image_width;
+    state->mouse_pos = cv::Vec2i(x, y);
 
     if (event == cv::EVENT_LBUTTONDOWN)
     {
-        mouse_points.push_back(mouse_pos);
-    }
-    else if (event == cv::EVENT_RBUTTONDOWN)
-    {
-        //          std::cout << "Right button of the mouse is clicked - position ("
-        //          << x << ", " << y << ")" << std::endl;
-    }
-    else if (event == cv::EVENT_MBUTTONDOWN)
-    {
-        //          std::cout << "Middle button of the mouse is clicked - position
-        //          (" << x << ", " << y << ")" << std::endl;
-    }
-    else if (event == cv::EVENT_MOUSEMOVE)
-    {
-        //        mouse_pos = cv::Vec2i(x, y);
+        state->mouse_points.push_back(state->mouse_pos);
     }
 }
+
+} // namespace
 
 // ----------------------------------------------------------------------------------------------------
 
@@ -51,6 +60,7 @@ int main(int argc, char** argv)
     const auto logger = node->get_logger();
 
     std::unique_ptr<rgbd::Client> client(nullptr);
+    MultitoolState state;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // - - - - - - - - - - - -
@@ -59,23 +69,23 @@ int main(int argc, char** argv)
 
     if (argc < 3)
     {
-        std::cout << "Usage:" << std::endl << std::endl << "    multitool --rgbd RGBD_TOPIC" << std::endl << std::endl;
+        std::cout << "Usage:" << '\n' << '\n' << "    multitool --rgbd RGBD_TOPIC" << '\n' << '\n';
         return 1;
     }
 
     for (int i = 1; i < argc; i += 2)
     {
-        std::string opt = argv[i];
-        std::string arg = argv[i + 1];
+        std::string const opt = argv[i];
+        std::string const arg = argv[i + 1];
 
         if (opt == "--rgbd")
         {
-            client = std::unique_ptr<rgbd::Client>(new rgbd::Client);
+            client = std::make_unique<rgbd::Client>();
             client->initialize(node->get_node_topics_interface()->resolve_topic_name(arg));
         }
         else
         {
-            std::cout << "Unknown option: '" << opt << "'." << std::endl;
+            std::cout << "Unknown option: '" << opt << "'." << '\n';
             return 1;
         }
     }
@@ -83,12 +93,12 @@ int main(int argc, char** argv)
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // - - - - - - - - - - - -
 
-    std::cout << "Keys:" << std::endl
-              << std::endl
-              << "    spacebar - Pause" << std::endl
-              << "    m        - Measure" << std::endl
-              << "    q        - Quit" << std::endl
-              << std::endl;
+    std::cout << "Keys:" << '\n'
+              << '\n'
+              << "    spacebar - Pause" << '\n'
+              << "    m        - Measure" << '\n'
+              << "    q        - Quit" << '\n'
+              << '\n';
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // - - - - - - - - - - - -
@@ -98,12 +108,12 @@ int main(int argc, char** argv)
     cv::namedWindow(window_name, 1);
 
     // set the callback function for any mouse event
-    cv::setMouseCallback(window_name, CallBackFunc, nullptr);
+    cv::setMouseCallback(window_name, callBackFunc, &state);
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // - - - - - - - - - - - -
 
-    float max_view_distance = 10;
+    float const max_view_distance = 10;
 
     rgbd::ImagePtr image;
 
@@ -117,16 +127,16 @@ int main(int argc, char** argv)
     rclcpp::Rate r(rate);
     while (rclcpp::ok())
     {
-        if (!PAUSE && client)
+        if (!state.paused && client)
         {
-            rgbd::ImagePtr image_tmp = client->nextImage();
+            rgbd::ImagePtr const image_tmp = client->nextImage();
             if (image_tmp)
                 image = image_tmp;
         }
 
         cv::Mat canvas;
-        IMAGE_WIDTH = 0;
-        IMAGE_HEIGHT = 0;
+        state.image_width = 0;
+        state.image_height = 0;
 
         if (image)
         {
@@ -140,10 +150,10 @@ int main(int argc, char** argv)
                 {
                     for (int x = 0; x < depth.cols; ++x)
                     {
-                        float d = depth.at<float>(y, x);
+                        float const d = depth.at<float>(y, x);
                         if (d > 0 && d == d)
                         {
-                            unsigned char v = static_cast<unsigned char>(
+                            unsigned char const v = static_cast<unsigned char>(
                                 std::min<float>(max_view_distance, d / max_view_distance) * 255);
                             depth_canvas.at<cv::Vec3b>(y, x) = cv::Vec3b(v, v, v);
                         }
@@ -152,21 +162,21 @@ int main(int argc, char** argv)
 
                 if (rgb.data)
                 {
-                    IMAGE_WIDTH = std::min(rgb.cols, depth.cols);
+                    state.image_width = std::min(rgb.cols, depth.cols);
 
-                    int rgb_height = IMAGE_WIDTH * rgb.rows / rgb.cols;
-                    int depth_height = IMAGE_WIDTH * depth.rows / depth.cols;
+                    int const rgb_height = state.image_width * rgb.rows / rgb.cols;
+                    int const depth_height = state.image_width * depth.rows / depth.cols;
 
-                    IMAGE_HEIGHT = std::max(rgb_height, depth_height);
+                    state.image_height = std::max(rgb_height, depth_height);
 
-                    canvas = cv::Mat(IMAGE_HEIGHT, IMAGE_WIDTH * 2, CV_8UC3, cv::Scalar(50, 50, 50));
+                    canvas = cv::Mat(state.image_height, state.image_width * 2, CV_8UC3, cv::Scalar(50, 50, 50));
 
-                    cv::Mat rgb_roi = canvas(cv::Rect(cv::Point(0, 0), cv::Size(IMAGE_WIDTH, rgb_height)));
+                    cv::Mat rgb_roi = canvas(cv::Rect(cv::Point(0, 0), cv::Size(state.image_width, rgb_height)));
                     cv::Mat depth_roi =
-                        canvas(cv::Rect(cv::Point(IMAGE_WIDTH, 0), cv::Size(IMAGE_WIDTH, depth_height)));
+                        canvas(cv::Rect(cv::Point(state.image_width, 0), cv::Size(state.image_width, depth_height)));
 
-                    cv::resize(rgb, rgb_roi, cv::Size(IMAGE_WIDTH, rgb_height));
-                    cv::resize(depth_canvas, depth_roi, cv::Size(IMAGE_WIDTH, depth_height));
+                    cv::resize(rgb, rgb_roi, cv::Size(state.image_width, rgb_height));
+                    cv::resize(depth_canvas, depth_roi, cv::Size(state.image_width, depth_height));
                 }
                 else
                 {
@@ -186,20 +196,21 @@ int main(int argc, char** argv)
             cv::line(canvas, cv::Point(0, 480), cv::Point(640, 0), cv::Scalar(255, 255, 255), 5);
         }
 
-        if (IMAGE_WIDTH == 0 || IMAGE_HEIGHT == 0)
+        if (state.image_width == 0 || state.image_height == 0)
         {
-            IMAGE_WIDTH = canvas.cols;
-            IMAGE_HEIGHT = canvas.rows;
+            state.image_width = canvas.cols;
+            state.image_height = canvas.rows;
         }
 
         // Show mouse cursor(s)
-        cv::circle(canvas, mouse_pos, 5, cv::Scalar(255, 0, 0), 1);
-        if (canvas.cols > IMAGE_WIDTH)
-            cv::circle(canvas, mouse_pos + cv::Vec2i(IMAGE_WIDTH, 0), 5, cv::Scalar(255, 0, 0), 1);
+        cv::circle(canvas, state.mouse_pos, 5, cv::Scalar(255, 0, 0), 1);
+        if (canvas.cols > state.image_width)
+            cv::circle(canvas, state.mouse_pos + cv::Vec2i(state.image_width, 0), 5, cv::Scalar(255, 0, 0), 1);
 
-        cv::putText(canvas, MODE, cv::Point(10, 20), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
+        cv::putText(
+            canvas, state.mode, cv::Point(10, 20), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
 
-        if (PAUSE)
+        if (state.paused)
             cv::putText(canvas,
                         "PAUSED",
                         cv::Point(10, canvas.rows - 25),
@@ -211,56 +222,57 @@ int main(int argc, char** argv)
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // - - - - - - - - - - - - -
 
-        for (unsigned int i = 0; i < mouse_points.size(); ++i)
+        for (const auto& mouse_point : state.mouse_points)
         {
-            cv::circle(canvas, mouse_points[i], 5, cv::Scalar(0, 0, 255), 2);
-            if (canvas.cols > IMAGE_WIDTH)
-                cv::circle(canvas, mouse_points[i] + cv::Vec2i(IMAGE_WIDTH, 0), 5, cv::Scalar(0, 0, 255), 2);
+            cv::circle(canvas, mouse_point, 5, cv::Scalar(0, 0, 255), 2);
+            if (canvas.cols > state.image_width)
+                cv::circle(canvas, mouse_point + cv::Vec2i(state.image_width, 0), 5, cv::Scalar(0, 0, 255), 2);
         }
 
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // - - - - - - - - - - - - -
-        if (MODE == "DONE")
+        if (state.mode == "DONE")
         {
             break;
         }
-        else if (MODE == "MEASURE")
+        if (state.mode == "MEASURE")
         {
-            if (mouse_points.size() == 2)
+            if (state.mouse_points.size() == 2)
             {
-                rgbd::View view(*image, 640);
+                rgbd::View const view(*image, 640);
 
-                geo::Vector3 p1, p2;
+                geo::Vector3 p1;
+                geo::Vector3 p2;
 
-                if (view.getPoint3D(mouse_points[0][0], mouse_points[0][1], p1) &&
-                    view.getPoint3D(mouse_points[1][0], mouse_points[1][1], p2))
+                if (view.getPoint3D(state.mouse_points[0][0], state.mouse_points[0][1], p1) &&
+                    view.getPoint3D(state.mouse_points[1][0], state.mouse_points[1][1], p2))
                 {
-                    std::cout << (p1 - p2).length() << " m" << std::endl;
+                    std::cout << (p1 - p2).length() << " m" << '\n';
                 }
 
-                mouse_points.clear();
+                state.mouse_points.clear();
             }
         }
         else
         {
-            mouse_points.clear();
+            state.mouse_points.clear();
         }
 
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // - - - - - - - - - - - - -
 
         cv::imshow(window_name, canvas);
-        int i_key = cv::waitKey(3);
+        int const i_key = cv::waitKey(3);
         if (i_key >= 0)
         {
-            char key = static_cast<char>(i_key);
+            char const key = static_cast<char>(i_key);
 
             switch (key)
             {
-            case ' ': PAUSE = !PAUSE; break;
-            case 'm': MODE = MODE == "MEASURE" ? "" : "MEASURE"; break;
-            case 'q': MODE = "DONE"; break;
-            default: MODE = ""; break;
+            case ' ': state.paused = !state.paused; break;
+            case 'm': state.mode = state.mode == "MEASURE" ? "" : "MEASURE"; break;
+            case 'q': state.mode = "DONE"; break;
+            default: state.mode = ""; break;
             }
         }
 

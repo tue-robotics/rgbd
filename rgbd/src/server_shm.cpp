@@ -2,18 +2,36 @@
 #include <algorithm>
 
 #include "rgbd/image.h"
+#include "rgbd/image_header.h"
 
+#include <boost/interprocess/creation_tags.hpp>
+#include <boost/interprocess/detail/os_file_functions.hpp>
+#include <boost/interprocess/exceptions.hpp>
+#include <boost/interprocess/shared_memory_object.hpp>
+#include <boost/interprocess/sync/interprocess_mutex.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
 
-#include <std_msgs/msg/string.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <memory>
+#include <opencv2/core/hal/interface.h>
+#include <opencv2/core/mat.hpp>
+#include <rclcpp/logger.hpp>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/rate.hpp>
+#include <rclcpp/utilities.hpp>
+#include <sensor_msgs/msg/detail/camera_info__struct.hpp>
+#include <std_msgs/msg/string.hpp> // IWYU pragma: keep
 
 namespace ipc = boost::interprocess;
 
 namespace rgbd
 {
 
-ServerSHM::ServerSHM(const rclcpp::Node::SharedPtr& node)
-    : buffer_header_(nullptr), image_data_(nullptr), node_(node ? node : rclcpp::Node::make_shared("rgbd_server_shm"))
+ServerSHM::ServerSHM(const rclcpp::Node::SharedPtr& node) :
+    node_(node ? node : rclcpp::Node::make_shared("rgbd_server_shm"))
 {
 }
 
@@ -58,8 +76,8 @@ void ServerSHM::send(const Image& image)
             check_shm_thread_ptr_ = std::make_unique<std::thread>(&ServerSHM::checkSHMThreadFunc, this, 1.0f);
         }
 
-        rgb_data_size_ = static_cast<uint64_t>(rgb.cols * rgb.rows * 3);
-        depth_data_size_ = static_cast<uint64_t>(depth.cols * depth.rows * 4);
+        rgb_data_size_ = static_cast<uint64_t>(rgb.cols) * rgb.rows * 3;
+        depth_data_size_ = static_cast<uint64_t>(depth.cols) * depth.rows * 4;
         image_data_size_ = rgb_data_size_ + depth_data_size_;
 
         shm_.truncate(static_cast<ipc::offset_t>(sizeof(BufferHeader) + image_data_size_));
@@ -84,8 +102,8 @@ void ServerSHM::send(const Image& image)
         buffer_header_->width = cam_info.width;
         buffer_header_->binning_x = cam_info.binning_x;
         buffer_header_->binning_y = cam_info.binning_y;
-        memcpy(buffer_header_->distortion_model, cam_info.distortion_model.c_str(),
-               cam_info.distortion_model.size() + 1);
+        memcpy(
+            buffer_header_->distortion_model, cam_info.distortion_model.c_str(), cam_info.distortion_model.size() + 1);
         buffer_header_->size_D = std::min<size_t>(cam_info.d.size(), 5);
         memcpy(buffer_header_->D, cam_info.d.data(), buffer_header_->size_D * sizeof(double));
         memcpy(buffer_header_->K, cam_info.k.data(), 9 * sizeof(double));
@@ -99,7 +117,7 @@ void ServerSHM::send(const Image& image)
     }
 
     {
-        ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header_->mutex);
+        ipc::scoped_lock<ipc::interprocess_mutex> const lock(buffer_header_->mutex);
 
         buffer_header_->timestamp = image.getTimestamp();
 
@@ -123,7 +141,8 @@ void ServerSHM::checkSHMThreadFunc(float frequency)
         catch (ipc::interprocess_exception& ex)
         {
             RCLCPP_FATAL(rclcpp::get_logger("ServerSHM"),
-                         "ServerSHM::checkSHMThreadFunc: SHM on '%s' is corrupted: '%s'", shared_mem_name_.c_str(),
+                         "ServerSHM::checkSHMThreadFunc: SHM on '%s' is corrupted: '%s'",
+                         shared_mem_name_.c_str(),
                          ex.what());
             rclcpp::shutdown();
             break;
@@ -132,9 +151,13 @@ void ServerSHM::checkSHMThreadFunc(float frequency)
     }
 }
 
-void pubHostnameThreadFunc(const rclcpp::Node::SharedPtr& node, const std::string& server_name,
-                           const std::string& hostname, float frequency)
+void pubHostnameThreadFunc(const rclcpp::Node::SharedPtr& node,
+                           const std::string& server_name,
+                           const std::string& hostname,
+                           float frequency)
 {
+    // NOLINTNEXTLINE(misc-include-cleaner) std_msgs/msg/string.hpp is included; the detail struct header it
+    // suggests instead lacks the type-support needed for create_publisher<T>.
     auto pub_shm_hostname = node->create_publisher<std_msgs::msg::String>(server_name + "/hosts", 1);
     rclcpp::WallRate r(frequency);
     std_msgs::msg::String msg;

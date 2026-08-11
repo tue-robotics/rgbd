@@ -1,19 +1,28 @@
 #include "rgbd/client.h"
 
+#include "rgbd/types.h"
 #include "rgbd/utility.h"
+#include <mutex>
+#include <rcl/time.h>
+#include <rclcpp/callback_group.hpp>
+#include <rclcpp/duration.hpp>
+#include <rclcpp/executors/single_threaded_executor.hpp>
+#include <rclcpp/logger.hpp>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/rate.hpp>
+#include <rclcpp/utilities.hpp>
+#include <std_msgs/msg/detail/string__struct.hpp>
 
-namespace rgbd {
-
-Client::Client(const rclcpp::Node::SharedPtr& node)
-    : node_(node ? node : rclcpp::Node::make_shared("rgbd_client"))
-    , sub_shm_hosts_(nullptr)
-    , cb_group_shm_hosts_(nullptr)
-    , client_rgbd_(node_)
-    , last_time_shm_server_online_(0, 0, RCL_ROS_TIME)
-    , stop_sub_hosts_thread_(false)
-    , client_impl_mode_(ClientImplMode::rgbd)
+namespace rgbd
 {
-    hostname_ = get_hostname();
+
+Client::Client(const rclcpp::Node::SharedPtr& node) :
+    node_(node ? node : rclcpp::Node::make_shared("rgbd_client")), sub_shm_hosts_(nullptr),
+    cb_group_shm_hosts_(nullptr), client_rgbd_(node_), last_time_shm_server_online_(0, 0, RCL_ROS_TIME)
+
+{
+    hostname_ = getHostname();
 }
 
 Client::~Client()
@@ -27,7 +36,7 @@ bool Client::initialize(const std::string& server_name, float)
     {
         return true;
     }
-    else if (initialized())
+    if (initialized())
     {
         deinitialize();
     }
@@ -39,7 +48,8 @@ bool Client::initialize(const std::string& server_name, float)
     sub_shm_hosts_ = node_->create_subscription<std_msgs::msg::String>(
         server_name + "/hosts",
         10,
-        std::bind(&Client::hostsCallback, this, std::placeholders::_1), sub_options);
+        [this](const std_msgs::msg::String::ConstSharedPtr& msg) { hostsCallback(msg); },
+        sub_options);
 
     stop_sub_hosts_thread_ = false;
     sub_hosts_thread_ = std::thread(&Client::subHostsThreadFunc, this, 20.0f);
@@ -80,8 +90,8 @@ bool Client::deinitialize()
 
 bool Client::nextImage(Image& image)
 {
-    std::lock_guard<std::mutex> lg(switch_impl_mutex_);
-    if (client_impl_mode_ == ClientImplMode::shm)
+    std::scoped_lock const lg(switch_impl_mutex_);
+    if (client_impl_mode_ == ClientImplMode::SHM)
     {
         return client_shm_.nextImage(image);
     }
@@ -90,8 +100,8 @@ bool Client::nextImage(Image& image)
 
 ImagePtr Client::nextImage()
 {
-    std::lock_guard<std::mutex> lg(switch_impl_mutex_);
-    if (client_impl_mode_ == ClientImplMode::shm)
+    std::scoped_lock const lg(switch_impl_mutex_);
+    if (client_impl_mode_ == ClientImplMode::SHM)
     {
         return client_shm_.nextImage();
     }
@@ -106,7 +116,8 @@ void Client::hostsCallback(const std_msgs::msg::String::ConstSharedPtr& msg)
     }
 
     last_time_shm_server_online_ = node_->now();
-    RCLCPP_DEBUG_THROTTLE(rclcpp::get_logger("Client"), *node_->get_clock(), 5000, "SHM server online on: %s", hostname_.c_str());
+    RCLCPP_DEBUG_THROTTLE(
+        rclcpp::get_logger("Client"), *node_->get_clock(), 5000, "SHM server online on: %s", hostname_.c_str());
 }
 
 void Client::subHostsThreadFunc(float frequency)
@@ -123,7 +134,7 @@ void Client::subHostsThreadFunc(float frequency)
 
         if (node_->now() > (last_time_shm_server_online_ + rclcpp::Duration::from_seconds(timeout)))
         {
-            std::lock_guard<std::mutex> lg(switch_impl_mutex_);
+            std::scoped_lock const lg(switch_impl_mutex_);
             if (client_shm_.initialized())
             {
                 client_shm_.deinitialize();
@@ -133,11 +144,11 @@ void Client::subHostsThreadFunc(float frequency)
                 RCLCPP_DEBUG(rclcpp::get_logger("Client"), "Switching to ClientRGBD");
                 client_rgbd_.initialize(server_name_);
             }
-            client_impl_mode_ = ClientImplMode::rgbd;
+            client_impl_mode_ = ClientImplMode::RGBD;
         }
         else
         {
-            std::lock_guard<std::mutex> lg(switch_impl_mutex_);
+            std::scoped_lock const lg(switch_impl_mutex_);
             if (client_rgbd_.initialized())
             {
                 client_rgbd_.deinitialize();
@@ -147,11 +158,11 @@ void Client::subHostsThreadFunc(float frequency)
                 RCLCPP_DEBUG(rclcpp::get_logger("Client"), "Switching to ClientSHM");
                 client_shm_.initialize(server_name_, 0.001);
             }
-            client_impl_mode_ = ClientImplMode::shm;
+            client_impl_mode_ = ClientImplMode::SHM;
         }
         r.sleep();
     }
     executor.remove_callback_group(cb_group_shm_hosts_);
 }
 
-}  // namespace rgbd
+} // namespace rgbd

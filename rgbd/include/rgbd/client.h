@@ -12,6 +12,7 @@
 #include "rgbd/client_shm.h"
 #include "rgbd/types.h"
 
+#include <cstdint>
 #include <memory>
 #include <mutex>
 #include <thread>
@@ -74,10 +75,10 @@ public:
     ImagePtr nextImage();
 
 protected:
-    enum class ClientImplMode
+    enum class ClientImplMode : int8_t
     {
-        shm,
-        rgbd
+        SHM,
+        RGBD
     };
 
     rclcpp::Node::SharedPtr node_;
@@ -94,9 +95,9 @@ protected:
     rclcpp::Time last_time_shm_server_online_;
 
     std::thread sub_hosts_thread_;
-    bool stop_sub_hosts_thread_;
+    bool stop_sub_hosts_thread_{false};
 
-    ClientImplMode client_impl_mode_;
+    ClientImplMode client_impl_mode_{ClientImplMode::RGBD};
     std::mutex switch_impl_mutex_;
 
     void hostsCallback(const std_msgs::msg::String::ConstSharedPtr& msg);

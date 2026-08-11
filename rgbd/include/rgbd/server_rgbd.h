@@ -40,8 +40,8 @@ public:
      * @param service_freq frequency of the thread processing service requests
      */
     void initialize(const std::string& name,
-                    RGBStorageType rgb_type = RGB_STORAGE_LOSSLESS,
-                    DepthStorageType depth_type = DEPTH_STORAGE_LOSSLESS,
+                    RGBStorageType rgb_type = RGBStorageType::RGB_STORAGE_LOSSLESS,
+                    DepthStorageType depth_type = DepthStorageType::DEPTH_STORAGE_LOSSLESS,
                     float service_freq = 10.0f);
 
     /**
@@ -60,8 +60,8 @@ protected:
     rclcpp::Publisher<rgbd_interfaces::msg::RGBD>::SharedPtr pub_image_;
     rclcpp::Service<rgbd_interfaces::srv::GetRGBD>::SharedPtr service_server_;
 
-    RGBStorageType rgb_type_;
-    DepthStorageType depth_type_;
+    RGBStorageType rgb_type_{RGBStorageType::RGB_STORAGE_LOSSLESS};
+    DepthStorageType depth_type_{DepthStorageType::DEPTH_STORAGE_LOSSLESS};
 
     rgbd::Image image_;
     std::mutex image_mutex_;
@@ -76,8 +76,8 @@ protected:
      * @param req Service Request
      * @param resp Service Response
      */
-    void serviceCallback(const std::shared_ptr<rgbd_interfaces::srv::GetRGBD::Request> req,
-                         std::shared_ptr<rgbd_interfaces::srv::GetRGBD::Response> resp);
+    void serviceCallback(const std::shared_ptr<rgbd_interfaces::srv::GetRGBD::Request>& REQ,
+                         const std::shared_ptr<rgbd_interfaces::srv::GetRGBD::Response>& resp);
     /**
      * @brief Function to be called in the thread providing the service
      * @param frequency frequency for checking service requests

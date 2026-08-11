@@ -1,54 +1,62 @@
+#include <cstddef>
+#include <iostream>
+#include <opencv2/imgcodecs.hpp>
+#include <ostream>
 #include <rgbd/image.h>
 #include <rgbd/serialization.h>
-#include <rgbd/view.h>
 
 #include <fstream>
 
 #include <opencv2/highgui/highgui.hpp>
+#include <string>
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
 
-  if (argc < 2) {
-    std::cout << "Usage:\n\n   rgbd_to_rgb_png FILENAME\n\n";
-    return 1;
-  }
-
-  for (int i = 1; i < argc; ++i) {
-    std::string name = std::string(argv[i]);
-
-    // read
-    std::ifstream f_in;
-    f_in.open(name.c_str(), std::ifstream::binary);
-
-    if (!f_in.is_open()) {
-      std::cerr << "Could not open '" << name << "'." << std::endl;
-      continue;
+    if (argc < 2)
+    {
+        std::cout << "Usage:\n\n   rgbd_to_rgb_png FILENAME\n\n";
+        return 1;
     }
 
-    tue::serialization::InputArchive a_in(f_in);
+    for (int i = 1; i < argc; ++i)
+    {
+        std::string name = std::string(argv[i]);
 
-    rgbd::Image image;
-    rgbd::deserialize(a_in, image);
+        // read
+        std::ifstream f_in;
+        f_in.open(name.c_str(), std::ifstream::binary);
 
-    size_t lastindex = name.find_last_of(".");
-    name = name.substr(0, lastindex);
+        if (!f_in.is_open())
+        {
+            std::cerr << "Could not open '" << name << "'." << '\n';
+            continue;
+        }
 
-    // write rgb image
-    std::string rgb_filename = name + "_rgb.png";
+        tue::serialization::InputArchive a_in(f_in);
 
-    if (cv::imwrite(rgb_filename, image.getRGBImage()))
-      std::cout << "Succesfully stored '" << rgb_filename << "'" << std::endl;
-    else
-      std::cerr << "Failed to write rgbd to rgb png" << std::endl;
+        rgbd::Image image;
+        rgbd::deserialize(a_in, image);
 
-    // write depth image
-    std::string depth_filename = name + "_depth.png";
+        size_t const lastindex = name.find_last_of('.');
+        name = name.substr(0, lastindex);
 
-    if (cv::imwrite(depth_filename, image.getDepthImage()))
-      std::cout << "Succesfully stored '" << depth_filename << "'" << std::endl;
-    else
-      std::cerr << "Failed to write rgbd to depth png" << std::endl;
-  }
+        // write rgb image
+        std::string const rgb_filename = name + "_rgb.png";
 
-  return 0;
+        if (cv::imwrite(rgb_filename, image.getRGBImage()))
+            std::cout << "Succesfully stored '" << rgb_filename << "'" << '\n';
+        else
+            std::cerr << "Failed to write rgbd to rgb png" << '\n';
+
+        // write depth image
+        std::string const depth_filename = name + "_depth.png";
+
+        if (cv::imwrite(depth_filename, image.getDepthImage()))
+            std::cout << "Succesfully stored '" << depth_filename << "'" << '\n';
+        else
+            std::cerr << "Failed to write rgbd to depth png" << '\n';
+    }
+
+    return 0;
 }

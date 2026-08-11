@@ -1,14 +1,22 @@
 #include "rgbd/client.h"
+#include "rgbd/image.h"
 #include "rgbd/view.h"
 
+#include <geolib/sensors/DepthCamera.h>
+#include <iostream>
 #include <memory>
-#include <rclcpp/rclcpp.hpp>
+#include <opencv2/core/mat.hpp>
+#include <ostream>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/rate.hpp>
+#include <rclcpp/utilities.hpp>
 
 int main(int argc, char** argv)
 {
     if (argc <= 1)
     {
-        std::cout << "Please provide rgbd topic" << std::endl;
+        std::cout << "Please provide rgbd topic" << '\n';
         return 1;
     }
 
@@ -41,37 +49,37 @@ int main(int argc, char** argv)
         const cv::Mat& depth = image.getDepthImage();
         const cv::Mat& rgb = image.getRGBImage();
 
-        std::cout << "------------------------------------------------" << std::endl;
-        std::cout << "time: " << image.getTimestamp() << std::endl;
+        std::cout << "------------------------------------------------" << '\n';
+        std::cout << "time: " << image.getTimestamp() << '\n';
 
         if (depth.data)
         {
-            rgbd::View view(image, depth.cols);
+            rgbd::View const view(image, depth.cols);
             const geo::DepthCamera& cam_model = view.getRasterizer();
 
-            std::cout << "depth:" << std::endl;
-            std::cout << "    camera model:" << std::endl;
+            std::cout << "depth:" << '\n';
+            std::cout << "    camera model:" << '\n';
             std::cout << "        fx, fy = " << cam_model.getFocalLengthX() << ", " << cam_model.getFocalLengthY()
-                      << std::endl;
+                      << '\n';
             std::cout << "        cx, cy = " << cam_model.getOpticalCenterX() << ", " << cam_model.getOpticalCenterY()
-                      << std::endl;
+                      << '\n';
             std::cout << "        Tx, Ty = " << cam_model.getOpticalTranslationX() << ", "
-                      << cam_model.getOpticalTranslationY() << std::endl;
-            std::cout << "    size = " << depth.cols << " x " << depth.rows << std::endl;
+                      << cam_model.getOpticalTranslationY() << '\n';
+            std::cout << "    size = " << depth.cols << " x " << depth.rows << '\n';
         }
         else
         {
-            std::cout << "depth: NO INFO" << std::endl;
+            std::cout << "depth: NO INFO" << '\n';
         }
 
         if (rgb.data)
         {
-            std::cout << "rgb:" << std::endl;
-            std::cout << "    size = " << rgb.cols << " x " << rgb.rows << std::endl;
+            std::cout << "rgb:" << '\n';
+            std::cout << "    size = " << rgb.cols << " x " << rgb.rows << '\n';
         }
         else
         {
-            std::cout << "rgb: NO INFO" << std::endl;
+            std::cout << "rgb: NO INFO" << '\n';
         }
 
         r.sleep();

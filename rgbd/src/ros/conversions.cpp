@@ -1,9 +1,24 @@
 #include "rgbd/ros/conversions.h"
 
+#include <algorithm>
+#include <boost/iostreams/categories.hpp>
 #include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 #include <boost/iostreams/filter/zstd.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
+#include <cstdint>
+#include <image_geometry/pinhole_camera_model.h>
+#include <limits>
+#include <opencv2/core/hal/interface.h>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/core/types.hpp>
+#include <rclcpp/logger.hpp>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/time.hpp>
+#include <rgbd_interfaces/msg/detail/rgbd__struct.hpp>
+#include <sensor_msgs/msg/detail/camera_info__struct.hpp>
+#include <sensor_msgs/msg/detail/image__struct.hpp>
+#include <tue/serialization/input_archive.h>
 
 #if __has_include(<cv_bridge/cv_bridge.hpp>)
 #include <cv_bridge/cv_bridge.hpp>
@@ -11,14 +26,12 @@
 #include <cv_bridge/cv_bridge.h>
 #endif
 
-
 #include <geolib/ros/msg_conversions.h>
 #include <geolib/sensors/DepthCamera.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 
-#include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/distortion_models.hpp>
 
 #include <tue/serialization/conversions.h>
@@ -54,8 +67,8 @@ bool convert(const cv::Mat& image,
              sensor_msgs::msg::CameraInfo& cam_model_msg)
 {
     geo::convert(cam_model, cam_model_msg);
-    int width = static_cast<int>(cam_model_msg.width);
-    int height = static_cast<int>(cam_model_msg.height);
+    int const width = static_cast<int>(cam_model_msg.width);
+    int const height = static_cast<int>(cam_model_msg.height);
 
     cv_bridge::CvImage image_cv_bridge;
 
@@ -73,7 +86,7 @@ bool convert(const cv::Mat& image,
     else
         return false;
 
-    cv::Rect crop_rect(0, 0, std::min(img_rect.cols, image.cols), std::min(img_rect.rows, image.rows));
+    cv::Rect const crop_rect(0, 0, std::min(img_rect.cols, image.cols), std::min(img_rect.rows, image.rows));
     image(crop_rect).copyTo(img_rect.rowRange(0, crop_rect.height).colRange(0, crop_rect.width));
 
     image_cv_bridge.image = img_rect;
@@ -89,25 +102,28 @@ bool convert(const rgbd_interfaces::msg::RGBD::ConstSharedPtr& msg, rgbd::Image*
 
     if (msg->version == 1)
     {
-        std::vector<uint8_t> rgb_data(msg->rgb.begin(), msg->rgb.end());
+        std::vector<uint8_t> const rgb_data(msg->rgb.begin(), msg->rgb.end());
         image->rgb_image_ = cv::imdecode(rgb_data, cv::IMREAD_UNCHANGED);
 
-        float depthQuantA = static_cast<float>(msg->params[0]);
-        float depthQuantB = static_cast<float>(msg->params[1]);
+        auto const depth_quant_a = static_cast<float>(msg->params[0]);
+        auto const depth_quant_b = static_cast<float>(msg->params[1]);
 
-        std::vector<uint8_t> depth_data(msg->depth.begin(), msg->depth.end());
+        std::vector<uint8_t> const depth_data(msg->depth.begin(), msg->depth.end());
         cv::Mat decompressed = cv::imdecode(depth_data, cv::IMREAD_UNCHANGED);
         image->depth_image_ = cv::Mat(decompressed.size(), CV_32FC1);
 
-        cv::MatIterator_<float> itDepthImg = image->depth_image_.begin<float>(), itDepthImg_end = image->depth_image_.end<float>();
-        cv::MatConstIterator_<unsigned short> itInvDepthImg = decompressed.begin<unsigned short>(), itInvDepthImg_end = decompressed.end<unsigned short>();
+        cv::MatIterator_<float> it_depth_img = image->depth_image_.begin<float>();
+        cv::MatIterator_<float> const it_depth_img_end = image->depth_image_.end<float>();
+        cv::MatConstIterator_<uint16_t> it_inv_depth_img = decompressed.begin<uint16_t>();
+        cv::MatConstIterator_<uint16_t> const it_inv_depth_img_end = decompressed.end<uint16_t>();
 
-        for (; (itDepthImg != itDepthImg_end) && (itInvDepthImg != itInvDepthImg_end); ++itDepthImg, ++itInvDepthImg)
+        for (; (it_depth_img != it_depth_img_end) && (it_inv_depth_img != it_inv_depth_img_end);
+             ++it_depth_img, ++it_inv_depth_img)
         {
-            if (*itInvDepthImg)
-                *itDepthImg = depthQuantA / (static_cast<float>(*itInvDepthImg) - depthQuantB);
+            if (*it_inv_depth_img)
+                *it_depth_img = depth_quant_a / (static_cast<float>(*it_inv_depth_img) - depth_quant_b);
             else
-                *itDepthImg = std::numeric_limits<float>::quiet_NaN();
+                *it_depth_img = std::numeric_limits<float>::quiet_NaN();
         }
 
         sensor_msgs::msg::CameraInfo cam_info_msg;

@@ -7,8 +7,8 @@ namespace rgbd
 {
 
 class Image;
-typedef std::shared_ptr<Image> ImagePtr;
-typedef std::shared_ptr<const Image> ImageConstPtr;
+using ImagePtr = std::shared_ptr<Image>;
+using ImageConstPtr = std::shared_ptr<const Image>;
 
 } // namespace rgbd
 

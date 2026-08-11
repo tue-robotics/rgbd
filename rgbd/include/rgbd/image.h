@@ -3,6 +3,7 @@
 
 #include "rgbd/types.h"
 
+#include <cstdint>
 #include <opencv2/core.hpp>
 #if __has_include(<image_geometry/pinhole_camera_model.hpp>)
 #include <image_geometry/pinhole_camera_model.hpp>
@@ -12,32 +13,29 @@
 #include <rgbd_interfaces/msg/rgbd.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 
-namespace tue
-{
-namespace serialization
+namespace tue::serialization
 {
 class InputArchive;
 class OutputArchive;
-} // namespace serialization
-} // namespace tue
+} // namespace tue::serialization
 
 namespace rgbd
 {
 
-enum CameraModelType
+enum class CameraModelType : int8_t
 {
     CAMERA_MODEL_NONE = 0,
     CAMERA_MODEL_PINHOLE = 1
 };
 
-enum RGBStorageType
+enum class RGBStorageType : int8_t
 {
     RGB_STORAGE_NONE = 0,
     RGB_STORAGE_LOSSLESS = 1,
     RGB_STORAGE_JPG = 2
 };
 
-enum DepthStorageType
+enum class DepthStorageType : int8_t
 {
     DEPTH_STORAGE_NONE = 0,
     DEPTH_STORAGE_LOSSLESS = 1,
@@ -51,30 +49,51 @@ class Image
 public:
     Image();
 
-    Image(const cv::Mat& rgb_image,
-          const cv::Mat& depth_image,
+    Image(cv::Mat rgb_image,
+          cv::Mat depth_image,
           const image_geometry::PinholeCameraModel& cam_model,
-          const std::string& frame_id,
+          std::string frame_id,
           double timestamp);
 
-    inline const cv::Mat& getDepthImage() const { return depth_image_; }
-    inline const cv::Mat& getRGBImage() const { return rgb_image_; }
-    inline const std::string& getFrameId() const { return frame_id_; }
-    inline double getTimestamp() const { return timestamp_; }
-    inline const image_geometry::PinholeCameraModel& getCameraModel() const { return cam_model_; }
+    [[nodiscard]]
+    const cv::Mat& getDepthImage() const
+    {
+        return depth_image_;
+    }
+    [[nodiscard]]
+    const cv::Mat& getRGBImage() const
+    {
+        return rgb_image_;
+    }
+    [[nodiscard]]
+    const std::string& getFrameId() const
+    {
+        return frame_id_;
+    }
+    [[nodiscard]]
+    double getTimestamp() const
+    {
+        return timestamp_;
+    }
+    [[nodiscard]]
+    const image_geometry::PinholeCameraModel& getCameraModel() const
+    {
+        return cam_model_;
+    }
 
-    inline void setDepthImage(const cv::Mat& depth_image) { depth_image_ = depth_image; }
-    inline void setRGBImage(const cv::Mat& rgb_image) { rgb_image_ = rgb_image; }
-    inline void setFrameId(const std::string& frame_id) { frame_id_ = frame_id; }
-    inline void setTimestamp(double timestamp) { timestamp_ = timestamp; }
+    void setDepthImage(const cv::Mat& depth_image) { depth_image_ = depth_image; }
+    void setRGBImage(const cv::Mat& rgb_image) { rgb_image_ = rgb_image; }
+    void setFrameId(const std::string& frame_id) { frame_id_ = frame_id; }
+    void setTimestamp(double timestamp) { timestamp_ = timestamp; }
 
     void setCameraInfo(sensor_msgs::msg::CameraInfo cam_info);
     void setCameraModel(const image_geometry::PinholeCameraModel& cam_model);
 
+    [[nodiscard]]
     Image clone() const;
 
     bool operator==(const rgbd::Image& other) const;
-    inline bool operator!=(const rgbd::Image& other) const { return !(*this == other); }
+    bool operator!=(const rgbd::Image& other) const { return !(*this == other); }
 
     friend std::ostream& operator<<(std::ostream& out, const rgbd::Image& image);
 

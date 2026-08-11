@@ -1,20 +1,28 @@
 #include "rgbd/ros_to_rgbd_component.h"
+#include "rgbd/client_ros.h"
+#include "rgbd/image.h"
+#include "rgbd/server.h"
+#include "rgbd/types.h"
 
-#include <rcl_interfaces/msg/floating_point_range.hpp>
-#include <rcl_interfaces/msg/parameter_descriptor.hpp>
+#include <memory>
+#include <rcl_interfaces/msg/detail/floating_point_range__struct.hpp>
+#include <rcl_interfaces/msg/detail/parameter_descriptor__struct.hpp>
 
 #include <chrono>
-#include <functional>
 #include <limits>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/node_options.hpp>
 #include <stdexcept>
 
-namespace rgbd {
+namespace rgbd
+{
 
-RosToRGBDComponent::RosToRGBDComponent(const rclcpp::NodeOptions& options)
-    : rclcpp::Node("ros_to_rgbd", options)
-    , rgb_type_(parseRGBStorageType(declare_parameter<std::string>("rgb_storage", "lossless")))
-    , depth_type_(parseDepthStorageType(declare_parameter<std::string>("depth_storage", "lossless")))
-    , interfaces_initialized_(false)
+RosToRGBDComponent::RosToRGBDComponent(const rclcpp::NodeOptions& options) :
+    rclcpp::Node("ros_to_rgbd", options),
+    rgb_type_(parseRGBStorageType(declare_parameter<std::string>("rgb_storage", "lossless"))),
+    depth_type_(parseDepthStorageType(declare_parameter<std::string>("depth_storage", "lossless")))
+
 {
     rcl_interfaces::msg::ParameterDescriptor rate_descriptor;
     rate_descriptor.description = "Processing loop rate in Hz";
@@ -25,23 +33,24 @@ RosToRGBDComponent::RosToRGBDComponent(const rclcpp::NodeOptions& options)
     rate_descriptor.floating_point_range.push_back(rate_range);
 
     double rate = declare_parameter<double>("rate", 30.0, rate_descriptor);
-    if (rate <= 0.0) {
+    if (rate <= 0.0)
+    {
         RCLCPP_WARN(get_logger(), "Parameter 'rate' must be > 0, defaulting to 30Hz");
         rate = 30.0;
     }
 
     const auto period = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(1.0 / rate));
-    timer_ = create_wall_timer(period, std::bind(&RosToRGBDComponent::runOnce, this));
+    timer_ = create_wall_timer(period, [this] { runOnce(); });
 }
 
 RGBStorageType RosToRGBDComponent::parseRGBStorageType(const std::string& rgb_type_str)
 {
     if (rgb_type_str == "none")
-        return RGB_STORAGE_NONE;
+        return RGBStorageType::RGB_STORAGE_NONE;
     if (rgb_type_str == "lossless")
-        return RGB_STORAGE_LOSSLESS;
+        return RGBStorageType::RGB_STORAGE_LOSSLESS;
     if (rgb_type_str == "jpg")
-        return RGB_STORAGE_JPG;
+        return RGBStorageType::RGB_STORAGE_JPG;
 
     throw std::invalid_argument("Unknown 'rgb_storage' type: should be 'none', 'lossless', or 'jpg'.");
 }
@@ -49,11 +58,11 @@ RGBStorageType RosToRGBDComponent::parseRGBStorageType(const std::string& rgb_ty
 DepthStorageType RosToRGBDComponent::parseDepthStorageType(const std::string& depth_type_str)
 {
     if (depth_type_str == "none")
-        return DEPTH_STORAGE_NONE;
+        return DepthStorageType::DEPTH_STORAGE_NONE;
     if (depth_type_str == "lossless")
-        return DEPTH_STORAGE_LOSSLESS;
+        return DepthStorageType::DEPTH_STORAGE_LOSSLESS;
     if (depth_type_str == "png")
-        return DEPTH_STORAGE_PNG;
+        return DepthStorageType::DEPTH_STORAGE_PNG;
 
     throw std::invalid_argument("Unknown 'depth_storage' type: should be 'none', 'lossless', or 'png'.");
 }
@@ -83,9 +92,9 @@ void RosToRGBDComponent::runOnce()
             return;
     }
 
-    ImagePtr image_ptr = client_->nextImage();
+    ImagePtr const image_ptr = client_->nextImage();
     if (image_ptr)
         server_->send(*image_ptr);
 }
 
-}  // namespace rgbd
+} // namespace rgbd

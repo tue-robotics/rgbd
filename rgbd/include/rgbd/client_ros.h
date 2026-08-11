@@ -109,12 +109,12 @@ private:
     /**
      * @brief Track if image is updated in a callback.
      */
-    bool new_image_;
+    bool new_image_{false};
     /**
      * @brief Pointer to image. Image could be provided by reference or wrapped in a shared_ptr.
      * This class never takes ownership.
      */
-    Image* image_ptr_;
+    Image* image_ptr_{nullptr};
 
     /**
      * @brief Callback for CameraInfo, will unsubscribe after successfully receiving first message.

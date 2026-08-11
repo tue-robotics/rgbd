@@ -72,16 +72,16 @@ private:
     boost::interprocess::mapped_region mem_buffer_header_;
     boost::interprocess::mapped_region mem_image_;
 
-    BufferHeader* buffer_header_;
-    unsigned char* image_data_;
+    BufferHeader* buffer_header_{nullptr};
+    unsigned char* image_data_{nullptr};
 
-    uint64_t rgb_data_size_;
-    uint64_t depth_data_size_;
+    uint64_t rgb_data_size_{};
+    uint64_t depth_data_size_{};
 
     /**
      * @brief sequence_nr Contains the sequence nummer of the last NextImage call
      */
-    uint64_t sequence_nr_;
+    uint64_t sequence_nr_{};
 };
 
 } // end namespace rgbd
