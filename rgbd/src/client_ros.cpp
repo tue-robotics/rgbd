@@ -4,8 +4,6 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
-#include <message_filters/subscriber.h>
-#include <message_filters/synchronizer.h>
 #include <opencv2/core/hal/interface.h>
 #include <opencv2/core/mat.hpp>
 #include <rclcpp/callback_group.hpp>
@@ -21,6 +19,16 @@
 #include <cv_bridge/cv_bridge.hpp>
 #else
 #include <cv_bridge/cv_bridge.h>
+#endif
+#if __has_include(<message_filters/subscriber.hpp>)
+#include <message_filters/subscriber.hpp> // IWYU pragma: keep
+#else
+#include <message_filters/subscriber.h> // IWYU pragma: keep
+#endif
+#if __has_include(<message_filters/synchronizer.hpp>)
+#include <message_filters/synchronizer.hpp> // IWYU pragma: keep
+#else
+#include <message_filters/synchronizer.h> // IWYU pragma: keep
 #endif
 #include <rmw/qos_profiles.h>
 #include <sensor_msgs/image_encodings.hpp>

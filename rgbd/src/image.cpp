@@ -1,7 +1,6 @@
 #include "rgbd/image.h"
 
 #include <cstdlib>
-#include <image_geometry/pinhole_camera_model.h>
 #include <iomanip>
 #include <ios>
 #include <opencv2/core.hpp>
@@ -14,6 +13,12 @@
 #include <sensor_msgs/msg/detail/camera_info__traits.hpp>
 #include <string>
 #include <utility>
+
+#if __has_include(<image_geometry/pinhole_camera_model.hpp>)
+#include <image_geometry/pinhole_camera_model.hpp> // IWYU pragma: keep
+#else
+#include <image_geometry/pinhole_camera_model.h> // IWYU pragma: keep
+#endif
 
 namespace rgbd
 {

@@ -156,8 +156,9 @@ void pubHostnameThreadFunc(const rclcpp::Node::SharedPtr& node,
                            const std::string& hostname,
                            float frequency)
 {
-    // NOLINTNEXTLINE(misc-include-cleaner) std_msgs/msg/string.hpp is included; the detail struct header it
-    // suggests instead lacks the type-support needed for create_publisher<T>.
+    // std_msgs/msg/string.hpp is included; the detail struct header it suggests instead lacks the type-support
+    // needed for create_publisher<T>.
+    // NOLINTNEXTLINE(misc-include-cleaner)
     auto pub_shm_hostname = node->create_publisher<std_msgs::msg::String>(server_name + "/hosts", 1);
     rclcpp::WallRate r(frequency);
     std_msgs::msg::String msg;

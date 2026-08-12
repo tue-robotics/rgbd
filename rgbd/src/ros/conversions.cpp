@@ -7,7 +7,6 @@
 #include <boost/iostreams/filter/zstd.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <cstdint>
-#include <image_geometry/pinhole_camera_model.h>
 #include <limits>
 #include <opencv2/core/hal/interface.h>
 #include <opencv2/core/mat.hpp>
@@ -19,6 +18,12 @@
 #include <sensor_msgs/msg/detail/camera_info__struct.hpp>
 #include <sensor_msgs/msg/detail/image__struct.hpp>
 #include <tue/serialization/input_archive.h>
+
+#if __has_include(<image_geometry/pinhole_camera_model.hpp>)
+#include <image_geometry/pinhole_camera_model.hpp> // IWYU pragma: keep
+#else
+#include <image_geometry/pinhole_camera_model.h> // IWYU pragma: keep
+#endif
 
 #if __has_include(<cv_bridge/cv_bridge.hpp>)
 #include <cv_bridge/cv_bridge.hpp>

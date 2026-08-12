@@ -14,15 +14,16 @@
 class Node
 {
 public:
-    // NOLINTNEXTLINE(clang-analyzer-optin.cplusplus.UninitializedObject) flagged fields belong to boost::interprocess
-    // member objects (shm_/mem_buffer_header_/mem_image_ inside server_), which are fully initialized by their own
-    // default constructors.
+    // The clang-analyzer diagnostic below anchors to the last statement of this constructor. The flagged fields
+    // belong to boost::interprocess member objects (shm_/mem_buffer_header_/mem_image_ inside server_), which are
+    // fully initialized by their own default constructors.
     explicit Node(rclcpp::Node::SharedPtr node) :
         node_(std::move(node)), client_(node_), server_(node_), SERVER_NAME("rgbd"), HOST_NAME(rgbd::getHostname())
     {
         rate_ = node_->declare_parameter<double>("rate", 30.0);
 
         client_.initialize(SERVER_NAME);
+        // NOLINTNEXTLINE(clang-analyzer-optin.cplusplus.UninitializedObject)
         server_.initialize(SERVER_NAME);
     }
 

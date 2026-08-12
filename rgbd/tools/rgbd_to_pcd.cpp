@@ -71,7 +71,7 @@ int main(int argc, char** argv)
                 // union; there is no non-union accessor.
                 cloud.at(jj, ii).x = static_cast<float>((-half_width + j) * d / fx);
                 cloud.at(jj, ii).y = static_cast<float>((-half_height + i) * d / fy);
-                cloud.at(jj, ii).z = d;
+                cloud.at(jj, ii).z = static_cast<float>(d);
                 cloud.at(jj, ii).r = bgr[2];
                 cloud.at(jj, ii).g = bgr[1];
                 cloud.at(jj, ii).b = bgr[0];

@@ -35,8 +35,9 @@ auto createProject2DTo3DService(NodeT& node,
                                 CallbackT&& callback,
                                 const rclcpp::CallbackGroup::SharedPtr& callback_group,
                                 int)
-    // NOLINTNEXTLINE(misc-include-cleaner) rgbd_interfaces/srv/project2_d_to3_d.hpp is included; the detail
-    // struct header suggested instead lacks the type-support needed for create_service<T>.
+    // rgbd_interfaces/srv/project2_d_to3_d.hpp is included; the detail struct header suggested instead lacks the
+    // type-support needed for create_service<T>.
+    // NOLINTNEXTLINE(misc-include-cleaner)
     -> decltype(node->template create_service<rgbd_interfaces::srv::Project2DTo3D>(
         "project_2d_to_3d",
         std::forward<CallbackT>(callback),
@@ -64,8 +65,8 @@ auto createProject2DTo3DService(NodeT& node,
         "project_2d_to_3d", std::forward<CallbackT>(callback), rmw_qos_profile_services_default, callback_group);
 }
 
-// NOLINTNEXTLINE(misc-include-cleaner) boost/circular_buffer.hpp is included; the detail base header suggested
-// instead does not compile on its own.
+// boost/circular_buffer.hpp is included; the detail base header suggested instead does not compile on its own.
+// NOLINTNEXTLINE(misc-include-cleaner)
 void srvGet3dPointFromROI(const boost::circular_buffer<std::shared_ptr<rgbd::Image>>& last_images,
                           const std::shared_ptr<rgbd_interfaces::srv::Project2DTo3D::Request>& REQ,
                           const std::shared_ptr<rgbd_interfaces::srv::Project2DTo3D::Response>& res)

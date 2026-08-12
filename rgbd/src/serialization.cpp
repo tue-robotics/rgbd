@@ -2,7 +2,7 @@
 #include "rgbd/image.h"
 
 #include <cmath>
-#include <image_geometry/pinhole_camera_model.h>
+#include <cstdint>
 #include <limits>
 #include <opencv2/core/hal/interface.h>
 #include <opencv2/core/mat.hpp>
@@ -15,6 +15,12 @@
 
 #include <opencv2/imgcodecs.hpp>
 #include <vector>
+
+#if __has_include(<image_geometry/pinhole_camera_model.hpp>)
+#include <image_geometry/pinhole_camera_model.hpp> // IWYU pragma: keep
+#else
+#include <image_geometry/pinhole_camera_model.h> // IWYU pragma: keep
+#endif
 
 namespace rgbd
 {

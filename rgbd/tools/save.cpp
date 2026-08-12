@@ -58,7 +58,7 @@ int main(int argc, char** argv)
                 ss << "image_";
                 double sec = NAN;
                 const double fractional = std::modf(image.getTimestamp(), &sec);
-                const std::time_t time = static_cast<std::time_t>(sec);
+                const auto time = static_cast<std::time_t>(sec);
                 ss << std::put_time(std::localtime(&time), "%Y-%m-%d_%H.%M.%S");
                 ss << "." << std::setw(6) << std::setfill('0') << static_cast<int32_t>(fractional * 1e6);
                 ss << ".rgbd";
