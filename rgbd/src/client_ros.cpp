@@ -42,7 +42,7 @@ namespace
 
 template <typename SubscriberT, typename NodeT>
 auto subscribeSensorDataImpl(
-    SubscriberT& sub, const NodeT& node, const std::string& topic, rclcpp::SubscriptionOptions options, int)
+    SubscriberT& sub, const NodeT& node, const std::string& topic, const rclcpp::SubscriptionOptions& options, int)
     -> decltype(sub.subscribe(node, topic, rclcpp::SensorDataQoS(), options), void())
 {
     sub.subscribe(node, topic, rclcpp::SensorDataQoS(), options);

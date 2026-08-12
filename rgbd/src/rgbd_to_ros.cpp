@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
+#include <vector> // IWYU pragma: keep
 
 int main(int argc, char** argv)
 {

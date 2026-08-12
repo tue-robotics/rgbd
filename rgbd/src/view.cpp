@@ -2,8 +2,9 @@
 #include "rgbd/image.h"
 
 #if __has_include(<image_geometry/pinhole_camera_model.hpp>)
-#include <image_geometry/pinhole_camera_model.hpp>
+#include <image_geometry/pinhole_camera_model.hpp> // IWYU pragma: keep
 #else
+#include <image_geometry/pinhole_camera_model.h> // IWYU pragma: keep
 #endif
 #include <opencv2/core/mat.hpp>
 
