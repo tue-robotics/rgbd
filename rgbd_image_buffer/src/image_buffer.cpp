@@ -1,19 +1,46 @@
 #include "rgbd/image_buffer/image_buffer.h"
-#include <algorithm>
 
+#include <geolib/datatypes.h>
 #include <geolib/ros/msg_conversions.h>
 
 #include <geometry_msgs/msg/transform_stamped.hpp>
 
 #include <rgbd/client.h>
-#include <rgbd/image.h>
+#include <rgbd/types.h>
 
+#include <rgbd/image.h> // IWYU pragma: keep
+
+#include <rclcpp/duration.hpp>
+#include <rclcpp/logger.hpp>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/rate.hpp>
+#include <rclcpp/time.hpp>
+#include <rclcpp/utilities.hpp>
+
+#if __has_include(<tf2/exceptions.hpp>)
+#include <tf2/exceptions.hpp> // IWYU pragma: keep
+#else
+#include <tf2/exceptions.h> // IWYU pragma: keep
+#endif
 #if __has_include(<tf2/time.hpp>)
 #include <tf2/time.hpp>
 #else
 #include <tf2/time.h>
 #endif
-#include <tf2_ros/transform_listener.h>
+
+#if __has_include(<tf2_ros/transform_listener.hpp>)
+#include <tf2_ros/transform_listener.hpp> // IWYU pragma: keep
+#else
+#include <tf2_ros/transform_listener.h> // IWYU pragma: keep
+#endif
+
+#include <algorithm>
+#include <cstdint>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <sys/types.h>
 
 namespace rgbd
 {
@@ -66,7 +93,7 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image,
     rclcpp::Rate r(check_rate);
 
     rgbd::ImageConstPtr rgbd_image;
-    do
+    while (rclcpp::ok())
     {
         rgbd_image = rgbd_client_->nextImage();
 
@@ -74,14 +101,13 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image,
         {
             break;
         }
-        else if (node_->now() > t_end)
+        if (node_->now() > t_end)
         {
             RCLCPP_ERROR(rclcpp::get_logger("image_buffer"), "[IMAGE_BUFFER] timeout waiting for rgbd image");
             return false;
         }
-        else
-            r.sleep();
-    } while (rclcpp::ok());
+        r.sleep();
+    }
 
     const rclcpp::Time image_stamp = rclcpp::Time(static_cast<int64_t>(rgbd_image->getTimestamp() * 1e9));
     if (!tf_buffer_.canTransform(root_frame_, rgbd_image->getFrameId(), image_stamp))
@@ -98,7 +124,7 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image,
 
     try
     {
-        geometry_msgs::msg::TransformStamped t_sensor_pose =
+        const geometry_msgs::msg::TransformStamped t_sensor_pose =
             tf_buffer_.lookupTransform(root_frame_, rgbd_image->getFrameId(), image_stamp);
         geo::convert(t_sensor_pose.transform, sensor_pose);
     }
@@ -124,14 +150,14 @@ bool ImageBuffer::waitForRecentImage(rgbd::ImageConstPtr& image,
     {
         timeout_tries = 25;
     }
-    double freq = timeout_sec > 0 ? timeout_tries / timeout_sec : 1000;
+    const double freq = timeout_sec > 0 ? timeout_tries / timeout_sec : 1000;
 
     return waitForRecentImage(image, sensor_pose, timeout_sec, freq);
 }
 
 bool ImageBuffer::nextImage(rgbd::ImageConstPtr& image, geo::Pose3D& sensor_pose)
 {
-    std::lock_guard<std::mutex> lg(recent_image_mutex_);
+    const std::scoped_lock lg(recent_image_mutex_);
     if (!recent_image_.first)
     {
         return false;
@@ -154,7 +180,7 @@ bool ImageBuffer::getMostRecentImageTF()
     }
 
     {
-        rgbd::ImageConstPtr new_image = rgbd_client_->nextImage();
+        const rgbd::ImageConstPtr new_image = rgbd_client_->nextImage();
         if (new_image)
         {
             image_buffer_.push_front(new_image);
@@ -165,10 +191,10 @@ bool ImageBuffer::getMostRecentImageTF()
 
     for (auto it = image_buffer_.begin(); it != image_buffer_.end(); ++it)
     {
-        rgbd::ImageConstPtr& rgbd_image = *it;
+        const rgbd::ImageConstPtr& rgbd_image = *it;
         try
         {
-            geometry_msgs::msg::TransformStamped t_sensor_pose =
+            const geometry_msgs::msg::TransformStamped t_sensor_pose =
                 tf_buffer_.lookupTransform(root_frame_,
                                            rgbd_image->getFrameId(),
                                            rclcpp::Time(static_cast<int64_t>(rgbd_image->getTimestamp() * 1e9)));
@@ -178,7 +204,7 @@ bool ImageBuffer::getMostRecentImageTF()
         {
             try
             {
-                geometry_msgs::msg::TransformStamped latest_sensor_pose =
+                const geometry_msgs::msg::TransformStamped latest_sensor_pose =
                     tf_buffer_.lookupTransform(root_frame_, rgbd_image->getFrameId(), tf2::TimePointZero);
                 if (rclcpp::Time(latest_sensor_pose.header.stamp) >
                     rclcpp::Time(static_cast<int64_t>(rgbd_image->getTimestamp() * 1e9)))
@@ -186,11 +212,8 @@ bool ImageBuffer::getMostRecentImageTF()
                     image_buffer_.erase_after(it, image_buffer_.end());
                     return false;
                 }
-                else
-                {
-                    (void)ex;
-                    continue;
-                }
+                (void)ex;
+                continue;
             }
             catch (tf2::TransformException&)
             {
@@ -205,7 +228,7 @@ bool ImageBuffer::getMostRecentImageTF()
         sensor_pose.R = sensor_pose.R * geo::Matrix3(1, 0, 0, 0, -1, 0, 0, 0, -1);
 
         {
-            std::lock_guard<std::mutex> lg(recent_image_mutex_);
+            const std::scoped_lock lg(recent_image_mutex_);
             recent_image_.first = rgbd_image;
             recent_image_.second = sensor_pose;
         }

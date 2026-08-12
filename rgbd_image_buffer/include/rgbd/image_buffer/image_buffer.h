@@ -7,7 +7,11 @@
 
 #include <rgbd/types.h>
 
-#include <tf2_ros/buffer.h>
+#if __has_include(<tf2_ros/buffer.hpp>)
+#include <tf2_ros/buffer.hpp> // IWYU pragma: keep
+#else
+#include <tf2_ros/buffer.h> // IWYU pragma: keep
+#endif
 
 #include <forward_list>
 #include <memory>
