@@ -72,8 +72,8 @@ bool convert(const cv::Mat& image,
              sensor_msgs::msg::CameraInfo& cam_model_msg)
 {
     geo::convert(cam_model, cam_model_msg);
-    int const width = static_cast<int>(cam_model_msg.width);
-    int const height = static_cast<int>(cam_model_msg.height);
+    const int width = static_cast<int>(cam_model_msg.width);
+    const int height = static_cast<int>(cam_model_msg.height);
 
     cv_bridge::CvImage image_cv_bridge;
 
@@ -91,7 +91,7 @@ bool convert(const cv::Mat& image,
     else
         return false;
 
-    cv::Rect const crop_rect(0, 0, std::min(img_rect.cols, image.cols), std::min(img_rect.rows, image.rows));
+    const cv::Rect crop_rect(0, 0, std::min(img_rect.cols, image.cols), std::min(img_rect.rows, image.rows));
     image(crop_rect).copyTo(img_rect.rowRange(0, crop_rect.height).colRange(0, crop_rect.width));
 
     image_cv_bridge.image = img_rect;
@@ -107,20 +107,20 @@ bool convert(const rgbd_interfaces::msg::RGBD::ConstSharedPtr& msg, rgbd::Image*
 
     if (msg->version == 1)
     {
-        std::vector<uint8_t> const rgb_data(msg->rgb.begin(), msg->rgb.end());
+        const std::vector<uint8_t> rgb_data(msg->rgb.begin(), msg->rgb.end());
         image->rgb_image_ = cv::imdecode(rgb_data, cv::IMREAD_UNCHANGED);
 
-        auto const depth_quant_a = static_cast<float>(msg->params[0]);
-        auto const depth_quant_b = static_cast<float>(msg->params[1]);
+        const auto depth_quant_a = static_cast<float>(msg->params[0]);
+        const auto depth_quant_b = static_cast<float>(msg->params[1]);
 
-        std::vector<uint8_t> const depth_data(msg->depth.begin(), msg->depth.end());
+        const std::vector<uint8_t> depth_data(msg->depth.begin(), msg->depth.end());
         cv::Mat decompressed = cv::imdecode(depth_data, cv::IMREAD_UNCHANGED);
         image->depth_image_ = cv::Mat(decompressed.size(), CV_32FC1);
 
         cv::MatIterator_<float> it_depth_img = image->depth_image_.begin<float>();
-        cv::MatIterator_<float> const it_depth_img_end = image->depth_image_.end<float>();
+        const cv::MatIterator_<float> it_depth_img_end = image->depth_image_.end<float>();
         cv::MatConstIterator_<uint16_t> it_inv_depth_img = decompressed.begin<uint16_t>();
-        cv::MatConstIterator_<uint16_t> const it_inv_depth_img_end = decompressed.end<uint16_t>();
+        const cv::MatConstIterator_<uint16_t> it_inv_depth_img_end = decompressed.end<uint16_t>();
 
         for (; (it_depth_img != it_depth_img_end) && (it_inv_depth_img != it_inv_depth_img_end);
              ++it_depth_img, ++it_inv_depth_img)

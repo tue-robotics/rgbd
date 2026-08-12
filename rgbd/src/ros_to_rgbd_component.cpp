@@ -92,7 +92,7 @@ void RosToRGBDComponent::runOnce()
             return;
     }
 
-    ImagePtr const image_ptr = client_->nextImage();
+    const ImagePtr image_ptr = client_->nextImage();
     if (image_ptr)
         server_->send(*image_ptr);
 }

@@ -18,7 +18,7 @@ View::View(const Image& image, int width) : image_(image), width_(width)
     const cv::Mat& rgb_image = image.getRGBImage();
     const cv::Mat& depth_image = image.getDepthImage();
     // Determine scaling between rgb and depth
-    float const aspect_ratio = static_cast<float>(depth_image.cols) / static_cast<float>(depth_image.rows); // 640 / 480
+    const float aspect_ratio = static_cast<float>(depth_image.cols) / static_cast<float>(depth_image.rows); // 640 / 480
     height_ = static_cast<int>(static_cast<float>(width_) / aspect_ratio);
 
     // Factors

@@ -2,13 +2,12 @@
 
 #include <gtest/gtest.h>
 
+#include <rgbd/client_shm.h>
 #include <rgbd/image.h>
 #include <rgbd/server_shm.h>
-#include <rgbd/client_shm.h>
 
 #include <ros/duration.h>
 #include <ros/init.h>
-
 
 class SHM : public testing::Test
 {
@@ -110,7 +109,7 @@ TEST_F(SHMInitialized, NextImageTwice)
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
-    image.setTimestamp(image.getTimestamp()+10.);
+    image.setTimestamp(image.getTimestamp() + 10.);
     server.send(image);
     ros::Duration(0.01).sleep();
     EXPECT_TRUE(client.nextImage(image2));
@@ -143,7 +142,7 @@ TEST_F(SHMInitialized, NextImagePtrTwice)
         EXPECT_EQ(image, *image2);
     }
     EXPECT_FALSE(ros::isShuttingDown());
-    image.setTimestamp(image.getTimestamp()+10.);
+    image.setTimestamp(image.getTimestamp() + 10.);
     image2.reset();
     server.send(image);
     ros::Duration(0.01).sleep();
@@ -175,7 +174,7 @@ TEST_F(SHMInitialized, NextImagePtrTwiceWithoutSend)
 }
 
 // Run all the tests that were declared with TEST()
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     ros::init(argc, argv, "shm_connection");
     testing::InitGoogleTest(&argc, argv);

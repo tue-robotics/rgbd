@@ -1,5 +1,5 @@
-#include "test_client_templ.h"
 #include "rgbd/client_ros.h"
+#include "test_client_templ.h"
 
 class TestClientROS : public rgbd::ClientROS
 {
@@ -17,7 +17,8 @@ bool TestClientROS::initialize(std::string server_name)
     if (last_slash != std::string::npos)
     {
         std::string server_ns = server_name.substr(0, last_slash);
-        return ClientROS::initialize(server_ns + "/rgb/image", server_ns + "/depth/image", server_ns + "/rgb/camera_info");
+        return ClientROS::initialize(
+            server_ns + "/rgb/image", server_ns + "/depth/image", server_ns + "/rgb/camera_info");
     }
     else
     {
@@ -25,7 +26,7 @@ bool TestClientROS::initialize(std::string server_name)
     }
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     return main_templ<TestClientROS>(argc, argv);
 }

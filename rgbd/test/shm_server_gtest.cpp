@@ -17,9 +17,7 @@
 #include <memory>
 #include <thread>
 
-
 namespace ipc = boost::interprocess;
-
 
 class SHMServer : public testing::Test
 {
@@ -40,9 +38,7 @@ protected:
 class SHMServerHostame : public SHMServer
 {
 protected:
-    SHMServerHostame() : SHMServer(), correct_hostname(true)
-    {
-    }
+    SHMServerHostame() : SHMServer(), correct_hostname(true) {}
 
     void SetUp() override
     {
@@ -66,7 +62,8 @@ protected:
 TEST_F(SHMServer, Initialize)
 {
     EXPECT_FALSE(ros::isShuttingDown());
-    EXPECT_THROW(ipc::shared_memory_object(ipc::open_only, test_server_name_shm.c_str(), ipc::read_write), ipc::interprocess_exception);
+    EXPECT_THROW(ipc::shared_memory_object(ipc::open_only, test_server_name_shm.c_str(), ipc::read_write),
+                 ipc::interprocess_exception);
 }
 
 TEST_F(SHMServer, SHMCreated)
@@ -99,7 +96,7 @@ TEST_F(SHMServerHostame, PubHostname)
 }
 
 // Run all the tests that were declared with TEST()
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     ros::init(argc, argv, "shm_server_behaviour");
     testing::InitGoogleTest(&argc, argv);

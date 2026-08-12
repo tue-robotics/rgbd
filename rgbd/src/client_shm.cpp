@@ -91,7 +91,7 @@ bool ClientSHM::nextImage(Image& image)
         return false;
     }
 
-    ipc::scoped_lock<ipc::interprocess_mutex> const lock(buffer_header_->mutex);
+    const ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header_->mutex);
 
     if (buffer_header_->sequence_nr == sequence_nr_)
     {

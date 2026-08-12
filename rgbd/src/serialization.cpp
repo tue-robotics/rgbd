@@ -76,7 +76,7 @@ bool serialize(const Image& image,
         a << image.rgb_image_.cols;
         a << image.rgb_image_.rows;
 
-        int const size = image.rgb_image_.rows * image.rgb_image_.cols * 3;
+        const int size = image.rgb_image_.rows * image.rgb_image_.cols * 3;
         a.write(reinterpret_cast<const char*>(image.rgb_image_.data), size);
     }
     else if (rgb_type == RGBStorageType::RGB_STORAGE_JPG)
@@ -120,16 +120,16 @@ bool serialize(const Image& image,
         a << image.depth_image_.cols;
         a << image.depth_image_.rows;
 
-        int const size = image.depth_image_.rows * image.depth_image_.cols * 4;
+        const int size = image.depth_image_.rows * image.depth_image_.cols * 4;
         a.write(reinterpret_cast<const char*>(image.depth_image_.data), size);
     }
     else if (depth_type == DepthStorageType::DEPTH_STORAGE_PNG)
     {
-        float const depth_z0 = 100; // config_.depth_quantization;
-        float const depth_max = 10; // config_.depth_max;
+        const float depth_z0 = 100; // config_.depth_quantization;
+        const float depth_max = 10; // config_.depth_max;
 
-        float const depth_quant_a = depth_z0 * (depth_z0 + 1.0f);
-        float const depth_quant_b = 1.0f - (depth_quant_a / depth_max);
+        const float depth_quant_a = depth_z0 * (depth_z0 + 1.0f);
+        const float depth_quant_b = 1.0f - (depth_quant_a / depth_max);
 
         a << depth_quant_a << depth_quant_b;
 
@@ -138,9 +138,9 @@ bool serialize(const Image& image,
 
         // Matrix iterators
         cv::MatConstIterator_<float> it_depth_img = depth_image.begin<float>();
-        cv::MatConstIterator_<float> const it_depth_img_end = depth_image.end<float>();
+        const cv::MatConstIterator_<float> it_depth_img_end = depth_image.end<float>();
         cv::MatIterator_<uint16_t> it_inv_depth_img = inv_depth_img.begin<uint16_t>();
-        cv::MatIterator_<uint16_t> const it_inv_depth_img_end = inv_depth_img.end<uint16_t>();
+        const cv::MatIterator_<uint16_t> it_inv_depth_img_end = inv_depth_img.end<uint16_t>();
 
         // Quantization
         for (; (it_depth_img != it_depth_img_end) && (it_inv_depth_img != it_inv_depth_img_end);
@@ -273,7 +273,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         a >> width;
         a >> height;
 
-        int const size = width * height * 3;
+        const int size = width * height * 3;
         image.rgb_image_ = cv::Mat(height, width, CV_8UC3);
         for (int i = 0; i < size; ++i)
             a >> image.rgb_image_.data[i];
@@ -309,7 +309,7 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
         a >> width;
         a >> height;
 
-        int const size = width * height * 4;
+        const int size = width * height * 4;
         image.depth_image_ = cv::Mat(height, width, CV_32FC1);
         for (int i = 0; i < size; ++i)
             a >> image.depth_image_.data[i];
@@ -333,9 +333,9 @@ bool deserialize(tue::serialization::InputArchive& a, Image& image)
 
         // Depth conversion
         cv::MatIterator_<float> it_depth_img = depth_image.begin<float>();
-        cv::MatIterator_<float> const it_depth_img_end = depth_image.end<float>();
+        const cv::MatIterator_<float> it_depth_img_end = depth_image.end<float>();
         cv::MatConstIterator_<uint16_t> it_inv_depth_img = decompressed.begin<uint16_t>();
-        cv::MatConstIterator_<uint16_t> const it_inv_depth_img_end = decompressed.end<uint16_t>();
+        const cv::MatConstIterator_<uint16_t> it_inv_depth_img_end = decompressed.end<uint16_t>();
 
         for (; (it_depth_img != it_depth_img_end) && (it_inv_depth_img != it_inv_depth_img_end);
              ++it_depth_img, ++it_inv_depth_img)

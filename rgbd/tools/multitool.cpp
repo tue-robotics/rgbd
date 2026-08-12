@@ -75,8 +75,8 @@ int main(int argc, char** argv)
 
     for (int i = 1; i < argc; i += 2)
     {
-        std::string const opt = argv[i];
-        std::string const arg = argv[i + 1];
+        const std::string opt = argv[i];
+        const std::string arg = argv[i + 1];
 
         if (opt == "--rgbd")
         {
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // - - - - - - - - - - - -
 
-    float const max_view_distance = 10;
+    const float max_view_distance = 10;
 
     rgbd::ImagePtr image;
 
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
     {
         if (!state.paused && client)
         {
-            rgbd::ImagePtr const image_tmp = client->nextImage();
+            const rgbd::ImagePtr image_tmp = client->nextImage();
             if (image_tmp)
                 image = image_tmp;
         }
@@ -150,10 +150,10 @@ int main(int argc, char** argv)
                 {
                     for (int x = 0; x < depth.cols; ++x)
                     {
-                        float const d = depth.at<float>(y, x);
+                        const float d = depth.at<float>(y, x);
                         if (d > 0 && d == d)
                         {
-                            unsigned char const v = static_cast<unsigned char>(
+                            const unsigned char v = static_cast<unsigned char>(
                                 std::min<float>(max_view_distance, d / max_view_distance) * 255);
                             depth_canvas.at<cv::Vec3b>(y, x) = cv::Vec3b(v, v, v);
                         }
@@ -164,8 +164,8 @@ int main(int argc, char** argv)
                 {
                     state.image_width = std::min(rgb.cols, depth.cols);
 
-                    int const rgb_height = state.image_width * rgb.rows / rgb.cols;
-                    int const depth_height = state.image_width * depth.rows / depth.cols;
+                    const int rgb_height = state.image_width * rgb.rows / rgb.cols;
+                    const int depth_height = state.image_width * depth.rows / depth.cols;
 
                     state.image_height = std::max(rgb_height, depth_height);
 
@@ -239,7 +239,7 @@ int main(int argc, char** argv)
         {
             if (state.mouse_points.size() == 2)
             {
-                rgbd::View const view(*image, 640);
+                const rgbd::View view(*image, 640);
 
                 geo::Vector3 p1;
                 geo::Vector3 p2;
@@ -262,10 +262,10 @@ int main(int argc, char** argv)
         // - - - - - - - - - - - - -
 
         cv::imshow(window_name, canvas);
-        int const i_key = cv::waitKey(3);
+        const int i_key = cv::waitKey(3);
         if (i_key >= 0)
         {
-            char const key = static_cast<char>(i_key);
+            const char key = static_cast<char>(i_key);
 
             switch (key)
             {

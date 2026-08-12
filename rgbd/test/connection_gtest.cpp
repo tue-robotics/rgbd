@@ -11,7 +11,6 @@
 #include <ros/rate.h>
 #include <ros/time.h>
 
-
 namespace ipc = boost::interprocess;
 
 class Connection : public testing::Test
@@ -22,7 +21,7 @@ protected:
         client.initialize(ros::names::resolve(test_server_name));
         ros::Time end_init = ros::Time::now() + ros::Duration(2);
         ros::Rate r_init(10);
-        while(ros::Time::now() < end_init)
+        while (ros::Time::now() < end_init)
         {
             if (client.nextImage())
             {
@@ -49,8 +48,8 @@ TEST_F(Connection, ConsistentConnection)
     bool shm_killed = false;
     ros::Time end = start + ros::Duration(20);
     ros::Rate r(1);
-    int i=1;
-    while(ros::Time::now() < end)
+    int i = 1;
+    while (ros::Time::now() < end)
     {
         if (!shm_killed && ros::Time::now() >= shm_kill_time)
         {
@@ -73,7 +72,7 @@ TEST_F(Connection, ConsistentConnection)
 }
 
 // Run all the tests that were declared with TEST()
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     ros::init(argc, argv, "connection_client");
     testing::InitGoogleTest(&argc, argv);

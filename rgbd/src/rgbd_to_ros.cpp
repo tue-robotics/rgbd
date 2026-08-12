@@ -96,7 +96,7 @@ int main(int argc, char** argv)
     rgbd::ServerROS server(node);
     server.initialize("", publish_rgb, publish_depth, publish_pc);
 
-    double const rate = node->declare_parameter<double>("rate", 30.0);
+    const double rate = node->declare_parameter<double>("rate", 30.0);
 
     rgbd::Image image;
 

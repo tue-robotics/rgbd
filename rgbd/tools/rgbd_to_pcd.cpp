@@ -53,19 +53,19 @@ int main(int argc, char** argv)
         cloud.is_dense = false;
         cloud.resize(static_cast<std::size_t>(cloud.width) * cloud.height);
 
-        double const fx = image.getCameraModel().fx();
-        double const fy = image.getCameraModel().fy();
+        const double fx = image.getCameraModel().fx();
+        const double fy = image.getCameraModel().fy();
 
-        double const half_height = 0.5 * cloud.height;
-        double const half_width = 0.5 * cloud.width;
+        const double half_height = 0.5 * cloud.height;
+        const double half_width = 0.5 * cloud.width;
         for (uint i = 0; i < cloud.height; ++i)
         {
             for (uint j = 0; j < cloud.width; ++j)
             {
-                int const ii = static_cast<int>(i);
-                int const jj = static_cast<int>(j);
+                const int ii = static_cast<int>(i);
+                const int jj = static_cast<int>(j);
                 cv::Vec3b bgr = image.getRGBImage().at<cv::Vec3b>(ii, jj);
-                double const d = image.getDepthImage().at<float>(ii, jj);
+                const double d = image.getDepthImage().at<float>(ii, jj);
 
                 // NOLINTBEGIN(cppcoreguidelines-pro-type-union-access) pcl::PointXYZRGB exposes its fields via a
                 // union; there is no non-union accessor.
@@ -79,10 +79,10 @@ int main(int argc, char** argv)
             }
         }
 
-        size_t const lastindex = name.find_last_of('.');
+        const size_t lastindex = name.find_last_of('.');
         name = name.substr(0, lastindex);
 
-        std::string const pcd_filename = name + ".pcd";
+        const std::string pcd_filename = name + ".pcd";
 
         pcl::io::savePCDFileASCII(pcd_filename, cloud);
         std::cout << "Saved " << cloud.size() << " data points to " << pcd_filename << '\n';

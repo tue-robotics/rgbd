@@ -72,7 +72,7 @@ void ServerRGBD::initialize(const std::string& name,
 void ServerRGBD::send(const Image& image)
 {
     {
-        std::unique_lock<std::mutex> const ul(image_mutex_);
+        const std::unique_lock<std::mutex> ul(image_mutex_);
         image_ = image.clone();
     }
 
@@ -102,7 +102,7 @@ void ServerRGBD::serviceCallback(const std::shared_ptr<rgbd_interfaces::srv::Get
 {
     rgbd::Image image;
     {
-        std::unique_lock<std::mutex> const ul(image_mutex_);
+        const std::unique_lock<std::mutex> ul(image_mutex_);
         image = image_.clone();
     }
 

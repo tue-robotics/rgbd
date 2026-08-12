@@ -1,5 +1,5 @@
-#include "test_server_templ.h"
 #include "rgbd/server_ros.h"
+#include "test_server_templ.h"
 
 class TestServerROS : public rgbd::ServerROS
 {
@@ -25,7 +25,7 @@ void TestServerROS::initialize(std::string server_name)
     }
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     return main_templ<TestServerROS>(argc, argv);
 }

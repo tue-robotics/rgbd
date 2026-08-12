@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 
         if (depth.data)
         {
-            rgbd::View const view(image, depth.cols);
+            const rgbd::View view(image, depth.cols);
             const geo::DepthCamera& cam_model = view.getRasterizer();
 
             std::cout << "depth:" << '\n';

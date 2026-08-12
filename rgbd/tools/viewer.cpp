@@ -50,7 +50,7 @@ int main(int argc, char** argv)
                 cv::Mat image_hsv;
                 cv::cvtColor(image.getRGBImage(), image_hsv, cv::COLOR_BGR2HSV);
 
-                rgbd::View const view(image, image_hsv.cols);
+                const rgbd::View view(image, image_hsv.cols);
 
                 cv::Mat canvas_hsv(view.getHeight(), view.getWidth(), CV_8UC3, cv::Scalar(0, 0, 0));
 
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
                 {
                     for (int x = 0; x < view.getWidth(); ++x)
                     {
-                        float const d = view.getDepth(x, y);
+                        const float d = view.getDepth(x, y);
                         if (d == d)
                         {
                             cv::Vec3b hsv = image_hsv.at<cv::Vec3b>(y, x);

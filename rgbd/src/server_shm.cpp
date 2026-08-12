@@ -117,7 +117,7 @@ void ServerSHM::send(const Image& image)
     }
 
     {
-        ipc::scoped_lock<ipc::interprocess_mutex> const lock(buffer_header_->mutex);
+        const ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header_->mutex);
 
         buffer_header_->timestamp = image.getTimestamp();
 

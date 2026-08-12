@@ -102,7 +102,7 @@ bool Image::operator==(const rgbd::Image& other) const
 
 std::ostream& operator<<(std::ostream& out, const rgbd::Image& image)
 {
-    std::streamsize const ss = out.precision();
+    const std::streamsize ss = out.precision();
     out << "Depth: " << image.depth_image_.size << "@(" << cv::typeToString(image.depth_image_.type()) << ")" << '\n'
         << "color: " << image.rgb_image_.size << "@(" << cv::typeToString(image.rgb_image_.type()) << ")" << '\n'
         << "frame_id: " << image.frame_id_ << '\n'

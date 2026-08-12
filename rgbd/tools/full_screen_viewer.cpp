@@ -57,10 +57,10 @@ int main(int argc, char** argv)
 
         cv::imshow(window_name, canvas);
 
-        int const i_key = cv::waitKey(3);
+        const int i_key = cv::waitKey(3);
         if (i_key >= 0)
         {
-            char const key = static_cast<char>(i_key);
+            const char key = static_cast<char>(i_key);
 
             if (key == ' ')
                 pause = !pause;

@@ -90,7 +90,7 @@ bool Client::deinitialize()
 
 bool Client::nextImage(Image& image)
 {
-    std::scoped_lock const lg(switch_impl_mutex_);
+    const std::scoped_lock lg(switch_impl_mutex_);
     if (client_impl_mode_ == ClientImplMode::SHM)
     {
         return client_shm_.nextImage(image);
@@ -100,7 +100,7 @@ bool Client::nextImage(Image& image)
 
 ImagePtr Client::nextImage()
 {
-    std::scoped_lock const lg(switch_impl_mutex_);
+    const std::scoped_lock lg(switch_impl_mutex_);
     if (client_impl_mode_ == ClientImplMode::SHM)
     {
         return client_shm_.nextImage();
@@ -134,7 +134,7 @@ void Client::subHostsThreadFunc(float frequency)
 
         if (node_->now() > (last_time_shm_server_online_ + rclcpp::Duration::from_seconds(timeout)))
         {
-            std::scoped_lock const lg(switch_impl_mutex_);
+            const std::scoped_lock lg(switch_impl_mutex_);
             if (client_shm_.initialized())
             {
                 client_shm_.deinitialize();
@@ -148,7 +148,7 @@ void Client::subHostsThreadFunc(float frequency)
         }
         else
         {
-            std::scoped_lock const lg(switch_impl_mutex_);
+            const std::scoped_lock lg(switch_impl_mutex_);
             if (client_rgbd_.initialized())
             {
                 client_rgbd_.deinitialize();

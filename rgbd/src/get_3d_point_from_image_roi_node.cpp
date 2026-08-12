@@ -97,16 +97,16 @@ void srvGet3dPointFromROI(const boost::circular_buffer<std::shared_ptr<rgbd::Ima
     {
         const cv::Mat& depth = last_image->getDepthImage();
 
-        cv::Rect const roi_rgb(static_cast<int>(roi.x_offset),
+        const cv::Rect roi_rgb(static_cast<int>(roi.x_offset),
                                static_cast<int>(roi.y_offset),
                                static_cast<int>(roi.width),
                                static_cast<int>(roi.height));
-        float const rgb_depth_width_ratio =
+        const float rgb_depth_width_ratio =
             static_cast<float>(depth.cols) / static_cast<float>(last_image->getRGBImage().cols);
-        cv::Rect const roi_depth(rgb_depth_width_ratio * roi_rgb.tl(), rgb_depth_width_ratio * roi_rgb.br());
-        cv::Point const roi_depth_center = 0.5 * (roi_depth.tl() + roi_depth.br());
+        const cv::Rect roi_depth(rgb_depth_width_ratio * roi_rgb.tl(), rgb_depth_width_ratio * roi_rgb.br());
+        const cv::Point roi_depth_center = 0.5 * (roi_depth.tl() + roi_depth.br());
 
-        cv::Rect const roi_depth_capped(
+        const cv::Rect roi_depth_capped(
             cv::Point(std::max(0, roi_depth.x), std::max(0, roi_depth.y)),
             cv::Point(std::min(depth.cols - 1, roi_depth.br().x), std::min(depth.rows - 1, roi_depth.br().y)));
 
@@ -115,7 +115,7 @@ void srvGet3dPointFromROI(const boost::circular_buffer<std::shared_ptr<rgbd::Ima
         std::vector<float> depths;
         for (int j = 0; j < depth_roi_capped.cols * depth_roi_capped.rows; ++j)
         {
-            float const d = depth_roi_capped.at<float>(j);
+            const float d = depth_roi_capped.at<float>(j);
             if (d > 0 && d == d)
                 depths.push_back(d);
         }
@@ -130,9 +130,9 @@ void srvGet3dPointFromROI(const boost::circular_buffer<std::shared_ptr<rgbd::Ima
         else
         {
             std::ranges::sort(depths);
-            float const median_depth = depths[depths.size() / 2];
+            const float median_depth = depths[depths.size() / 2];
 
-            rgbd::View const view(*last_image, last_image->getDepthImage().cols);
+            const rgbd::View view(*last_image, last_image->getDepthImage().cols);
             geo::Vec3 pos = view.getRasterizer().project2Dto3D(roi_depth_center.x, roi_depth_center.y) *
                             static_cast<double>(median_depth);
             pos.y = -pos.y;
@@ -151,7 +151,7 @@ int main(int argc, char** argv)
     rclcpp::init(argc, argv);
     auto node = rclcpp::Node::make_shared("get_3d_point_from_image_roi");
 
-    double const rate = node->declare_parameter<double>("rate", 30.0);
+    const double rate = node->declare_parameter<double>("rate", 30.0);
 
     rgbd::Client client(node);
     client.initialize("rgbd");

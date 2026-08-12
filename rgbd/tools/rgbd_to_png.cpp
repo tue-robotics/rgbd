@@ -38,11 +38,11 @@ int main(int argc, char** argv)
         rgbd::Image image;
         rgbd::deserialize(a_in, image);
 
-        size_t const lastindex = name.find_last_of('.');
+        const size_t lastindex = name.find_last_of('.');
         name = name.substr(0, lastindex);
 
         // write rgb image
-        std::string const rgb_filename = name + "_rgb.png";
+        const std::string rgb_filename = name + "_rgb.png";
 
         if (cv::imwrite(rgb_filename, image.getRGBImage()))
             std::cout << "Succesfully stored '" << rgb_filename << "'" << '\n';
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
             std::cerr << "Failed to write rgbd to rgb png" << '\n';
 
         // write depth image
-        std::string const depth_filename = name + "_depth.png";
+        const std::string depth_filename = name + "_depth.png";
 
         if (cv::imwrite(depth_filename, image.getDepthImage()))
             std::cout << "Succesfully stored '" << depth_filename << "'" << '\n';

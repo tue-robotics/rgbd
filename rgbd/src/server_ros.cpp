@@ -56,7 +56,7 @@ void ServerROS::send(const Image& image)
 {
     if ((pub_depth_img_ || pub_depth_pc_) && image.getDepthImage().data)
     {
-        rgbd::View const view(image, image.getDepthImage().cols);
+        const rgbd::View view(image, image.getDepthImage().cols);
 
         if (pub_depth_img_ && (pub_depth_img_->get_subscription_count() || pub_depth_info_->get_subscription_count()))
         {
@@ -121,7 +121,7 @@ void ServerROS::send(const Image& image)
     if (pub_rgb_img_ && (pub_rgb_img_->get_subscription_count() || pub_rgb_info_->get_subscription_count()) &&
         image.getRGBImage().data)
     {
-        rgbd::View const view(image, image.getRGBImage().cols);
+        const rgbd::View view(image, image.getRGBImage().cols);
 
         sensor_msgs::msg::Image msg;
         sensor_msgs::msg::CameraInfo info_msg;
