@@ -59,9 +59,9 @@ template <typename SubscriberT, typename NodeT>
 void subscribeSensorData(SubscriberT& sub,
                          const NodeT& node,
                          const std::string& topic,
-                         rclcpp::SubscriptionOptions options)
+                         const rclcpp::SubscriptionOptions& options)
 {
-    subscribeSensorDataImpl(sub, node, topic, std::move(options), 0);
+    subscribeSensorDataImpl(sub, node, topic, options, 0);
 }
 
 } // namespace
