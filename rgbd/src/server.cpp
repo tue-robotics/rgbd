@@ -1,13 +1,18 @@
 #include "rgbd/server.h"
 
+#include "rgbd/image.h"
+#include "rgbd/server_shm.h"
 #include "rgbd/utility.h"
+#include <memory>
+#include <rclcpp/node.hpp>
+#include <string>
 
 namespace rgbd
 {
 
-Server::Server(const rclcpp::Node::SharedPtr& node)
-    : node_(node ? node : rclcpp::Node::make_shared("rgbd_server")), server_rgbd_(node_), server_shm_(node_),
-      hostname_(get_hostname())
+Server::Server(const rclcpp::Node::SharedPtr& node) :
+    node_(node ? node : rclcpp::Node::make_shared("rgbd_server")), server_rgbd_(node_), server_shm_(node_),
+    hostname_(getHostname())
 {
 }
 
@@ -19,7 +24,9 @@ Server::~Server()
     }
 }
 
-void Server::initialize(const std::string& name, RGBStorageType rgb_type, DepthStorageType depth_type,
+void Server::initialize(const std::string& name,
+                        RGBStorageType rgb_type,
+                        DepthStorageType depth_type,
                         float service_freq)
 {
     name_ = name;

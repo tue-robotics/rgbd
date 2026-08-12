@@ -28,7 +28,7 @@ private:
     RGBStorageType rgb_type_;
     DepthStorageType depth_type_;
 
-    bool interfaces_initialized_;
+    bool interfaces_initialized_{false};
 
     std::unique_ptr<ClientROS> client_;
     std::unique_ptr<Server> server_;

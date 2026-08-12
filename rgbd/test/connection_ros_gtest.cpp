@@ -2,20 +2,17 @@
 
 #include <gtest/gtest.h>
 
+#include <rgbd/client_ros.h>
 #include <rgbd/image.h>
 #include <rgbd/server_ros.h>
-#include <rgbd/client_ros.h>
 
-#include <ros/init.h>
 #include <ros/console.h>
-
+#include <ros/init.h>
 
 class ROS : public testing::Test
 {
 protected:
-    ROS(const std::string& _ns="") : ns(_ns), server(nh)
-    {
-    }
+    ROS(const std::string& _ns = "") : ns(_ns), server(nh) {}
 
     virtual ~ROS()
     {
@@ -40,14 +37,14 @@ protected:
 class ROSInitialized : public ROS
 {
 protected:
-    ROSInitialized(const std::string& _ns="") : ROS(_ns)
-    {
-    }
+    ROSInitialized(const std::string& _ns = "") : ROS(_ns) {}
 
     void SetUp() override
     {
         ROS::SetUp();
-        client.initialize(ros::names::append(ns, "rgb/image"), ros::names::append(ns, "depth/image"), ros::names::append(ns, "rgb/camera_info"));
+        client.initialize(ros::names::append(ns, "rgb/image"),
+                          ros::names::append(ns, "depth/image"),
+                          ros::names::append(ns, "rgb/camera_info"));
         ros::Time end = ros::Time::now() + ros::Duration(5);
         bool received = false;
         while (!received || ros::Time::now() <= end)
@@ -58,7 +55,8 @@ protected:
             if (received)
             {
                 ros::Duration(2).sleep();
-                EXPECT_FALSE(client.nextImage()) << "SetUp failed, client should not have gotten a new image after getting one image correctly";
+                EXPECT_FALSE(client.nextImage())
+                    << "SetUp failed, client should not have gotten a new image after getting one image correctly";
             }
         }
         EXPECT_TRUE(received) << "SetUp failed, because client wasn't able to get one image correctly.";
@@ -68,9 +66,7 @@ protected:
 class ROS_NS : public ROSInitialized
 {
 protected:
-    ROS_NS() : ROSInitialized("test_ns")
-    {
-    }
+    ROS_NS() : ROSInitialized("test_ns") {}
 };
 
 TEST_F(ROS, Initialize)
@@ -126,7 +122,7 @@ TEST_F(ROSInitialized, NextImageTwice)
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
-    image.setTimestamp(image.getTimestamp()+10.);
+    image.setTimestamp(image.getTimestamp() + 10.);
     server.send(image);
     ros::Duration(0.01).sleep();
     EXPECT_TRUE(client.nextImage(image2));
@@ -161,7 +157,7 @@ TEST_F(ROSInitialized, NextImagePtrTwice)
         EXPECT_EQ(image, *image2);
     }
     EXPECT_FALSE(ros::isShuttingDown());
-    image.setTimestamp(image.getTimestamp()+10.);
+    image.setTimestamp(image.getTimestamp() + 10.);
     image2.reset();
     server.send(image);
     ros::Duration(0.01).sleep();
@@ -206,7 +202,7 @@ TEST_F(ROS_NS, NextImage)
 }
 
 // Run all the tests that were declared with TEST()
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     ros::init(argc, argv, "ros_connection");
     testing::InitGoogleTest(&argc, argv);

@@ -49,11 +49,11 @@ public:
 
 protected:
     rclcpp::Node::SharedPtr node_;
-    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_rgb_img_;
-    rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr pub_rgb_info_;
-    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_depth_img_;
-    rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr pub_depth_info_;
-    rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_depth_pc_;
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_rgb_img_{nullptr};
+    rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr pub_rgb_info_{nullptr};
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_depth_img_{nullptr};
+    rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr pub_depth_info_{nullptr};
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_depth_pc_{nullptr};
 };
 
 } // namespace rgbd

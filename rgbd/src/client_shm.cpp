@@ -2,32 +2,44 @@
 #include <algorithm>
 
 #include "rgbd/image.h"
+#include "rgbd/image_header.h"
+#include "rgbd/types.h"
 
-#include <rclcpp/rclcpp.hpp>
+#include <boost/interprocess/creation_tags.hpp>
+#include <boost/interprocess/detail/os_file_functions.hpp>
+#include <boost/interprocess/exceptions.hpp>
+#include <boost/interprocess/sync/interprocess_mutex.hpp>
+#include <cstdint>
+#include <cstring>
+#include <opencv2/core/hal/interface.h>
+#include <opencv2/core/mat.hpp>
+#include <rclcpp/logger.hpp>
+#include <rclcpp/logging.hpp>
 
-#include <sensor_msgs/msg/camera_info.hpp>
+#include <rclcpp/utilities.hpp>
 
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <chrono>
+#include <sensor_msgs/msg/detail/camera_info__struct.hpp>
+#include <string>
 
 namespace ipc = boost::interprocess;
 
 namespace rgbd
 {
 
-ClientSHM::ClientSHM() : buffer_header_(nullptr), image_data_(nullptr)
-{
-}
+ClientSHM::ClientSHM() = default;
 
 ClientSHM::~ClientSHM() = default;
 
 bool ClientSHM::initialize(const std::string& server_name, float timeout)
 {
     std::string server_name_cp = server_name;
-    std::replace(server_name_cp.begin(), server_name_cp.end(), '/', '-');
+    std::ranges::replace(server_name_cp, '/', '-');
 
     const auto start = std::chrono::steady_clock::now();
-    while (rclcpp::ok() && std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count() < static_cast<double>(timeout))
+    while (rclcpp::ok() && std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count() <
+                               static_cast<double>(timeout))
     {
         try
         {
@@ -39,11 +51,12 @@ bool ClientSHM::initialize(const std::string& server_name, float timeout)
             buffer_header_ = static_cast<BufferHeader*>(mem_buffer_header_.get_address());
             image_data_ = static_cast<uchar*>(mem_image_.get_address());
 
-            rgb_data_size_ = static_cast<uint64_t>(buffer_header_->rgb_width * buffer_header_->rgb_height * 3);
-            depth_data_size_ = static_cast<uint64_t>(buffer_header_->depth_width * buffer_header_->depth_height * 4);
+            rgb_data_size_ = static_cast<uint64_t>(buffer_header_->rgb_width) * buffer_header_->rgb_height * 3;
+            depth_data_size_ = static_cast<uint64_t>(buffer_header_->depth_width) * buffer_header_->depth_height * 4;
 
             sequence_nr_ = 0;
-            RCLCPP_INFO(rclcpp::get_logger("ClientSHM"), "Opened shared memory on: '%s' successfully.", server_name_cp.c_str());
+            RCLCPP_INFO(
+                rclcpp::get_logger("ClientSHM"), "Opened shared memory on: '%s' successfully.", server_name_cp.c_str());
             return true;
         }
         catch (ipc::interprocess_exception& ex)
@@ -53,7 +66,10 @@ bool ClientSHM::initialize(const std::string& server_name, float timeout)
         rclcpp::sleep_for(std::chrono::milliseconds(100));
     }
 
-    RCLCPP_INFO(rclcpp::get_logger("ClientSHM"), "Opening shared memory on: '%s' failed on timeout(%f).", server_name_cp.c_str(), timeout);
+    RCLCPP_INFO(rclcpp::get_logger("ClientSHM"),
+                "Opening shared memory on: '%s' failed on timeout(%f).",
+                server_name_cp.c_str(),
+                timeout);
 
     return false;
 }
@@ -75,7 +91,7 @@ bool ClientSHM::nextImage(Image& image)
         return false;
     }
 
-    ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header_->mutex);
+    const ipc::scoped_lock<ipc::interprocess_mutex> lock(buffer_header_->mutex);
 
     if (buffer_header_->sequence_nr == sequence_nr_)
     {

@@ -1,25 +1,37 @@
 #include "rgbd/image.h"
 
+#include <cstdlib>
+#include <iomanip>
+#include <ios>
+#include <opencv2/core.hpp>
 #include <opencv2/core/check.hpp>
-#include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/camera_info.hpp>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/core/matx.hpp>
+#include <ostream>
+#include <rclcpp/time.hpp>
+#include <sensor_msgs/msg/detail/camera_info__struct.hpp>
+#include <sensor_msgs/msg/detail/camera_info__traits.hpp>
+#include <string>
+#include <utility>
+
+#if __has_include(<image_geometry/pinhole_camera_model.hpp>)
+#include <image_geometry/pinhole_camera_model.hpp> // IWYU pragma: keep
+#else
+#include <image_geometry/pinhole_camera_model.h> // IWYU pragma: keep
+#endif
 
 namespace rgbd
 {
 
-Image::Image() : timestamp_(0)
-{
-}
+Image::Image() : timestamp_(0) {}
 
-Image::Image(const cv::Mat& rgb_image,
-             const cv::Mat& depth_image,
+Image::Image(cv::Mat rgb_image,
+             cv::Mat depth_image,
              const image_geometry::PinholeCameraModel& cam_model,
-             const std::string& frame_id,
-             double timestamp)
-    : rgb_image_(rgb_image)
-    , depth_image_(depth_image)
-    , frame_id_(frame_id)
-    , timestamp_(timestamp)
+             std::string frame_id,
+             double timestamp) :
+    rgb_image_(std::move(rgb_image)), depth_image_(std::move(depth_image)), frame_id_(std::move(frame_id)),
+    timestamp_(timestamp)
 {
     setCameraModel(cam_model);
 }
@@ -88,14 +100,15 @@ bool Image::operator==(const rgbd::Image& other) const
     return true;
 }
 
-std::ostream& operator<< (std::ostream& out, const rgbd::Image& image)
+std::ostream& operator<<(std::ostream& out, const rgbd::Image& image)
 {
-    std::streamsize ss = out.precision();
-    out << "Depth: " << image.depth_image_.size << "@(" << cv::typeToString(image.depth_image_.type()) << ")" << std::endl
-        << "color: " << image.rgb_image_.size << "@(" << cv::typeToString(image.rgb_image_.type()) << ")" << std::endl
-        << "frame_id: " << image.frame_id_ << std::endl
-        << "timestamp: " << std::setprecision(32) << image.timestamp_ << std::setprecision(ss) << std::endl
-        << "camera model: " << std::endl << sensor_msgs::msg::to_yaml(image.cam_model_.cameraInfo());
+    const std::streamsize ss = out.precision();
+    out << "Depth: " << image.depth_image_.size << "@(" << cv::typeToString(image.depth_image_.type()) << ")" << '\n'
+        << "color: " << image.rgb_image_.size << "@(" << cv::typeToString(image.rgb_image_.type()) << ")" << '\n'
+        << "frame_id: " << image.frame_id_ << '\n'
+        << "timestamp: " << std::setprecision(32) << image.timestamp_ << std::setprecision(static_cast<int>(ss)) << '\n'
+        << "camera model: " << '\n'
+        << sensor_msgs::msg::to_yaml(image.cam_model_.cameraInfo());
     return out;
 }
 

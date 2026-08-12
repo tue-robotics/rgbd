@@ -13,14 +13,10 @@
 
 #include <sstream>
 
-
 class Serialization : public testing::Test
 {
 protected:
-    void SetUp() override
-    {
-        image1 = rgbd::generateRandomImage();
-    }
+    void SetUp() override { image1 = rgbd::generateRandomImage(); }
 
     rgbd::Image image1;
 };
@@ -30,7 +26,10 @@ TEST_F(Serialization, LossLess)
     std::stringstream ss;
     tue::serialization::OutputArchive output_achive(ss);
 
-    EXPECT_TRUE(rgbd::serialize(image1, output_achive, rgbd::RGB_STORAGE_LOSSLESS, rgbd::DEPTH_STORAGE_LOSSLESS));
+    EXPECT_TRUE(rgbd::serialize(image1,
+                                output_achive,
+                                rgbd::RGBStorageType::RGB_STORAGE_LOSSLESS,
+                                rgbd::DepthStorageType::DEPTH_STORAGE_LOSSLESS));
     tue::serialization::InputArchive input_achive(ss);
     rgbd::Image image2;
     EXPECT_TRUE(rgbd::deserialize(input_achive, image2));
@@ -43,7 +42,8 @@ TEST_F(Serialization, Lossy)
     std::stringstream ss;
     tue::serialization::OutputArchive output_achive(ss);
 
-    EXPECT_TRUE(rgbd::serialize(image1, output_achive, rgbd::RGB_STORAGE_JPG, rgbd::DEPTH_STORAGE_LOSSLESS));
+    EXPECT_TRUE(rgbd::serialize(
+        image1, output_achive, rgbd::RGBStorageType::RGB_STORAGE_JPG, rgbd::DepthStorageType::DEPTH_STORAGE_LOSSLESS));
     tue::serialization::InputArchive input_achive(ss);
     rgbd::Image image2;
     EXPECT_TRUE(rgbd::deserialize(input_achive, image2));
@@ -63,7 +63,7 @@ TEST_F(Serialization, Lossy)
 }
 
 // Run all the tests that were declared with TEST()
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

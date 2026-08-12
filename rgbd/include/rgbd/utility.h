@@ -10,7 +10,7 @@ namespace rgbd
  * @brief Get the hostname of the current machine
  * @return hostname or an empty string in case of any error
  */
-std::string get_hostname();
+std::string getHostname();
 
 } // namespace rgbd
 

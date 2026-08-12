@@ -2,11 +2,19 @@
 #include "rgbd/image.h"
 
 // Writing video files
+#include <iostream>
+#include <opencv2/core/types.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include <opencv2/imgproc/imgproc.hpp>
 #include <memory>
-#include <rclcpp/rclcpp.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/videoio.hpp>
+#include <ostream>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/rate.hpp>
+#include <rclcpp/utilities.hpp>
 
 int main(int argc, char** argv)
 {
@@ -82,15 +90,13 @@ int main(int argc, char** argv)
                 // If not, do so
                 video_size =
                     cv::Size2i(static_cast<int>(size * rgb_image.cols), static_cast<int>(size * rgb_image.rows));
-                video_writer.open(filename.c_str(),
-                                  cv::VideoWriter::fourcc(format[0], format[1], format[2], format[3]),
-                                  rate,
-                                  video_size);
+                video_writer.open(
+                    filename, cv::VideoWriter::fourcc(format[0], format[1], format[2], format[3]), rate, video_size);
 
                 if (!video_writer.isOpened())
                 {
                     // Could not create the video writer, so exit
-                    std::cout << "Unable to create video writer" << std::endl;
+                    std::cout << "Unable to create video writer" << '\n';
                     return 1;
                 }
 

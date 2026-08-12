@@ -1,3 +1,6 @@
+#include <iostream>
+#include <opencv2/highgui.hpp>
+#include <ostream>
 #include <rgbd/image.h>
 #include <rgbd/serialization.h>
 
@@ -20,7 +23,7 @@ int main(int argc, char** argv)
 
     if (!f_in.is_open())
     {
-        std::cout << "Could not open '" << argv[1] << "'." << std::endl;
+        std::cout << "Could not open '" << argv[1] << "'." << '\n';
         return 1;
     }
 
@@ -29,12 +32,12 @@ int main(int argc, char** argv)
     rgbd::Image image;
     rgbd::deserialize(a_in, image);
 
-    std::cout << "Image loaded from disk." << std::endl;
-    std::cout << "    name:  " << argv[1] << std::endl;
+    std::cout << "Image loaded from disk." << '\n';
+    std::cout << "    name:  " << argv[1] << '\n';
     //    std::cout << "    size:  " << image.getWidth() << " x " <<
     //    image.getHeight() << std::endl;
-    std::cout << "    frame: " << image.getFrameId() << std::endl;
-    std::cout << "    time:  " << image.getTimestamp() << std::endl;
+    std::cout << "    frame: " << image.getFrameId() << '\n';
+    std::cout << "    time:  " << image.getTimestamp() << '\n';
 
     cv::imshow("rgb", image.getRGBImage());
     cv::imshow("depth", image.getDepthImage() / 8);

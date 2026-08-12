@@ -3,13 +3,19 @@
 #include "rgbd/serialization.h"
 
 #include <cmath>
+#include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <exception>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <memory>
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/rate.hpp>
+#include <rclcpp/utilities.hpp>
 #include <sstream>
 
 int main(int argc, char** argv)
@@ -32,7 +38,7 @@ int main(int argc, char** argv)
     rgbd::Image image;
 
     rclcpp::Rate r(rate);
-    char key_pressed;
+    char key_pressed = 0;
     while (rclcpp::ok())
     {
         RCLCPP_INFO(logger, "Press s to save and q to exit.");
@@ -40,7 +46,7 @@ int main(int argc, char** argv)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-result"
         system("/bin/stty raw");
-        key_pressed = getchar();
+        key_pressed = static_cast<char>(getchar());
         system("/bin/stty cooked");
 #pragma GCC diagnostic pop
 
@@ -50,9 +56,9 @@ int main(int argc, char** argv)
             {
                 std::stringstream ss;
                 ss << "image_";
-                double sec;
+                double sec = NAN;
                 const double fractional = std::modf(image.getTimestamp(), &sec);
-                const std::time_t time = sec;
+                const auto time = static_cast<std::time_t>(sec);
                 ss << std::put_time(std::localtime(&time), "%Y-%m-%d_%H.%M.%S");
                 ss << "." << std::setw(6) << std::setfill('0') << static_cast<int32_t>(fractional * 1e6);
                 ss << ".rgbd";

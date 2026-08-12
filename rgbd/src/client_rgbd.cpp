@@ -1,14 +1,19 @@
 #include "rgbd/client_rgbd.h"
 
+#include "rgbd/image.h"
 #include "rgbd/ros/conversions.h"
+#include "rgbd/types.h"
+#include <rclcpp/callback_group.hpp>
+#include <rclcpp/node.hpp>
+#include <rgbd_interfaces/msg/detail/rgbd__struct.hpp>
+#include <string>
 
-namespace rgbd {
+namespace rgbd
+{
 
-ClientRGBD::ClientRGBD(const rclcpp::Node::SharedPtr& node)
-    : node_(node ? node : rclcpp::Node::make_shared("rgbd_client_rgbd"))
-    , cb_group_image_(nullptr)
-    , new_image_(false)
-    , image_ptr_(nullptr)
+ClientRGBD::ClientRGBD(const rclcpp::Node::SharedPtr& node) :
+    node_(node ? node : rclcpp::Node::make_shared("rgbd_client_rgbd")), cb_group_image_(nullptr)
+
 {
 }
 
@@ -22,7 +27,7 @@ bool ClientRGBD::initialize(const std::string& server_name)
     sub_image_ = node_->create_subscription<rgbd_interfaces::msg::RGBD>(
         server_name,
         rclcpp::SensorDataQoS(),
-        std::bind(&ClientRGBD::rgbdImageCallback, this, std::placeholders::_1),
+        [this](const rgbd_interfaces::msg::RGBD::ConstSharedPtr& msg) { rgbdImageCallback(msg); },
         sub_options);
     executor_image_.add_callback_group(cb_group_image_, node_->get_node_base_interface());
     return true;
@@ -62,4 +67,4 @@ void ClientRGBD::rgbdImageCallback(const rgbd_interfaces::msg::RGBD::ConstShared
     new_image_ = convert(msg, image_ptr_);
 }
 
-}  // namespace rgbd
+} // namespace rgbd

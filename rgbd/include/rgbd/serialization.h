@@ -15,8 +15,8 @@ class Image;
 
 bool serialize(const Image& image,
                tue::serialization::OutputArchive& a,
-               RGBStorageType rgb_type = RGB_STORAGE_JPG,
-               DepthStorageType depth_type = DEPTH_STORAGE_PNG);
+               RGBStorageType rgb_type = RGBStorageType::RGB_STORAGE_JPG,
+               DepthStorageType depth_type = DepthStorageType::DEPTH_STORAGE_PNG);
 
 // DESERIALIZATION
 

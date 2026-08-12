@@ -2,20 +2,17 @@
 
 #include <gtest/gtest.h>
 
+#include <rgbd/client_rgbd.h>
 #include <rgbd/image.h>
 #include <rgbd/server_rgbd.h>
-#include <rgbd/client_rgbd.h>
 
 #include <ros/init.h>
 #include <ros/node_handle.h>
 
-
 class RGBD : public testing::Test
 {
 protected:
-    RGBD() : server(nh)
-    {
-    }
+    RGBD() : server(nh) {}
 
     virtual ~RGBD()
     {
@@ -117,7 +114,7 @@ TEST_F(RGBD, NextImageTwice)
     EXPECT_TRUE(client.nextImage(image2));
     EXPECT_EQ(image, image2);
     EXPECT_FALSE(ros::isShuttingDown());
-    image.setTimestamp(image.getTimestamp()+10.);
+    image.setTimestamp(image.getTimestamp() + 10.);
     server.send(image);
     ros::Duration(0.01).sleep();
     EXPECT_TRUE(client.nextImage(image2));
@@ -154,7 +151,7 @@ TEST_F(RGBD, NextImagePtrTwice)
         EXPECT_EQ(image, *image2);
     }
     EXPECT_FALSE(ros::isShuttingDown());
-    image.setTimestamp(image.getTimestamp()+10.);
+    image.setTimestamp(image.getTimestamp() + 10.);
     image2.reset();
     server.send(image);
     ros::Duration(0.01).sleep();
@@ -188,7 +185,7 @@ TEST_F(RGBD, NextImagePtrTwiceWithoutSend)
 }
 
 // Run all the tests that were declared with TEST()
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     ros::init(argc, argv, "rgbd_connection");
     testing::InitGoogleTest(&argc, argv);

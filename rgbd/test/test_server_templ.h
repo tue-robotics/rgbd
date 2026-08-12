@@ -49,8 +49,7 @@ template <class T> int main_templ(int argc, char** argv)
     cv::Mat depth_image(480, 640, CV_32FC1, 5.0);
     sensor_msgs::msg::CameraInfo cam_info;
     cam_info.k = {554.2559327880068, 0.0, 320.5, 0.0, 554.2559327880068, 240.5, 0.0, 0.0, 1.0};
-    cam_info.p = {
-        554.2559327880068, 0.0, 320.5, 0.0, 0.0, 554.2559327880068, 240.5, 0.0, 0.0, 0.0, 1.0, 0.0};
+    cam_info.p = {554.2559327880068, 0.0, 320.5, 0.0, 0.0, 554.2559327880068, 240.5, 0.0, 0.0, 0.0, 1.0, 0.0};
     cam_info.distortion_model = sensor_msgs::distortion_models::PLUMB_BOB;
     cam_info.width = 640;
     cam_info.height = 480;

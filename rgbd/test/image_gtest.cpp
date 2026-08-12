@@ -8,7 +8,6 @@
 
 #include <sensor_msgs/msg/camera_info.hpp>
 
-
 TEST(Image, EmptyClone)
 {
     rgbd::Image image1;
@@ -44,7 +43,7 @@ TEST(Image, NotEqual)
 
     // Different timestamp
     image2 = image1.clone();
-    image2.setTimestamp(image1.getTimestamp()+10.);
+    image2.setTimestamp(image1.getTimestamp() + 10.);
     EXPECT_FALSE(image1 == image2);
     EXPECT_NE(image1, image2);
 
@@ -74,7 +73,7 @@ TEST(Image, NotEqual)
 }
 
 // Run all the tests that were declared with TEST()
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

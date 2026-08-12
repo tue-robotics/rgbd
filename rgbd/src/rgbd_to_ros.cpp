@@ -1,4 +1,7 @@
-#include <rclcpp/rclcpp.hpp>
+#include <cstddef>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/rate.hpp>
 #include <rclcpp/utilities.hpp>
 
 #include "rgbd/client.h"
@@ -7,11 +10,14 @@
 
 #include <iostream>
 #include <string>
+#include <vector> // IWYU pragma: keep
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     std::vector<std::string> myargv = rclcpp::remove_ros_arguments(argc, argv);
-    bool publish_rgb = false, publish_depth = false, publish_pc = false;
+    bool publish_rgb = false;
+    bool publish_depth = false;
+    bool publish_pc = false;
     {
         bool valid_arg_provided = false;
         for (size_t i = 1; i < myargv.size(); ++i)
@@ -19,18 +25,20 @@ int main(int argc, char **argv)
             const std::string& opt = myargv[i];
             if (opt == "-h" || opt == "--help")
             {
-                std::cout << "Usage: rgbd_to_ros [OPTIONS]" << std::endl
-                          << "    If no valid options are provided, rgb and depth images and camera info will be published" << std::endl
-                          << "Options:" << std::endl
-                          << "    -h, --help:         show this message" << std::endl
-                          << "    -a, --all:          publish rgb, depth and pointcloud" << std::endl
-                          << "    --rgb, --color:     publish rgb image and camera info" << std::endl
-                          << "    --depth:            publish depth image and camera info" << std::endl
-                          << "    --rgbd:             publish rgb and depth images and camera info" << std::endl
-                          << "    --pc, --pointcloud: publish pointcloud" << std::endl;
+                std::cout
+                    << "Usage: rgbd_to_ros [OPTIONS]" << '\n'
+                    << "    If no valid options are provided, rgb and depth images and camera info will be published"
+                    << '\n'
+                    << "Options:" << '\n'
+                    << "    -h, --help:         show this message" << '\n'
+                    << "    -a, --all:          publish rgb, depth and pointcloud" << '\n'
+                    << "    --rgb, --color:     publish rgb image and camera info" << '\n'
+                    << "    --depth:            publish depth image and camera info" << '\n'
+                    << "    --rgbd:             publish rgb and depth images and camera info" << '\n'
+                    << "    --pc, --pointcloud: publish pointcloud" << '\n';
                 return 0;
             }
-            else if (opt == "-a" || opt == "--all")
+            if (opt == "-a" || opt == "--all")
             {
                 publish_rgb = true;
                 publish_depth = true;
@@ -60,12 +68,12 @@ int main(int argc, char **argv)
             }
             else if (!opt.compare(0, 2, "--"))
             {
-                std::cout << "[rgbd_to_ros] Unknown option: '" << opt << "'." << std::endl;
+                std::cout << "[rgbd_to_ros] Unknown option: '" << opt << "'." << '\n';
                 return 1;
             }
             else
             {
-                std::cout << "[rgbd_to_ros] Ignoring option: '" << opt << "'." << std::endl;
+                std::cout << "[rgbd_to_ros] Ignoring option: '" << opt << "'." << '\n';
             }
         }
         if (!valid_arg_provided)
@@ -88,7 +96,7 @@ int main(int argc, char **argv)
     rgbd::ServerROS server(node);
     server.initialize("", publish_rgb, publish_depth, publish_pc);
 
-    double rate = node->declare_parameter<double>("rate", 30.0);
+    const double rate = node->declare_parameter<double>("rate", 30.0);
 
     rgbd::Image image;
 

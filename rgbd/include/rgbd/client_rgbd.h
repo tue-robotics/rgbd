@@ -75,12 +75,12 @@ protected:
     /**
      * @brief Track if image is updated in a callback.
      */
-    bool new_image_;
+    bool new_image_{false};
     /**
      * @brief Pointer to the Image being written in the NextImage calls.
      * Ownership belongs to the caller of nextImage.
      */
-    Image* image_ptr_;
+    Image* image_ptr_{nullptr};
 
     void rgbdImageCallback(const rgbd_interfaces::msg::RGBD::ConstSharedPtr& msg);
 };

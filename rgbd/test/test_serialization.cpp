@@ -32,7 +32,10 @@ int main(int /*argc*/, char** /*argv*/)
 
         tue::serialization::OutputArchive a_out(f_out);
 
-        if (!rgbd::serialize(image, a_out, rgbd::RGB_STORAGE_LOSSLESS, rgbd::DEPTH_STORAGE_LOSSLESS))
+        if (!rgbd::serialize(image,
+                             a_out,
+                             rgbd::RGBStorageType::RGB_STORAGE_LOSSLESS,
+                             rgbd::DepthStorageType::DEPTH_STORAGE_LOSSLESS))
         {
             std::cout << "Could not store image to disk" << std::endl;
             return 1;

@@ -1,27 +1,30 @@
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/rate.hpp>
 
 #include "rgbd/client_rgbd.h"
 #include "rgbd/server_shm.h"
+#include "rgbd/types.h"
 #include "rgbd/utility.h"
 
 #include <memory>
+#include <rclcpp/utilities.hpp>
 #include <thread>
+#include <utility>
 
 class Node
 {
 public:
-    explicit Node(const rclcpp::Node::SharedPtr& node)
-        : node_(node)
-        , client_(node_)
-        , server_(node_)
-        , rate_(30)
-        , server_name_("rgbd")
-        , host_name_(rgbd::get_hostname())
+    // The clang-analyzer diagnostic below anchors to the last statement of this constructor. The flagged fields
+    // belong to boost::interprocess member objects (shm_/mem_buffer_header_/mem_image_ inside server_), which are
+    // fully initialized by their own default constructors.
+    explicit Node(rclcpp::Node::SharedPtr node) :
+        node_(std::move(node)), client_(node_), server_(node_), SERVER_NAME("rgbd"), HOST_NAME(rgbd::getHostname())
     {
         rate_ = node_->declare_parameter<double>("rate", 30.0);
 
-        client_.initialize(server_name_);
-        server_.initialize(server_name_);
+        client_.initialize(SERVER_NAME);
+        // NOLINTNEXTLINE(clang-analyzer-optin.cplusplus.UninitializedObject)
+        server_.initialize(SERVER_NAME);
     }
 
     virtual ~Node()
@@ -41,7 +44,8 @@ public:
             if (image_ptr)
             {
                 if (!pub_hostname_thread_ptr_)
-                    pub_hostname_thread_ptr_ = std::make_unique<std::thread>(rgbd::pubHostnameThreadFunc, node_, server_name_, host_name_, 10.0f);
+                    pub_hostname_thread_ptr_ = std::make_unique<std::thread>(
+                        rgbd::pubHostnameThreadFunc, node_, SERVER_NAME, HOST_NAME, 10.0f);
                 server_.send(*image_ptr);
             }
             r.sleep();
@@ -56,15 +60,15 @@ private:
     rgbd::ClientRGBD client_;
     rgbd::ServerSHM server_;
 
-    double rate_;
+    double rate_{30};
 
-    const std::string server_name_;
-    const std::string host_name_;
+    const std::string SERVER_NAME;
+    const std::string HOST_NAME;
 
     std::unique_ptr<std::thread> pub_hostname_thread_ptr_;
 };
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     rclcpp::init(argc, argv);
 

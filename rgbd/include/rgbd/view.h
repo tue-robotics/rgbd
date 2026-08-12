@@ -15,40 +15,59 @@ class View
 public:
     View(const Image& image, int width);
 
-    inline const int& getWidth() const { return width_; }
-
-    inline const int& getHeight() const { return height_; }
-
-    inline const cv::Vec3b& getColor(int x, int y) const
+    [[nodiscard]]
+    const int& getWidth() const
     {
-        return image_.getRGBImage().at<cv::Vec3b>(y * rgb_factor_, x * rgb_factor_);
+        return width_;
     }
 
-    inline const float& getDepth(int x, int y) const
+    [[nodiscard]]
+    const int& getHeight() const
     {
-        return image_.getDepthImage().at<float>(y * depth_factor_, x * depth_factor_);
+        return height_;
     }
 
-    inline bool getPoint3D(int x, int y, geo::Vector3& p) const
+    [[nodiscard]]
+    const cv::Vec3b& getColor(int x, int y) const
     {
-        float d = getDepth(x, y);
+        return image_.getRGBImage().at<cv::Vec3b>(static_cast<int>(static_cast<float>(y) * rgb_factor_),
+                                                  static_cast<int>(static_cast<float>(x) * rgb_factor_));
+    }
+
+    [[nodiscard]]
+    const float& getDepth(int x, int y) const
+    {
+        return image_.getDepthImage().at<float>(static_cast<int>(static_cast<float>(y) * depth_factor_),
+                                                static_cast<int>(static_cast<float>(x) * depth_factor_));
+    }
+
+    bool getPoint3D(int x, int y, geo::Vector3& p) const
+    {
+        const float d = getDepth(x, y);
         p = rasterizer_.project2Dto3D(x, y) * d;
         return (d == d && d > 0);
     }
 
-    inline bool getPoint3DSafe(int x, int y, geo::Vector3& p) const
+    bool getPoint3DSafe(int x, int y, geo::Vector3& p) const
     {
         if (x < 0 || y < 0 || x >= width_ || y >= height_)
             return false;
 
-        float d = getDepth(x, y);
+        const float d = getDepth(x, y);
         p = rasterizer_.project2Dto3D(x, y) * d;
         return (d == d && d > 0);
     }
 
-    inline const geo::DepthCamera& getRasterizer() const { return rasterizer_; }
+    [[nodiscard]]
+    const geo::DepthCamera& getRasterizer() const
+    {
+        return rasterizer_;
+    }
 
 protected:
+    // View is intentionally a non-owning, non-assignable view over a longer-lived Image, mirroring
+    // std::string_view/std::span.
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
     const Image& image_;
     int width_;
     int height_;
