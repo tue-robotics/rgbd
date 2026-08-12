@@ -52,7 +52,7 @@ ServerSHM::~ServerSHM()
 void ServerSHM::initialize(const std::string& name)
 {
     shared_mem_name_ = name;
-    std::replace(shared_mem_name_.begin(), shared_mem_name_.end(), '/', '-');
+    std::ranges::replace(shared_mem_name_, '/', '-');
 }
 
 void ServerSHM::send(const Image& image)

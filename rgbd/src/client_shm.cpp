@@ -35,7 +35,7 @@ ClientSHM::~ClientSHM() = default;
 bool ClientSHM::initialize(const std::string& server_name, float timeout)
 {
     std::string server_name_cp = server_name;
-    std::replace(server_name_cp.begin(), server_name_cp.end(), '/', '-');
+    std::ranges::replace(server_name_cp, '/', '-');
 
     const auto start = std::chrono::steady_clock::now();
     while (rclcpp::ok() && std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count() <

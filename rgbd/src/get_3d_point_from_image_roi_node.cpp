@@ -22,6 +22,7 @@
 #include <rgbd_interfaces/srv/project2_d_to3_d.hpp> // IWYU pragma: keep
 
 #include <memory>
+#include <ranges>
 #include <rmw/qos_profiles.h>
 #include <sensor_msgs/msg/detail/region_of_interest__struct.hpp>
 #include <utility>
@@ -79,10 +80,10 @@ void srvGet3dPointFromROI(const boost::circular_buffer<std::shared_ptr<rgbd::Ima
             last_image = last_images.back();
         else
         {
-            for (auto it = last_images.rbegin(); it != last_images.rend(); ++it)
+            for (const std::shared_ptr<rgbd::Image>& im : std::ranges::reverse_view(last_images))
             {
-                if ((*it)->getTimestamp() <= rclcpp::Time(REQ->stamp).seconds())
-                    last_image = *it;
+                if (im->getTimestamp() <= rclcpp::Time(REQ->stamp).seconds())
+                    last_image = im;
             }
         }
     }
@@ -128,7 +129,7 @@ void srvGet3dPointFromROI(const boost::circular_buffer<std::shared_ptr<rgbd::Ima
         }
         else
         {
-            std::sort(depths.begin(), depths.end());
+            std::ranges::sort(depths);
             float const median_depth = depths[depths.size() / 2];
 
             rgbd::View const view(*last_image, last_image->getDepthImage().cols);
